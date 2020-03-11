@@ -1,6 +1,6 @@
 {
     "sourceDirectory": "src",
-    "sharePointSiteUrl": "https://eminentitco.sharepoint.com",
+    "sharePointSiteUrl": "https://eminentitco.sharepoint.com/Sandbox/",
     "workspaceRoot": "d:\\Repositories\\SP",
     "publishWorkspaceOptions": {
         "destinationFolder": "/",
@@ -10,6 +10,7 @@
     "publishingScope": "SaveOnly",
     "authenticationType": "Forms",
     "remoteFolders": [
-        "/SitePages/**/"
+        "/SitePages/**/",
+        "/**/"
     ]
 }
