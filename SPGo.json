@@ -1,16 +1,15 @@
 {
     "sourceDirectory": "src",
-    "sharePointSiteUrl": "https://eminentitco.sharepoint.com/Sandbox/",
+    "sharePointSiteUrl": "https://eminentitco.sharepoint.com",
     "workspaceRoot": "d:\\Repositories\\SP",
     "publishWorkspaceOptions": {
         "destinationFolder": "/",
-        "globPattern": "d:\\Repositories\\SP\\src\\**\\*.*",
-        "localRoot": "d:\\Repositories\\SP\\src"
+        "globPattern": "d:\\Repositories\\SPd:\\Repositories\\SP\\src/d:\\Repositories\\SP\\src\\**\\*.*",
+        "localRoot": "d:\\Repositories\\SPd:\\Repositories\\SP\\src"
     },
     "publishingScope": "SaveOnly",
     "authenticationType": "Forms",
-    "remoteFolders" : [
-        "/SitePages/**/",
-        "/**/"
+    "remoteFolders": [
+        "/SitePages/**/"
     ]
 }
