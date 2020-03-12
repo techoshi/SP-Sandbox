@@ -1158,13 +1158,23 @@ $.fn.spCRUD = (function () {
                                         var thisUser = $.fn.spCommon.ajax({
                                             source: thisData.owner,
                                             method: 'GET',
+                                            // headers: {
+                                            //     "X-HTTP-Method": "PUT",
+                                            //     "accept": "application/json; odata=verbose"
+                                            //     },
                                             async: false,
-                                            url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/AllUsers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
+                                            //data : { 'logonName': theseValues[u].Key },
+                                            url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
                                             //url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'" 
+                                            //url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
                                         });
 
-                                        if (thisUser.d) {
+                                        if (thisUser && thisUser.d) {
                                             ids.push(thisUser.d.Id);
+                                        }
+                                        else
+                                        {
+                                            toastr.info('User ' + theseValues[u].DisplayText + ' was not found!');
                                         }
                                         break;
                                 }
