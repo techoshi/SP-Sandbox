@@ -221,18 +221,27 @@ $.fn.spCRUD = (function () {
                             lists: []
                         };
                     }
+                    
+                    var override = undefined;
+                    
+                    if(m.parentObject && m.parentObject.relationships)
+                    { 
+                    	override = _.find(m.parentObject.relationships, function(o) { return o.child == m.object.Title });
+                    }
+                    
+                    var Title = override ? override.lookupField : m.object.Title
 
                     if (lookupDataPoints[m.parentObject.owner] != undefined && lookupDataPoints[m.parentObject.owner][m.listGuid] == undefined) {
                         lookupDataPoints[m.parentObject.owner][m.listGuid] = {
                             list: m.listGuid,
                             response: a,
-                            owner: m.object.EntityPropertyName,
+                            owner: Title,
                             parentForm: m.parentObject.owner
                         };
                     }
 
                     if (_.filter(lookupDataPoints[m.parentObject.owner].lists, function (o) { return o == m.listGuid }).length == 0) {
-                        lookupDataPoints[m.parentObject.owner].lists.push({ guid: m.listGuid, owner: m.object.EntityPropertyName, parentForm: m.parentObject.owner });
+                        lookupDataPoints[m.parentObject.owner].lists.push({ guid: m.listGuid, owner: Title, parentForm: m.parentObject.owner });
                     }
 
                     loadTheLookupData({ m: m, a: a });
@@ -713,7 +722,10 @@ $.fn.spCRUD = (function () {
                                                     var whichWay = theData.selectname ? theData.selectname : theData.name;
                                                     if ($(dElement).hasClass('sp-lookup')) {
                                                         var thisSelectData = returnedData[$(dElement).data('selectname')];
-                                                        $(dElement).val(thisSelectData.Id);
+                                                        if(thisSelectData)
+                                                        {
+                                                        	$(dElement).val(thisSelectData.Id);
+                                                        }
                                                     }
                                                     else {
                                                         //Choice
