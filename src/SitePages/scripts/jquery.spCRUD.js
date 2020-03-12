@@ -1105,19 +1105,20 @@ $.fn.spCRUD = (function () {
                     var thisCurrentObject = $(element).data('entity') ? $(element).data('entity').replace(/-/g, '_x002d_') : '';
 
                     switch ($(element).prop('type')) {
-                        case 'hidden':
+                        case "hidden":
                             if ($(element).hasClass('people-picker-data')) {
                                 formObjects[thisCurrentObject] = $('.people-picker[name="' + $(element).prop('name') + '"] ').find('[id$="_TopSpan_HiddenInput"]').val();
                             }
                             break;
-                        case 'date':
+                        case "date":
                             if ($(element).val()) {
                                 formObjects[thisCurrentObject] = moment($(element).val()).format();
                             }
-                        case 'checkbox':
+                        case "checkbox":
                             formObjects[thisCurrentObject] = $(element).is(":checked");
                             break;
-                        case 'text':
+                        case "textarea":
+                        case "text":
                             if ($(element).hasClass('sp-calendar')) {
                                 var thisDate = moment($(element).val()).format();
                                 formObjects[thisCurrentObject] = thisDate != undefined && thisDate.toLowerCase() != "invalid date" ? thisDate : null;
@@ -1127,20 +1128,20 @@ $.fn.spCRUD = (function () {
                                 formObjects[thisCurrentObject] = thisValue ? thisValue : null;
                             }
                             break;
-                        case 'radio':
+                        case "radio":
                             if ($(element).prop('checked')) {
                                 formObjects[thisCurrentObject] = $(element).val();
                             }
                             break;
-                        case 'select-one':
+                        case "select-one":
                             formObjects[thisCurrentObject] = $(element).find('option:selected').val();
                             break;
-                        case 'select-multiple':
+                        case "select-multiple":
                             var multiValue = $(element).val();
                             var finalValue = multiValue ? { "__metadata": { "type": "Collection(Edm.String)" }, "results": multiValue } : { "__metadata": { "type": "Collection(Edm.String)" }, "results": [] };
                             formObjects[thisCurrentObject] = finalValue;
                             break;
-                        case 'file':
+                        case "file":
                             fileObjects = $(element).data().files;
                             break;
                     }
