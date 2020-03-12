@@ -211,7 +211,7 @@ $.fn.spDB = (function () {
 
     function createListField(m) {
         var thisData = m.data;
-        var thisFieldTitle = thisData.parameter && thisData.parameters.Title ? thisData.parameters.Title : thisData.Title;
+        var thisFieldTitle = thisData.parameters && thisData.parameters.Title ? thisData.parameters.Title : thisData.Title;
         m.method = 'POST'
         m.data = JSON.stringify(m.data);
         m.done = function (a) {
@@ -257,7 +257,7 @@ $.fn.spDB = (function () {
 						list[m.Title].Id = a.d.Id;
                         toastr.success(m.type + ' ' + m.Title + ' created!', 'List Created!');
 						
-						$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : m.type + ' List ' + m.Title + ' created!', type: 'primary' }));
+						$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : m.type + ' ' + m.Title + ' created!', type: 'primary' }));
                         for (var c = 0; c < m.Columns.length; c++) {
                         	if(m.availableLists)
                         	{
