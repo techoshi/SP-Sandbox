@@ -43,31 +43,34 @@ $.fn.spQuery = (function () {
 
                 var initVal = thisAttachment ? 1 : 0;
 
-
+				var loadedNumber = 0;
                 for (var i = initVal; i < columns.results.length; i++) {
                     var thisRow = columns.results[(i - initVal)];
 
                     var hideTheseColumns = ['ContentType'];
-
-                    if ($(m.tableSelector + ' thead th[data-name="' + thisRow.EntityPropertyName + '"]').length > 0 && thisRow.EntityPropertyName != 'Attachments') {
-                        if (hideTheseColumns.indexOf(thisRow.EntityPropertyName) == -1) {
-                            var orderable = true;
-
-                            if (thisRow.TypeAsString == "MultiChoice") {
-                                orderable = false;
-                            }
-
-                            if (thisRow.AllowMultipleValues == true) {
-                                orderable = false;
-                            }
-
-                            temptableColumns.push({ data: thisRow.EntityPropertyName, orderable: orderable });
-                            temptableColumnDefs.push({ 'visible': true, 'width': '100px', 'targets': i });
-                        }
-                        else {
-                            temptableColumns.push({ data: thisRow.EntityPropertyName, orderable: false });
-                            temptableColumnDefs.push({ 'visible': false, 'width': '100px', 'targets': i });
-                        }
+					if(thisRow.spLoadObject)
+					{
+	                    if ($(m.tableSelector + ' thead th[data-name="' + thisRow.EntityPropertyName + '"]').length > 0 && thisRow.EntityPropertyName != 'Attachments') {
+	                        if (hideTheseColumns.indexOf(thisRow.EntityPropertyName) == -1) {
+	                            var orderable = true;
+	
+	                            if (thisRow.TypeAsString == "MultiChoice") {
+	                                orderable = false;
+	                            }
+	
+	                            if (thisRow.AllowMultipleValues == true) {
+	                                orderable = false;
+	                            }
+	
+	                            temptableColumns.push({ data: thisRow.EntityPropertyName, orderable: orderable, 'visible': true,  });
+	                            temptableColumnDefs.push({ 'visible': true, 'width': '100px', 'targets': loadedNumber  });
+	                        }
+	                        else {
+	                            temptableColumns.push({ data: thisRow.EntityPropertyName, orderable: false, 'visible': false });
+	                            temptableColumnDefs.push({ 'visible': false , 'width': '100px', 'targets': loadedNumber  });
+	                        }
+	                    }	                    
+	                    loadedNumber++;
                     }
                 }
             }
@@ -77,86 +80,110 @@ $.fn.spQuery = (function () {
 
         return { Columns: temptableColumns, ColumnDefs: temptableColumnDefs }
     }
+	
+	function getSelect(m) {
+		var selectQ = "";
+		var expandQ = "";
+			
+		var theRequired = _.filter(m, { type: "required" });
+		var theColumns = _.filter(m, { type: "column" });
+		var theLookups = _.filter(m, { type: "lookup" });
+			
+		var theseColumns0 = _.map(theRequired, "column");		
+		var theseColumns1 = _.map(theColumns, "column");
+		var theseColumns2 = _.map(theLookups, "column");
+		
+		var columnsA = theseColumns0.concat(theseColumns1);
+		columnsA = columnsA.concat(theseColumns2);
 
-    function getSelect(m) {
+		var theseExpands = _.uniq(_.map(theLookups, "expand"));
+		
+		if(columnsA.length > 0)
+		{
+			selectQ = "$select=" + columnsA.join(",");
+		}
+		if(theseExpands.length > 0)
+		{
+			expandQ = "$expand=" + theseExpands.join(",");
+		}
+		
+		if(expandQ)
+		{
+			selectQ = selectQ + "&" + expandQ 
+		}
+		
+		
+		return selectQ;
+	}
+    
+    function getSelectStruct(m) {
         var thisSelect = "$select=";
         var thisLookupSelect = ''
         var thisExpand = "&$expand=";
 
         var hasLookup = false;
 
-        var excludeTheseTypes = ["Lookup", "UserMulti", "User"]
+        var excludeTheseTypes = ["Lookup", "UserMulti", "User"];
 
         var hasAttachments = false;
-
+		
+		//Load Columns
+		var columns = []
+		var loadedColumns = 0;
         if (_.find(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) == -1 })) {
             var Lookups = _.filter(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) == -1 });
-
+			
             if (_.find(Lookups, function (o) { return o.InternalName == 'Attachments' })) {
                 hasAttachments = true,
-                    thisSelect += 'AttachmentFiles';
+                columns.push({ type: "lookup", column : "AttachmentFiles", expand: "AttachmentFiles" });
             }
 
             for (var i = 0; i < Lookups.length; i++) {
-                var thisLookup = Lookups[i];
-                var prefix = i == 0 && !hasAttachments ? '' : ','
-
-                thisSelect += prefix + thisLookup.InternalName;
-
-                //if(thisLookup.InternalName == 'Attachments')
-                //{
-                //	hasAttachments = true;
-                //	thisSelect += prefix + 'AttachmentFiles';
-                //}       			        			
+	            var thisLookup = Lookups[i];
+	            var prefix = loadedColumns == 0 && !hasAttachments ? '' : ','	  
+	            
+	            if(thisLookup.spLoadObject)
+	            {	            	
+	 				columns.push({ type: "column", column : thisLookup.InternalName });
+	 				loadedColumns++;     			
+	 			}
             }
 
-            thisSelect += prefix + 'GUID,ID';
+            columns.push({ type: "required", column : "GUID" });
+            columns.push({ type: "required", column : "ID" });
 
             if (m.templateType == '101') {
-                thisSelect += prefix + 'EncodedAbsUrl';
+                columns.push({ type: "column", column : "EncodedAbsUrl" });
             }
         }
-
+        		
+		//Load Lookups
         if (_.find(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) > -1 })) {
             var Lookups = _.filter(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) > -1 });
 
             for (var i = 0; i < Lookups.length; i++) {
                 var thisLookup = Lookups[i];
-
-                var userTypes = ["UserMulti", "User"]
-
-                if (userTypes.indexOf(thisLookup.TypeAsString) > -1) {
-                    var lookupColumns = ["Id", "EMail", "FirstName", "LastName", "WorkPhone", "Office", "Department", "JobTitle", "Title", "SipAddress", "Name"]
-
-                    for (var cols = 0; cols < lookupColumns.length; cols++) {
-                        thisLookupSelect += ',' + thisLookup.EntityPropertyName + '/' + lookupColumns[cols]
-                    }
-                }
-                else {
-                    thisLookupSelect += ',' + thisLookup.EntityPropertyName + '/' + thisLookup.LookupField,
-                        thisLookupSelect += ',' + thisLookup.EntityPropertyName + '/Id'
+				
+				if(thisLookup.spLoadObject)
+				{
+	                var userTypes = ["UserMulti", "User"]
+	
+	                if (userTypes.indexOf(thisLookup.TypeAsString) > -1) {
+	                    var lookupColumns = ["Id", "EMail", "FirstName", "LastName", "WorkPhone", "Office", "Department", "JobTitle", "Title", "SipAddress", "Name"]
+	
+	                    for (var cols = 0; cols < lookupColumns.length; cols++) {
+	                        columns.push({ type: "lookup", column : thisLookup.EntityPropertyName + '/' + lookupColumns[cols], expand: thisLookup.EntityPropertyName });
+	                    }
+	                }
+	                else {
+	                    columns.push({ type: "lookup", column : thisLookup.EntityPropertyName + '/Id', expand: thisLookup.EntityPropertyName });
+	                    columns.push({ type: "lookup", column : thisLookup.EntityPropertyName + '/' + thisLookup.LookupField, expand: thisLookup.EntityPropertyName });
+	                }
                 }
             }
-
-            for (var i = 0; i < Lookups.length; i++) {
-                var thisLookup = Lookups[i];
-                var prefix = i == 0 ? '' : ','
-                thisExpand += prefix + thisLookup.EntityPropertyName
-            }
-
-
-            hasLookup = true;
         }
 
-        if (hasAttachments) {
-            var prefix = hasLookup ? ',' : ''
-            thisExpand += prefix + 'AttachmentFiles';
-            hasLookup = true;
-        }
-
-        thisSelect = hasLookup ? thisSelect + thisLookupSelect + thisExpand : thisSelect;
-
-        return thisSelect;
+        return columns;
     }
 
     function getOrderBy(m) {
@@ -336,7 +363,7 @@ $.fn.spQuery = (function () {
             json.data = tempData.data;
             json.recordsTotal = tempData.recordsTotal;
             json.recordsFiltered = tempData.recordsFiltered;
-
+            
             delete json.value;
         }
         else {
@@ -355,7 +382,14 @@ $.fn.spQuery = (function () {
 
         if (mGlobal[xtra.path][xtra.tableName] != undefined) {
             mGlobal[xtra.path][xtra.tableName].currentJsonData = json;
+            
         }
+
+        if($.fn && $.fn.spCRUD && $.fn.spCRUD.updateLookups)
+        {
+        	$.fn.spCRUD.updateLookups(xtra.tableStructure);
+        }
+
 
         return json
     }
@@ -438,7 +472,9 @@ $.fn.spQuery = (function () {
             };
 
             var ColumnsModel = buildtableColumns(m);
-            m.ColumnsSelect = getSelect(m);
+            
+            var selectStruct = getSelectStruct(m);
+            m.ColumnsSelect = getSelect(selectStruct);
             var modelObjPath = m.path == undefined ? 'page' : m.path;
             m.path = modelObjPath;
 
@@ -463,6 +499,7 @@ $.fn.spQuery = (function () {
                     "dom": m.dom != undefined ? m.dom : "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
                     "oLanguage": m.oLanguage != undefined ? m.oLanguage : { "sLengthMenu": "_MENU_", "sSearch": "_INPUT_", "sSearchPlaceholder": "Search..." },
                     "scrollX": '100%',
+                    "scrollY": "400px",
                     "lengthMenu": [[5, 10, 25, 50, 100, 200, 300, 400, 500, 1000], [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000]],
                     "pageLength": m.pageLength != undefined && m.pageLength != '' ? m.pageLength : defaultPageSize,
                     "autoWidth": false,
@@ -485,12 +522,11 @@ $.fn.spQuery = (function () {
                                 }
                             }, 1000));
 
-
                         $('#' + m.tableName + ' input[type="search"]').addClass('iris-pager-nav');
                         $('#' + m.tableName + '_filter').append($.fn.spEnvironment.datatable_refresh_html({ owner: m.tableName }));
 
-                        $('.actionRefresh ').unbind('click', refreshServerData);
-                        $('.actionRefresh ').bind('click', refreshServerData);
+                        $('.actionRefresh').unbind('click', refreshServerData);
+                        $('.actionRefresh').bind('click', refreshServerData);                        
                     },
                     "fnDrawCallback": function (oSettings, json) {
 
@@ -498,8 +534,9 @@ $.fn.spQuery = (function () {
                             var thisElementData = $(thElement).data();
 
                             $('#' + m.tableName + ' tbody tr').each(function (tr, trElement) {
-
-                                $(trElement).find('td:eq(' + th + ')').addClass('css_dt_' + m.tableName + ' css_' + thisElementData.name)
+								var columnName = thisElementData.name.replace(new RegExp(" ", "g"), "_");
+	
+                                $(trElement).find('td:eq(' + th + ')').addClass('css_dt_' + m.tableName + ' css_' + columnName)
                                 for (prop in thisElementData) {
                                     $(trElement).find('td:eq(' + th + ')').attr('data-' + prop, thisElementData[prop]);
                                 }
@@ -514,11 +551,10 @@ $.fn.spQuery = (function () {
                             var thisTCArray = m.tableStructure.table.columns;
                             for (var tc = 0; tc < thisTCArray.length; tc++) {
                                 var thisTableColumn = thisTCArray[tc];
-                                $('.css_dt_' + m.tableName + '.css_' + thisTableColumn.name).css(thisTableColumn.css);
+                                var columnName = thisTableColumn.name.replace(new RegExp(" ", "g"), "_");
+                                $('.css_dt_' + m.tableName + '.css_' + columnName).css(thisTableColumn.css);
                             }
                         }
-
-
 
                         var settings = { type: "default", redirectToProfile: true };
 
@@ -631,7 +667,9 @@ $.fn.spQuery = (function () {
         getTables: function () { return tableObjects; },
         nav: function (m) { nav = m },
         getItemQuery: function (m) {
-            return getSelect(m);
+        	var struct = getSelectStruct(m);
+        
+            return getSelect(struct);
         }
     }
 })();

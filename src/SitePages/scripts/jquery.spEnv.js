@@ -13,7 +13,28 @@ var tables = {};
 var mGlobal = {};
 mGlobal.page = {};
 
-$.fn.spEnvironment = {};
+var spPermissions = {
+	loaded : false,
+	site : []
+};
+
+$.fn.spEnvironment = {
+	updatePermission : function(m) {
+		if(!spPermissions.loaded)
+		{
+			Object.defineProperty(spPermissions, "privileges", {
+			  value: m,
+			  writable: false,
+			  enumerable: true,
+			  configurable: true
+			});	
+			
+			spPermissions.loaded = true;
+			Object.freeze(spPermissions);						
+		}		
+ 	}	
+};
+
 
 $.fn.getType = function () { return this[0].tagName == "INPUT" ? this[0].type.toLowerCase() : this[0].tagName.toLowerCase(); }
 
@@ -79,5 +100,3 @@ var theLoader = function () {
         }
     };
 }();
-
-

@@ -1,3 +1,6 @@
+//requires jquery.spCommon.js
+//requires jquery.spAsyncQueue.js
+
 $.fn.spDB = (function () {
 
     function getListTypeID(m) {
@@ -67,18 +70,25 @@ $.fn.spDB = (function () {
                 }
             case 'FieldLookup':
             case 'Lookup':
+            	if(m.availableLists && typeof m.LookupListId == "object")
+            	{
+            		if(m.LookupListId.listName)
+            		{
+            			m.LookupListId = m.availableLists[m.LookupListId.listName].Id;
+            		}
+            	}
+            
                 return {
                     url: '/fields/addfield',
                     data: {
-                        '__metadata': { 'type': 'SP.FieldCreationInformation' },
+                        'parameters': { '__metadata': { 'type': 'SP.FieldCreationInformation' },
                         'FieldTypeKind': 7,
                         'Title': m.Title,
                         'LookupListId': m.LookupListId, //'4635daeb-7206-4513-ad17-ea06e09187ad',
-                        'LookupFieldName': m.LookupFieldName,
-                        'AllowMultipleValues': m.AllowMultipleValues,
-
+                        'LookupFieldName': m.LookupFieldName
+                        }
                     }
-                };
+                }
             case 'FieldNumber':
             case 'Number':
                 return {
@@ -199,26 +209,33 @@ $.fn.spDB = (function () {
         }
     }
 
-    function creatListField(m) {
+    function createListField(m) {
         var thisData = m.data;
         m.method = 'POST'
         m.data = JSON.stringify(m.data);
         m.done = function (a) {
+        	$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'Field ' + thisData.Title + ' added to List ' + m.originalRequest.Title + '!', type: 'success' }));
             toastr.success('Field ' + thisData.Title + ' added to List ' + m.originalRequest.Title + '!', 'Field Created!');
         };
         m.fail = function (response, errorCode, errotMessage) {
             toastr.error('Field ' + thisData.Title + ' not added to List ' + m.originalRequest.Title + '!', 'Field Create Failed!');
+            $('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'Field ' + thisData.Title + ' not added to List ' + m.originalRequest.Title + '!', type: 'danger' }));
         }
         $.fn.spAsyncQueue.call(m);
     }
 
     function createList(m) {
+    	var list = {};
+    	
         if (typeof m === 'object') {
             if (m.url && m.Title && m.Description) {
+            	list[m.Title] = {};
+            
                 $.fn.spCommon.ajax({
                     url: m.url,
                     method: 'POST',
                     original: m,
+                    async: typeof m.async == "boolean" ? m.async : true,
                     data: JSON.stringify(
                         {
                             '__metadata': { 'type': 'SP.List' },
@@ -236,30 +253,134 @@ $.fn.spDB = (function () {
 
                         var ListType = m.type;
                         var listURL = m.url + "(guid'" + a.d.Id + "')"
-
-                        toastr.success(ListType + ' List ' + m.Title + ' created!', 'List Created!');
-
+						list[m.Title].Id = a.d.Id;
+                        toastr.success(m.type + ' List ' + m.Title + ' created!', 'List Created!');
+						
+						$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : m.type + ' List ' + m.Title + ' created!', type: 'primary' }));
                         for (var c = 0; c < m.Columns.length; c++) {
+                        	if(m.availableLists)
+                        	{
+                        		m.Columns[c].availableLists = m.availableLists 
+                        	}
+                        		
                             var thisField = getFieldStruct(m.Columns[c]);
 
                             thisField.url = listURL + thisField.url
                             thisField.originalRequest = originalRequest;
-                            creatListField(thisField);
+                            createListField(thisField);
                         }
                     }
                 });
+                
+                if(m.async == false)
+                {
+                	return list;
+                }
             }
             else {
+            	$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'List not created the necessary criteria not provided!', type: 'danger' }));
                 toastr.info('List not created the necessary criteria not provided!');
             }
         }
     }
+    const sleep = (milliseconds) => {
+		return new Promise(resolve => setTimeout(resolve, milliseconds))
+	}
+        
+    function waitForQueue()
+    {
+    	var loop = 0;
+    	
+    	while ($.fn.spAsyncQueue.queue().length > 0) {
+    		sleep(1000).then(() => {
+			  console.log('Waiting for Queue');
+			}) 	
+    	}
+    }
+    
+    function ProcessRequest(m)
+    {
+    	if(m)
+		{
+			var listObject = m;
+			listObject.async = false;
+			listObject.availableLists = lists;
+			
+			var listReturn = createList(listObject);
+			
+			for(list in listReturn)
+			{						
+				lists[list] = listReturn[list];
+			}		
+			
+			waitingForRequest = true;
+		} 
+    }
+    
+    function createLists() {
+    	    
+    	m = loadObjects;
+    	waitingForRequest = false;
+
+    	PendingRequests = _.filter(loadObjects, function (o) { return o.loaded == undefined || o.loaded == false; });
+    	      
+		if(PendingRequests.length == 0)
+		{
+			for(var ins = 0; ins < intervalNumbs.length; ins++)
+			{
+				clearInterval(intervalNumbs[ins]);
+			}
+		}
+      
+    	if (PendingRequests.length > 0 && $.fn.spAsyncQueue.queue().length == 0) {
+            theLoader.show({ id: 'async-loader' });
+            ProcessRequest(PendingRequests[0]);
+            PendingRequests[0].loaded = true;
+        }
+        else {
+            theLoader.hide({ id: 'async-loader' });
+            waitingForRequest = true;
+        }                	            		       
+    }
+    
+    var lists = {};
+    var loadObjects = [];
+    var intervalCheck = [];
+    var PendingRequests = [];
+    var waitingForRequest = true;
+    var intervalNumbs = [];
+    
+    function loadCreateObjects(m)
+    {
+	    if (typeof m === 'object' && Array.isArray(m)) {
+	    	lists = {};
+	    	loadObjects = m;										
+			loadObjects  = _.map(loadObjects , function(element) { return _.extend({}, element, { loaded : false }); });
+			var thisNumb = setInterval(
+			function(){ 
+				createLists();
+			}, 50);
+			intervalNumbs.push(thisNumb)
+		}
+    }
 
     return {
         createApp: function (m) {
+        	        	
+			if(typeof m == "object")
+			{
+				if(Array.isArray(m))
+				{
+					 createList(m);
+					
 
-            createList(m);
-
+					loadCreateObjects(m);										
+				}
+				else
+				{
+					 createList(m);
+            	}
+            }
         },
         demoApp: function (m) {
             $.fn.spDB.createApp({

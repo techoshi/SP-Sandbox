@@ -4,7 +4,7 @@ $.fn.spCommon = (function () {
     var continueToUpdateContext = true;
     
     function updateDigest() {
-        spRest({
+        spAjax({
             url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
             async: true,
             method: 'POST',
@@ -57,7 +57,7 @@ $.fn.spCommon = (function () {
         //toastr.options.extendedTimeOut = "0"
     }
 
-    function spRest(m) {
+    function spAjax(m) {
         /*var source = m.source;
 	
         var thisData =  {
@@ -119,7 +119,6 @@ $.fn.spCommon = (function () {
         return basename.slice(pos + 1);            // extract extension ignoring `.`
     }
 
-
     initSettings();
 
     function getRelativeURL(m) {
@@ -153,7 +152,7 @@ $.fn.spCommon = (function () {
     }
     
     return {
-        ajax: function (m) { return spRest(m); },
+        ajax: function (m) { return spAjax(m); },
         getExtension: function (m) {
             return getExtension(m);
         },
@@ -182,7 +181,57 @@ $.fn.spCommon = (function () {
         getRelativeURL: function (m) {
             return getRelativeURL(m);
         },
-        theList: function (m) { return thisSite; }
+        theList: function (m) { return thisSite; },
+        getUserPermissions : function (m)
+		{
+			for (var i = 0; i < m.urls.length; i++) { 
+				
+				console.log(m.urls[i]);
+				
+				var site = { path : m.urls[i], privileges : [] }
+				//theseLists[i].path = theseLists[i].path ? theseLists[i].path : _spPageContextInfo.webAbsoluteUrl; 
+			
+				var ajaxStruct = {
+					url : m.urls[i] + "/_api/web/getusereffectivepermissions(@u)?@u='" + encodeURIComponent("i:0#.f|membership|" + m.accountName) + "'",
+					method : 'GET',
+					async: false,
+					done : function (a) { 
+					}
+				}
+				
+				var returnedData = $.fn.spCommon.ajax(ajaxStruct);
+				
+				var permissions = new SP.BasePermissions();
+		        permissions.initPropertiesFromJson(returnedData.d.GetUserEffectivePermissions);
+		        
+		        var permLevels = [];
+		        
+		        for(var permLevelName in SP.PermissionKind.prototype) {
+		            if (SP.PermissionKind.hasOwnProperty(permLevelName)) {
+		               var permLevel = SP.PermissionKind.parse(permLevelName);
+		               if(permissions.has(permLevel)){
+		                  permLevels.push(permLevelName);
+		                }
+		            }     
+		        }
+		        site.privileges = permLevels; 
+		        
+		        spPermissions.site.push(site);
+			}
+			
+			spPermissions.loaded = true;
+		},
+		checkUserPermission : function (m)
+		{
+			if(spPermissions.loaded && _.find(spPermissions.site, { path : m.path, privileges: [m.privilege] }))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
     }
 })();
 
@@ -206,6 +255,8 @@ $.fn.spEnvironment.spJsTreeTemplate = $.fn.spCommon.addHandlebar($('#sp_jstree_t
 $.fn.spEnvironment.spSearchCondition = $.fn.spCommon.addHandlebar($('#sp-search-condition').html());
 $.fn.spEnvironment.fillinModal = $.fn.spCommon.addHandlebar($('#sp-modal-fillin-template').html());
 $.fn.spEnvironment.promptModal = $.fn.spCommon.addHandlebar($('#prompt-modal-template').html());
+$.fn.spEnvironment.spDropDownOptions = $.fn.spCommon.addHandlebar($('#sp-lookup-dropdown').html());
+$.fn.spEnvironment.bootstrapAlert = $.fn.spCommon.addHandlebar($('#bootstrap-alert').html());
 
 
 var thisNavLiTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-li').html());

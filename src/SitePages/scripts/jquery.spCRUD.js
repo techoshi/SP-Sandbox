@@ -29,25 +29,63 @@ $.fn.spCRUD = (function () {
     }
 
     function loadLists() {
+    
         //var tempList = _.filter(theseLists, function (o) { return o.loaded == undefined || o.loaded == false; });
-        if (theseLists) {
-            for (var i = 0; i < theseLists.length; i++) {
-                theseLists[i].loaded = false;
-
-                var expectedObject = theseLists[i];
-                expectedObject.thisVar = theseLists[i].name;
-                expectedObject.thisObjectLower = theseLists[i].name.toLowerCase();
-                expectedObject.owner = theseLists[i].name.toLowerCase();
-                expectedObject.source = theseLists[i].name.toLowerCase();
-                expectedObject.path = expectedObject.path ? expectedObject.path : _spPageContextInfo.webAbsoluteUrl;
-
-                thisApp.objects[theseLists[i].source] = expectedObject;
-                loadTabStructure(expectedObject);
-
-                var ajaxCallStructure = getCallStructure(expectedObject);
-                $.fn.spCommon.ajax(ajaxCallStructure);
+        for (var i = 0; i < theseLists.length; i++) {
+	        theseLists[i].loaded = false;	
+	        theseLists[i].path = theseLists[i].path ? theseLists[i].path : _spPageContextInfo.webAbsoluteUrl;
+	    }
+                
+        $.fn.spCommon.getUserPermissions({ urls : _.uniq(_.map(theseLists, 'path')), accountName : _spPageContextInfo.userLoginName })        
+                
+        var waitForPermissions = setInterval(function(){
+	        if (theseLists && spPermissions.loaded) {
+	        	clearInterval(waitForPermissions);
+	            for (var i = 0; i < theseLists.length; i++) {
+	                theseLists[i].loaded = false;
+	
+	                var expectedObject = theseLists[i];
+	                expectedObject.thisVar = theseLists[i].name;
+	                expectedObject.thisObjectLower = theseLists[i].name.toLowerCase();
+	                expectedObject.owner = theseLists[i].name.toLowerCase();
+	                expectedObject.source = theseLists[i].name.toLowerCase();
+	                //expectedObject.path = expectedObject.path ? expectedObject.path : _spPageContextInfo.webAbsoluteUrl;
+	
+	                thisApp.objects[theseLists[i].source] = expectedObject;
+	                if($.fn.spCommon.checkUserPermission({ path: expectedObject.path, privilege : "viewListItems" }))
+	                {	         
+	                	loadTabStructure(expectedObject);       	                		                
+	                	getListMeta(expectedObject)		                
+	                }
+	            }
+	        }
+        }, 50);
+    }
+    
+    function getListMeta(m)
+    {
+		var thisAjax = {
+            method: 'GET',
+            url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists?$filter=Title eq '" + m.thisVar + "'",
+            done: function (a) {
+            	if(a.d && a.d.results && a.d.results.length > 0)
+            	{
+					thisApp.objects[m.source].listData = a.d.results[0];
+					thisApp.objects[m.source].id = thisApp.objects[m.source].listData.Id;
+												
+	                var ajaxCallStructure = getCallStructure(m);
+	                $.fn.spCommon.ajax(ajaxCallStructure);
+				}
+            },
+            fail: function (a) {
+            	toastr.error("Failed to get list data for " + m.thisVar);
+            },
+            always: function (a) {
+                
             }
         }
+
+        $.fn.spCommon.ajax(thisAjax);    
     }
 
     function getCallStructure(m) {
@@ -60,6 +98,46 @@ $.fn.spCRUD = (function () {
             }
         })
     }
+	
+	function updateLookups(m)
+	{
+		if(lookupDataPoints)
+		{	
+			for(owner in lookupDataPoints)
+			{	
+				var thisLookup = lookupDataPoints[owner];
+				var thisCaller = _.filter(theseLists, function (r) { return r.name.toLowerCase() == owner });
+				var relationships = thisCaller[0].relationships;
+				
+				
+				if(thisLookup  && thisLookup[m.id] && thisLookup[m.id].response && thisLookup[m.id].response.d && thisLookup[m.id].response.d.results) 
+				{
+	            	if(lookupDataPoints[owner])
+	            	{
+	            		var lookupField = "";
+	            		var thisField = _.find(thisCaller[0].relationships, { child : thisLookup[m.id].owner });
+						if(relationships && thisField)
+						{							
+							lookupField = thisField.lookupField;
+						}
+						else
+						{
+							lookupField = thisLookup[m.id].owner
+						}
+	            		
+	            		/*lookupDataPoints[owner][m.id].response.d.results = mGlobal.page[m.owner].currentJsonData.fullData;		            		
+						for (var thisLookupData = 0; thisLookupData < lookupDataPoints[owner][m.id].response.d.results.length; thisLookupData++) 
+						{							
+							lookupDataPoints[owner][m.id].response.d.results[thisLookupData].lookupText = lookupDataPoints[owner][m.id].response.d.results[thisLookupData][lookupField];												            					                   
+		            	}
+		            	
+		            	//Set Alpha Order
+		            	lookupDataPoints[owner][m.id].response.d.results = _.orderBy(lookupDataPoints[owner][m.id].response.d.results, [lookupField ],['asc']);*/
+		        	}
+	        	}
+	        }
+        }
+	}
 
     function getListLookups(m) {
         var thisSPListLookups = _.filter($.fn.spCRUD.data().objects[m.source].d.results, function (o) { return o.TypeAsString == "Lookup" });
@@ -110,12 +188,13 @@ $.fn.spCRUD = (function () {
                         lookupDataPoints[m.parentObject.owner][m.listGuid] = {
                             list: m.listGuid,
                             response: a,
-                            child: false
+                            owner: m.object.EntityPropertyName,
+                            parentForm: m.parentObject.owner
                         };
                     }
 
                     if (_.filter(lookupDataPoints[m.parentObject.owner].lists, function (o) { return o == m.listGuid }).length == 0) {
-                        lookupDataPoints[m.parentObject.owner].lists.push({ guid: m.listGuid });
+                        lookupDataPoints[m.parentObject.owner].lists.push({ guid: m.listGuid, owner: m.object.EntityPropertyName, parentForm: m.parentObject.owner });
                     }
 
                     loadTheLookupData({ m: m, a: a });
@@ -127,6 +206,8 @@ $.fn.spCRUD = (function () {
     var showFiles = function (sfm) {
     	sfm.create = false;
     	sfm.view = false;
+    	sfm.edit = false;
+    	sfm.officeLinks = false;
     	if(sfm.parentObject)
     	{
     		sfm.owner = sfm.parentObject.source;
@@ -134,9 +215,20 @@ $.fn.spCRUD = (function () {
     		switch(sfm.parentObject.action)
     		{
     			case "create": sfm.create = true; break;
-    			case "view": sfm.view = true; break;
+    			case "view": sfm.view = true; sfm.officeLinks = true; break;
+    			case "edit": sfm.edit = true; sfm.officeLinks = true; break;
     		}
     	}
+    	
+    	for(i=0; i< sfm.files.length;i++)
+	    {
+		    if(sfm.files[i].size == undefined)
+		    {
+	    		sfm.files[i].extension = getFileExtension(sfm.files[i].FileName);
+	    		sfm.files[i].exactURL = window.location.origin + sfm.files[i].ServerRelativeUrl;
+	    	}
+	    }    	
+    	
         $('[data-filecontainer=' + sfm.box + '] .box__inventory').html($.fn.spEnvironment.fileInventory(sfm));
 
         $('.box__inventory tbody tr .Remove-File').unbind('click', removeFile);
@@ -305,7 +397,7 @@ $.fn.spCRUD = (function () {
         var baseTemplate = '100';
 
         if (thisApp.objects[m.source.toLowerCase()].d && thisApp.objects[m.source.toLowerCase()].d.results && thisApp.objects[m.source.toLowerCase()].d.results.length > 0) {
-            if (thisApp.objects[m.source.toLowerCase()].d.results[0].EntityPropertyName == "FileLeafRef") {
+            if (_.find(thisApp.objects[m.source.toLowerCase()].d.results, { EntityPropertyName : "FileLeafRef" })) {
                 thisApp.objects[m.source.toLowerCase()].type = "Document Library";
                 thisApp.objects[m.source.toLowerCase()].d.results[0].multiple = false;
                 baseTemplate = '101';
@@ -381,7 +473,7 @@ $.fn.spCRUD = (function () {
 
         thisApp.objects[m.source.toLowerCase()].formType = m.action;
         if (m.action != "delete") {
-            crudModal += $.fn.spEnvironment.baseModal({ id: m.action + '-' + m.source, owner: m.source, action: m.action, title: m.action.capitalize() + ' ' + m.singular, minWidth: "50%", content: $.fn.spEnvironment.baseForm(thisApp.objects[m.source]) });
+            crudModal += $.fn.spEnvironment.baseModal({ id: m.action + '-' + m.source, owner: m.source, action: m.action, title: m.action.capitalize() + ' ' + m.singular, minWidth: "65%", content: $.fn.spEnvironment.baseForm(thisApp.objects[m.source]) });
         }
         else {
             crudModal += $.fn.spEnvironment.baseModal({ id: m.action + '-' + m.source, owner: m.source, action: m.action, title: m.action.capitalize() + ' ' + m.singular, content: $.fn.spEnvironment.deleteItem(thisApp.objects[m.source]) });
@@ -400,13 +492,46 @@ $.fn.spCRUD = (function () {
                 $('body').append($.fn.spEnvironment.fillinModal(tempObject));
             }
         }
+		function updateChild()
+        {		        		        			        	
+        	var LookupData = $(this).data();        	
+        	var currentValue = $(this).val();
+        	
+        	_.find($.fn.spCRUD.lookupDataPoints().activities.lists, { owner : 'Division' })
+
+        	var thisLookupContainer = $.fn.spCRUD.lookupDataPoints()[LookupData.owner].lists;
+        	
+        	var childDropDown = _.find(thisLookupContainer, { owner : LookupData.child });
+        	
+        	if(childDropDown)
+        	{
+        		var theChildList = $.fn.spCRUD.lookupDataPoints()[LookupData.owner][childDropDown.guid];
+        		
+        		if(theChildList && theChildList.response && theChildList.response.d && theChildList.response.d.results)
+        		{
+        			var thisData = theChildList.response.d.results;
+        			
+        			var matchedOptions = _.filter(thisData, function(o) { return o[LookupData.name] == currentValue });
+        			
+        			for (var thisLookupData = 0; thisLookupData < matchedOptions.length; thisLookupData++) {
+        				var usethisColumn = LookupData.lookupfield.length == 0 ? childDropDown.owner : LookupData.lookupfield;
+        			
+			            matchedOptions[thisLookupData].lookupText = matchedOptions[thisLookupData][usethisColumn];
+			        }
+			        LookupData.results = matchedOptions;        			
+        			var optionsHtml = $.fn.spEnvironment.spDropDownOptions({ Title : LookupData.selectname, LookupData: LookupData });
+        			
+        			$('[name="' + LookupData.owner + '.' + LookupData.child +  '"]').html(optionsHtml)
+        			$('[name="' + LookupData.owner + '.' + LookupData.child +  '"]').trigger('change');
+				} 
+        	}
+        }
+
 
         loadFormData(m)
 
         var thisMo = m.action;
         $('#modal-' + thisMo + '-' + m.source + ' .form-container button').prependTo('#modal-' + thisMo + '-' + m.source + ' .modal-footer');
-
-
 
         fileLoader({
             thisObject: '.' + m.source.toLowerCase() + '-attachments',
@@ -416,6 +541,7 @@ $.fn.spCRUD = (function () {
                 multiple: thisApp.objects[m.source.toLowerCase()].type == "Document Library" ? false : true
             }
         });
+		
 
         $('.btn.save-data').unbind('click', $.fn.spCRUD.saveData);
         $('.btn.save-data').bind('click', $.fn.spCRUD.saveData);
@@ -425,13 +551,28 @@ $.fn.spCRUD = (function () {
         $('.btn.delete-data').bind('click', $.fn.spCRUD.saveData);
         $('.sp-fill-in').unbind('click', $.fn.spCRUD.loadFillinModal);
         $('.sp-fill-in').bind('click', $.fn.spCRUD.loadFillinModal);
+        
+               		
+		
+        
+        if(m.relationships && m.relationships.length > 0)
+        {
+        	for(var rel = 0; rel < m.relationships.length; rel++)
+        	{
+        		var thisRelationship = m.relationships[rel];
+ 
+        		$('#modal-' + thisMo + '-' + m.source + ' [name="' + m.source + '.' + thisRelationship.parent  + '"]').unbind('change', updateChild);        		
+        		$('#modal-' + thisMo + '-' + m.source + ' [name="' + m.source + '.' + thisRelationship.parent  + '"]').bind('change', updateChild);
+        	}
+        }
+        
         initPeoplePickers();
 
         $('.sp-calendar').datepicker();
 
         $('#modal-' + thisMo + '-' + m.source).find('.select2-js, .sp-lookup').select2({
             dropdownParent: $('#modal-' + thisMo + '-' + m.source),
-            width: '100%'
+            width: '100%'            
         });
 
         $('#modal-' + thisMo + '-' + m.source + ' [data-toggle="popover"]').popover();
@@ -529,7 +670,7 @@ $.fn.spCRUD = (function () {
                                             case 'select':
 
                                                 if ($(dElement).prop('multiple')) {
-                                                    var thisSelectData = returnedData[$(dElement).data('name')];
+                                                    var thisSelectData = returnedData[$(dElement).data('entity')];
                                                     if (thisSelectData && thisSelectData.results) {
                                                         $(dElement).val(thisSelectData.results);
                                                     }
@@ -543,7 +684,7 @@ $.fn.spCRUD = (function () {
                                                     }
                                                     else {
                                                         //Choice
-                                                        var thisSelectData = returnedData[$(dElement).data('name')];
+                                                        var thisSelectData = returnedData[$(dElement).data('entity')];
 
                                                         var tempChoiceVal = $(dElement).find('[value="' + thisSelectData + '"]');
 
@@ -564,7 +705,7 @@ $.fn.spCRUD = (function () {
                                                 break;
                                             case 'radio':
                                                 var thisRadioData = $(dElement).parents('.sp-radio-wrapper').data();
-                                                var thisRadioValue = returnedData[$(dElement).data('name')];
+                                                var thisRadioValue = returnedData[$(dElement).data('entity')];
                                                 if ($(dElement).val() == thisRadioValue) {
                                                     $(dElement).prop('checked', true);
                                                 }
@@ -576,7 +717,7 @@ $.fn.spCRUD = (function () {
                                                 }
                                                 break;
                                             case 'checkbox':
-                                                var thisCheck = returnedData[$(dElement).data('name')];
+                                                var thisCheck = returnedData[$(dElement).data('entity')];
 
                                                 if (thisCheck) {
                                                     $(dElement).prop('checked', true);
@@ -588,21 +729,34 @@ $.fn.spCRUD = (function () {
                                                 break;
                                             default:
                                                 if ($(dElement).hasClass('sp-calendar')) {
-                                                    var calendarDate = returnedData[$(dElement).data('name')];
+                                                    var calendarDate = returnedData[$(dElement).data('entity')];
 
                                                     if (calendarDate) {
                                                         calendarDate = moment(calendarDate).format('MM/DD/YYYY')
                                                     }
                                                     $(dElement).val(calendarDate);
                                                 }
+                                                else if($(dElement).data('entity') == "Attachments" || $(dElement).data('entity') == "FileLeafRef")
+                                                {
+                                                	var attachValue = returnedData[$(dElement).data('entity')]
+                                                	
+                                                	if(attachValue == false)
+                                                	{
+                                                		$(dElement).val('');
+                                                	}   
+                                                	else
+                                                	{
+                                                		$(dElement).val('');
+                                                	}                                            	
+                                                }
                                                 else {
-                                                    $(dElement).val(returnedData[$(dElement).data('name')]);
+                                                    $(dElement).val(returnedData[$(dElement).data('entity')]);
                                                 }
                                                 break;
                                         }
                                     }
                                     else {
-                                        $(dElement).data('prepopulate', returnedData[$(dElement).data('name')])
+                                        $(dElement).data('prepopulate', returnedData[$(dElement).data('entity')])
                                     }
                                 }
                             });
@@ -626,15 +780,16 @@ $.fn.spCRUD = (function () {
                             if (templateType != '101') {
                                 var attachments = returnedData.AttachmentFiles.results;
 
+//								var thisFile = [{ FileName : returnedData.FileLeafRef }]
                                 showFiles({ box: action + '-' + owner + '-' + 'attachments', itemURL : itemURL, files: attachments, parentObject: m });
                                 $('.Delete-Attachment-File').unbind('click', deleteItemAttachmentPrompt)
                                 $('.Delete-Attachment-File').bind('click', deleteItemAttachmentPrompt)
                             }
                             else {
                                 var relativeFilePath = $.fn.spCommon.getRelativeURL({ url: returnedData.EncodedAbsUrl });
-                                var attachments = [{ FileName: returnedData.FileLeafRef, ServerRelativeUrl: relativeFilePath }];
+                                var attachments = [{ FileName: returnedData.FileLeafRef, ServerRelativeUrl: relativeFilePath, parentObject: m }];
                                 $('#form-' + action + '-' + owner).data('FileLeafRef', relativeFilePath);
-                                showFiles({ box: action + '-' + owner + '-' + 'attachments', files: attachments });
+                                showFiles({ box: action + '-' + owner + '-' + 'attachments', files: attachments, parentObject: m });
                             }
 
                             theLoader.hide({ id: owner + '-item-load' });
@@ -740,8 +895,64 @@ $.fn.spCRUD = (function () {
             method: 'GET',
             url: m.path + "/_api/web/lists/getbytitle('" + m.source + "')/fields?$filter=Hidden eq false and ReadOnlyField eq false",
             done: function (a) {
-                _.merge(thisApp.objects[m.source.toLowerCase()], a)
-                //				thisApp.objects[m.source.toLowerCase()] = a;
+                _.merge(thisApp.objects[m.source.toLowerCase()], a);
+                //thisApp.objects[m.source.toLowerCase()] = a;
+
+				
+                if(m.meta.dtColumns && m.meta.dtColumns.length > 0)
+	            {	     
+					if(!_.find(m.meta.dtColumns, "Attachments"))
+					{
+						m.meta.dtColumns.push("Attachments");
+						//m.meta.dtColumns.push("Content Type");
+					}
+									       
+	                thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function(element) { 
+					     return _.extend({}, element, { spLoadObject: false, spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length });
+					});
+	            
+	            	for(var lc = 0; lc < m.meta.dtColumns.length; lc++)
+	            	{
+	            		var thisObject = _.find(thisApp.objects[m.source.toLowerCase()].d.results, function(o) { return o.Title == m.meta.dtColumns[lc] })
+	            		
+	            		if(thisObject)
+	            		{
+	            			thisObject.spLoadObject = true;
+	            			thisObject.spObjectOrder = lc;	            			
+	            		}
+	            		
+	            		// Use Lodash to sort array by 'spObjectOrder'
+	            		thisApp.objects[m.source.toLowerCase()].d.results = _.orderBy(thisApp.objects[m.source.toLowerCase()].d.results, ['spObjectOrder'],['asc']); 
+					} 	            
+	            }
+	            else
+	            {
+	            	thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function(element) { 
+					     return _.extend({}, element, { spLoadObject: true, spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length });
+					});
+	            }
+	            
+	            if(m.meta.relationships && m.meta.relationships.length > 0)
+	            {	            	
+					for(var rel = 0; rel < m.meta.relationships.length; rel++)
+		        	{
+		        		var thisRelationship = m.meta.relationships[rel];
+		        		
+						var thisObject = _.find(thisApp.objects[m.source.toLowerCase()].d.results, function(o) { return o.Title == thisRelationship.parent });
+						
+						if(thisObject)
+						{
+							thisObject.dropDownRelationship = thisObject.dropDownRelationship ? thisObject.dropDownRelationship : {};
+							thisObject.hasDropDownRelationship = true;
+							if(thisObject.dropDownRelationship )
+							{
+								thisObject.dropDownRelationship.child = thisRelationship.child;
+								thisObject.dropDownRelationship.lookupField = thisRelationship.lookupField;
+								thisObject.dropDownRelationship.childDD = thisRelationship.child + "Id";
+							}	
+						}
+		        	}
+	            }
 
                 loadCRUD(m);
             },
@@ -895,6 +1106,8 @@ $.fn.spCRUD = (function () {
                         var parentID = $(parentObject).prop('id');
                         var parentData = $(parentObject).data();
 
+						
+
                         var rootObject = $('input[name="' + parentData.name + '"]');
                         var rootObjectName = $(rootObject).data('name');
 
@@ -913,7 +1126,7 @@ $.fn.spCRUD = (function () {
                                             source: thisData.owner,
                                             method: 'GET',
                                             async: false,
-                                            url: parentObject.path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
+                                            url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
                                         });
 
                                         if (thisUser.d) {
@@ -1141,7 +1354,7 @@ $.fn.spCRUD = (function () {
                             done: function (a) {
                                 toastr.success('File has been deleted successfully submitted.', 'File deleted!');
                             },
-                            fail: function (a) {
+                            fail: function (r) {
                                 var matchedError = false;
 
                                 if (matchedError == false && r.responseJSON.error.message.value.indexOf('list is related to an item in the')) {
@@ -1158,6 +1371,19 @@ $.fn.spCRUD = (function () {
 
                             }
                         }
+                        
+                        var callerData = $(m.currentTarget).data()
+
+	                    var callerId = '#' + callerData.owner
+	                    $(callerId).parents('.modal').modal('hide');
+	
+	                    setTimeout(function () {
+	                        var thisowner = $(callerId).parents('.modal').data('owner');
+	                        $(callerId).parents('.modal').remove();
+	                        $('.fillin-modal').remove();
+	                        tables[thisowner].ajax.reload();
+	                    }, 200);
+
 
                         $.fn.spCommon.ajax(crudRequest);
 
@@ -1210,7 +1436,6 @@ $.fn.spCRUD = (function () {
         }
 
         processQueue();
-
     }
 
     function triggerGenericListUploads(m) {
@@ -1443,7 +1668,6 @@ $.fn.spCRUD = (function () {
                     }
                 }
             }
-
         });
     }
 
@@ -1572,6 +1796,10 @@ $.fn.spCRUD = (function () {
         },
         loadFillinModal: function () {
             return loadFillinModal($(this))
+        },
+        updateLookups : function(m)
+        {
+        	updateLookups(m);
         }
     }
 })();

@@ -612,7 +612,10 @@ body #s4-leftpanel {
 	<script src="/_layouts/15/clientpeoplepicker.js"></script>  
 	<script src="/_layouts/15/autofill.js"></script>  
 	<!-- #endregion -->
-  <div class="ms-hide">
+  
+	<script type="text/javascript" src="/Sandbox/SitePages/apps/cm/cm.db.js?202002201200"></script>
+	
+	<div class="ms-hide">
 	<WebPartPages:WebPartZone runat="server" title="loc:TitleBar" id="TitleBar" AllowLayoutChange="false" AllowPersonalization="false" Style="display:none;" />
   </div>
   <table class="ms-core-tableNoSpace ms-webpartPage-root" width="100%">
