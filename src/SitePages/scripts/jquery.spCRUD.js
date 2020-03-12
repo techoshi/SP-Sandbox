@@ -1159,7 +1159,8 @@ $.fn.spCRUD = (function () {
                                             source: thisData.owner,
                                             method: 'GET',
                                             async: false,
-                                            url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
+                                            url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/AllUsers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
+                                            //url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'" 
                                         });
 
                                         if (thisUser.d) {
