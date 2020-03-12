@@ -211,15 +211,16 @@ $.fn.spDB = (function () {
 
     function createListField(m) {
         var thisData = m.data;
+        var thisFieldTitle = thisData.parameter && thisData.parameters.Title ? thisData.parameters.Title : thisData.Title;
         m.method = 'POST'
         m.data = JSON.stringify(m.data);
         m.done = function (a) {
-        	$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'Field ' + thisData.Title + ' added to List ' + m.originalRequest.Title + '!', type: 'success' }));
-            toastr.success('Field ' + thisData.Title + ' added to List ' + m.originalRequest.Title + '!', 'Field Created!');
+        	$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'Field ' + thisFieldTitle + ' added to List ' + m.originalRequest.Title + '!', type: 'success' }));
+            toastr.success('Field ' + thisFieldTitle + ' added to List ' + m.originalRequest.Title + '!', 'Field Created!');
         };
         m.fail = function (response, errorCode, errotMessage) {
-            toastr.error('Field ' + thisData.Title + ' not added to List ' + m.originalRequest.Title + '!', 'Field Create Failed!');
-            $('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'Field ' + thisData.Title + ' not added to List ' + m.originalRequest.Title + '!', type: 'danger' }));
+            toastr.error('Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!', 'Field Create Failed!');
+            $('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!', type: 'danger' }));
         }
         $.fn.spAsyncQueue.call(m);
     }
@@ -254,7 +255,7 @@ $.fn.spDB = (function () {
                         var ListType = m.type;
                         var listURL = m.url + "(guid'" + a.d.Id + "')"
 						list[m.Title].Id = a.d.Id;
-                        toastr.success(m.type + ' List ' + m.Title + ' created!', 'List Created!');
+                        toastr.success(m.type + ' ' + m.Title + ' created!', 'List Created!');
 						
 						$('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : m.type + ' List ' + m.Title + ' created!', type: 'primary' }));
                         for (var c = 0; c < m.Columns.length; c++) {
@@ -371,7 +372,7 @@ $.fn.spDB = (function () {
 			{
 				if(Array.isArray(m))
 				{
-					 createList(m);
+					 //createList(m);
 					
 
 					loadCreateObjects(m);										
