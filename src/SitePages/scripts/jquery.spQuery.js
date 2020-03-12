@@ -385,12 +385,6 @@ $.fn.spQuery = (function () {
             
         }
 
-        if($.fn && $.fn.spCRUD && $.fn.spCRUD.updateLookups)
-        {
-        	$.fn.spCRUD.updateLookups(xtra.tableStructure);
-        }
-
-
         return json
     }
 
