@@ -40,7 +40,8 @@ body #s4-leftpanel {
 	<SharePoint:ProjectProperty Property="Description" runat="server"/>
 </asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
-	<!--START OF HANDLEBARS-->
+
+	<!-- #region HANDLEBARS-->
 	<script type="text/template" id="the_loader_template">
     
 		<div class="modal-backdrop in the-Loader-wrap app-loader-text-centered {{id}}" style="opacity: 0; z-index: 999999;">
@@ -534,8 +535,8 @@ body #s4-leftpanel {
 	{{content}}
 	</div>
 	</script>
-	
-	<!--END OF HANDLEBARS-->
+	<!-- #endregion -->
+	<!-- #region Styles-->
 	<link rel="stylesheet" type="text/css" href="/Sandbox/SitePages/plugins/materialDesign-webfont-master/css/materialdesignicons.min.css"/>
 
 	<link rel="stylesheet" type="text/css" href="/Sandbox/SitePages/plugins/bootstrap/css/bootstrap.min.css"/>
@@ -562,7 +563,8 @@ body #s4-leftpanel {
 	<link rel="stylesheet" type="text/css" href="/Sandbox/SitePages/styles/style5.css"/>
 	<link rel="stylesheet" type="text/css" href="/Sandbox/SitePages/styles/style6.css"/>
 	<link rel="stylesheet" type="text/css" href="/Sandbox/SitePages/styles/style7.css"/>
-
+	<!-- #endregion -->
+	<!-- #region Javascript-->
 	<script type="text/javascript" src="/Sandbox/SitePages/scripts/polyfills.js"></script>
 	<script type="text/javascript" src="/Sandbox/SitePages/scripts/matth.uuid.js?202002201200"></script>
 
@@ -609,7 +611,7 @@ body #s4-leftpanel {
 	<script src="/_layouts/15/clientforms.js"></script>  
 	<script src="/_layouts/15/clientpeoplepicker.js"></script>  
 	<script src="/_layouts/15/autofill.js"></script>  
-
+	<!-- #endregion -->
   <div class="ms-hide">
 	<WebPartPages:WebPartZone runat="server" title="loc:TitleBar" id="TitleBar" AllowLayoutChange="false" AllowPersonalization="false" Style="display:none;" />
   </div>
