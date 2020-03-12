@@ -40,6 +40,7 @@ body #s4-leftpanel {
 	<SharePoint:ProjectProperty Property="Description" runat="server"/>
 </asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
+	<!--START OF HANDLEBARS-->
 	<script type="text/template" id="the_loader_template">
     
 		<div class="modal-backdrop in the-Loader-wrap app-loader-text-centered {{id}}" style="opacity: 0; z-index: 999999;">
@@ -534,7 +535,7 @@ body #s4-leftpanel {
 	</div>
 	</script>
 	
-
+	<!--END OF HANDLEBARS-->
 	<link rel="stylesheet" type="text/css" href="/Sandbox/SitePages/plugins/materialDesign-webfont-master/css/materialdesignicons.min.css"/>
 
 	<link rel="stylesheet" type="text/css" href="/Sandbox/SitePages/plugins/bootstrap/css/bootstrap.min.css"/>
