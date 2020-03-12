@@ -15,34 +15,19 @@ $(document).ready(function(){
 
 					$.fn.spCRUD.getList({
 						objects : [
-							/*{ name : 'Bureaus', search : ['Bureau_Name'], singular : 'Bureau', 
+							{ name : 'Contracts', search : ['Bureau_Name'], singular : 'Contract', 
 								table : { 
 									css : { 'width' : '200px', 'min-width' : '200px'},
 									columns : [
 										{ 
 											name : 'Title', 
 											css : { 'width' : '100px', 'min-width' : '100px' } 
-										},
-										{
-											name : 'Bureau_Name', 
-											css : { 'width' : '300px', 'min-width' : '300px' } 
 										}
 									] 
 								}
 							}, 
-							{ name : 'Offices', search : ['Office_Name'], singular : 'Office', path : _spPageContextInfo.webAbsoluteUrl  },
-							{ name : 'Divisions', search : ['Division_Name'], singular : 'Division' }, 
-							{ name : 'Positions', search : ['Position_Title'], singular : 'Position' }, 
-							{ name : 'Billets', singular : 'Billet' }, 
-							{ name : 'Duties', singular : 'Duty' }, 
-							{ name : 'Activities', singular : 'Activity', 
-								relationships: [ 
-								{ parent : 'Office', child : 'Division', lookupField: 'Division' },
-								{ parent : 'Division', child : 'Billet', lookupField: 'Billet_Identifier' },
-								{ parent : 'Billet', child : 'Duty' }
-							] },
-							{ name : 'Procedures', singular : 'Procedure' },
-							{ name : 'Personnel', singular : 'Person' }		*/										
+							{ name : 'Contractors', search : ['Office_Name'], singular : 'Contractor', path : _spPageContextInfo.webAbsoluteUrl  },
+							{ name : 'Projects', search : ['Division_Name'], singular : 'Project' }										
 						]
 					});
 	 			}

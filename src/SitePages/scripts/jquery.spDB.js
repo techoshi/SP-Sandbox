@@ -270,6 +270,10 @@ $.fn.spDB = (function () {
                             thisField.originalRequest = originalRequest;
                             createListField(thisField);
                         }
+                    },
+                    fail : function (response, errorCode, errorMessage)
+                    {
+                        $('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({ content : 'List ' + m.Title + ' not created! ' + response.responseJSON.error.message.value, type: 'danger' }));
                     }
                 });
                 

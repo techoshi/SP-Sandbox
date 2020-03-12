@@ -103,7 +103,7 @@ $.fn.spCommon = (function () {
                 }
             });
 
-        if (m.async == false && ajaxReturn.statusText == 'OK') {
+        if (m.async == false && ajaxReturn.status == 200) {
             return ajaxReturn.responseJSON;
         }
     }

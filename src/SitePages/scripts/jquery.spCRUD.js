@@ -158,6 +158,44 @@ $.fn.spCRUD = (function () {
         }
     }
 
+    function reloadLookupData(m)
+    {
+        var thisLookupContainer = lookupDataPoints[m.owner];
+
+        if(thisLookupContainer && thisLookupContainer.lists && thisLookupContainer.lists.length > 0)
+        {
+            for (let currentListIndex = 0; currentListIndex < thisLookupContainer.lists.length; currentListIndex++) {
+                const element = thisLookupContainer.lists[currentListIndex];
+                
+                $.fn.spCommon.ajax({
+                    source: m.source,
+                    method: 'GET',
+                    async: false,
+                    url: m.path + "/_api/web/lists(guid'" + element.guid + "')/items",
+                    done: function (a) {
+    
+                        if (lookupDataPoints[m.owner] == undefined) {
+                            lookupDataPoints[m.owner] = {
+                                lists: []
+                            };
+                        }
+    
+                        if (lookupDataPoints[m.owner] != undefined && lookupDataPoints[m.owner][m.listGuid] == undefined) {
+                            lookupDataPoints[m.owner][element.guid].response = a
+                                
+                        }
+    
+                        loadTheLookupData({ m: {
+                            parentObject :m,
+                            listGuid: element.guid,
+                            object : { LookupField : element.owner }
+                        }, a: a });
+                    }
+                });
+            }
+        }
+    }
+
     function getLookupData(m) {
 
         if (lookupDataPoints[m.parentObject.owner]
@@ -495,9 +533,7 @@ $.fn.spCRUD = (function () {
 		function updateChild()
         {		        		        			        	
         	var LookupData = $(this).data();        	
-        	var currentValue = $(this).val();
-        	
-        	_.find($.fn.spCRUD.lookupDataPoints().activities.lists, { owner : 'Division' })
+        	var currentValue = $(this).val();        	
 
         	var thisLookupContainer = $.fn.spCRUD.lookupDataPoints()[LookupData.owner].lists;
         	
@@ -551,10 +587,7 @@ $.fn.spCRUD = (function () {
         $('.btn.delete-data').bind('click', $.fn.spCRUD.saveData);
         $('.sp-fill-in').unbind('click', $.fn.spCRUD.loadFillinModal);
         $('.sp-fill-in').bind('click', $.fn.spCRUD.loadFillinModal);
-        
-               		
-		
-        
+                       			        
         if(m.relationships && m.relationships.length > 0)
         {
         	for(var rel = 0; rel < m.relationships.length; rel++)
@@ -597,7 +630,7 @@ $.fn.spCRUD = (function () {
 
             thisCaller[0].action = action;
             thisCaller[0].owner = owner;
-
+            reloadLookupData(thisCaller[0]);
             initModalContent(thisCaller[0]);
         }
     }
@@ -822,7 +855,7 @@ $.fn.spCRUD = (function () {
     
     function deleteItemAttachment(dm)
     {
-    	var parentObject = _.find(theseLists, function (o) { return o.source = dm.owner });
+    	var parentObject = _.find(theseLists, function (o) { return o.source == dm.owner });
 		
 		if(parentObject.path)
 		{
@@ -1026,7 +1059,7 @@ $.fn.spCRUD = (function () {
         var baseTemplate = $(caller).data().basetemplate;
 
         var thisActionType = thisData.action;
-        var parentObject = _.find(theseLists, function (o) { return o.source = thisData.source });
+        var parentObject = _.find(theseLists, function (o) { return o.source == thisData.source });
 
         if (parentObject.path) {
             var destinationURL = '';
