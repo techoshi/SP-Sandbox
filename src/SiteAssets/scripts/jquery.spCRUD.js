@@ -164,8 +164,8 @@ $.fn.spCRUD = (function () {
 
         if(thisLookupContainer && thisLookupContainer.lists && thisLookupContainer.lists.length > 0)
         {
-            for (let currentListIndex = 0; currentListIndex < thisLookupContainer.lists.length; currentListIndex++) {
-                const element = thisLookupContainer.lists[currentListIndex];
+            for (var currentListIndex = 0; currentListIndex < thisLookupContainer.lists.length; currentListIndex++) {
+                var element = thisLookupContainer.lists[currentListIndex];
                 
                 $.fn.spCommon.ajax({
                     source: m.source,
