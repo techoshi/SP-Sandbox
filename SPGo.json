@@ -1,6 +1,6 @@
 {
     "sourceDirectory": "src",
-    "sharePointSiteUrl": "https://eminentitco.sharepoint.com/Sandbox/",
+    "sharePointSiteUrl": "https://eminentitco.sharepoint.com/sandbox",
     "workspaceRoot": "d:\\Repositories\\SP",
     "publishWorkspaceOptions": {
         "destinationFolder": "/",
