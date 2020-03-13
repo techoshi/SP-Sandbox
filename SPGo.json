@@ -4,13 +4,13 @@
     "workspaceRoot": "d:\\Repositories\\SP",
     "publishWorkspaceOptions": {
         "destinationFolder": "/",
-        "globPattern": "d:\\Repositories\\SPd:\\Repositories\\SP\\src/d:\\Repositories\\SP\\src\\**\\*.*",
-        "localRoot": "d:\\Repositories\\SPd:\\Repositories\\SP\\src"
+        "globPattern": "d:\\Repositories\\SPd:\\Repositories\\SPd:\\Repositories\\SP\\src/d:\\Repositories\\SPd:\\Repositories\\SP\\src/d:\\Repositories\\SP\\src\\**\\*.*",
+        "localRoot": "d:\\Repositories\\SPd:\\Repositories\\SPd:\\Repositories\\SP\\src"
     },
     "publishingScope": "SaveOnly",
     "authenticationType": "Forms",
     "remoteFolders": [
         "/SitePages/**/",
-        "/**/"
+        "/SiteAssets/**/"
     ]
 }
