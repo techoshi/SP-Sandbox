@@ -276,7 +276,7 @@ body #s4-leftpanel {
 							{{/switch}}
 						{{/case}}
 						{{#case "Lookup"}}
-							<select type="text" id="{{uiID}}" class="form-control sp-lookup" name="{{@root.name}}.{{Title}}" data-entity="{{EntityPropertyName}}Id" data-owner="{{@root.name}}" data-name="{{Title}}Id" data-selectname="{{Title}}" aria-describedby="{{Title}}Help" placeholder="Enter {{Title}}" data-defaultvalue="{{DefaultValue}}" {{#if Required}}required{{/if}} {{#if hasDropDownRelationship}}data-child="{{dropDownRelationship.child}}" data-lookupfield="{{dropDownRelationship.lookupField}}"{{/if}}>
+							<select type="text" id="{{uiID}}" class="form-control sp-lookup" name="{{@root.name}}.{{Title}}" data-entity="{{EntityPropertyName}}Id" data-owner="{{@root.name}}" data-name="{{Title}}Id" data-selectname="{{EntityPropertyName}}" aria-describedby="{{Title}}Help" placeholder="Enter {{Title}}" data-defaultvalue="{{DefaultValue}}" {{#if Required}}required{{/if}} {{#if hasDropDownRelationship}}data-child="{{dropDownRelationship.child}}" data-lookupfield="{{dropDownRelationship.lookupField}}"{{/if}}>
 								<option value="">Please Select {{replace Title '/_/' ' '}}</option>
 								{{#LookupData.results}}
 									<option value="{{Id}}">{{lookupText}}</option>
