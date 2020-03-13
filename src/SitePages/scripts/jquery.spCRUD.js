@@ -221,18 +221,27 @@ $.fn.spCRUD = (function () {
                             lists: []
                         };
                     }
+                    
+                    var override = undefined;
+                    
+                    if(m.parentObject && m.parentObject.relationships)
+                    { 
+                    	override = _.find(m.parentObject.relationships, function(o) { return o.child == m.object.Title });
+                    }
+                    
+                    var Title = override ? override.lookupField : m.object.Title
 
                     if (lookupDataPoints[m.parentObject.owner] != undefined && lookupDataPoints[m.parentObject.owner][m.listGuid] == undefined) {
                         lookupDataPoints[m.parentObject.owner][m.listGuid] = {
                             list: m.listGuid,
                             response: a,
-                            owner: m.object.EntityPropertyName,
+                            owner: Title,
                             parentForm: m.parentObject.owner
                         };
                     }
 
                     if (_.filter(lookupDataPoints[m.parentObject.owner].lists, function (o) { return o == m.listGuid }).length == 0) {
-                        lookupDataPoints[m.parentObject.owner].lists.push({ guid: m.listGuid, owner: m.object.EntityPropertyName, parentForm: m.parentObject.owner });
+                        lookupDataPoints[m.parentObject.owner].lists.push({ guid: m.listGuid, owner: Title, parentForm: m.parentObject.owner });
                     }
 
                     loadTheLookupData({ m: m, a: a });
@@ -713,7 +722,10 @@ $.fn.spCRUD = (function () {
                                                     var whichWay = theData.selectname ? theData.selectname : theData.name;
                                                     if ($(dElement).hasClass('sp-lookup')) {
                                                         var thisSelectData = returnedData[$(dElement).data('selectname')];
-                                                        $(dElement).val(thisSelectData.Id);
+                                                        if(thisSelectData)
+                                                        {
+                                                        	$(dElement).val(thisSelectData.Id);
+                                                        }
                                                     }
                                                     else {
                                                         //Choice
@@ -1093,19 +1105,20 @@ $.fn.spCRUD = (function () {
                     var thisCurrentObject = $(element).data('entity') ? $(element).data('entity').replace(/-/g, '_x002d_') : '';
 
                     switch ($(element).prop('type')) {
-                        case 'hidden':
+                        case "hidden":
                             if ($(element).hasClass('people-picker-data')) {
                                 formObjects[thisCurrentObject] = $('.people-picker[name="' + $(element).prop('name') + '"] ').find('[id$="_TopSpan_HiddenInput"]').val();
                             }
                             break;
-                        case 'date':
+                        case "date":
                             if ($(element).val()) {
                                 formObjects[thisCurrentObject] = moment($(element).val()).format();
                             }
-                        case 'checkbox':
+                        case "checkbox":
                             formObjects[thisCurrentObject] = $(element).is(":checked");
                             break;
-                        case 'text':
+                        case "textarea":
+                        case "text":
                             if ($(element).hasClass('sp-calendar')) {
                                 var thisDate = moment($(element).val()).format();
                                 formObjects[thisCurrentObject] = thisDate != undefined && thisDate.toLowerCase() != "invalid date" ? thisDate : null;
@@ -1115,20 +1128,20 @@ $.fn.spCRUD = (function () {
                                 formObjects[thisCurrentObject] = thisValue ? thisValue : null;
                             }
                             break;
-                        case 'radio':
+                        case "radio":
                             if ($(element).prop('checked')) {
                                 formObjects[thisCurrentObject] = $(element).val();
                             }
                             break;
-                        case 'select-one':
+                        case "select-one":
                             formObjects[thisCurrentObject] = $(element).find('option:selected').val();
                             break;
-                        case 'select-multiple':
+                        case "select-multiple":
                             var multiValue = $(element).val();
                             var finalValue = multiValue ? { "__metadata": { "type": "Collection(Edm.String)" }, "results": multiValue } : { "__metadata": { "type": "Collection(Edm.String)" }, "results": [] };
                             formObjects[thisCurrentObject] = finalValue;
                             break;
-                        case 'file':
+                        case "file":
                             fileObjects = $(element).data().files;
                             break;
                     }
