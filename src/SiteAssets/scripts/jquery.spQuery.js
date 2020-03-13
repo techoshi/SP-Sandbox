@@ -13,7 +13,9 @@ $.fn.spQuery = (function () {
                 var thisTableID = $(element).prop('id');
                 var wrapperID = thisTableID + '_wrapper';
 
-                $('#' + wrapperID).find('.table, .dataTables_scrollHeadInner').css({ width: '100%' });
+                $('#' + wrapperID).find('.table, .dataTables_scrollHeadInner').css({
+                    width: '100%'
+                });
 
                 tables[$(element).data('table')].columns.adjust();
 
@@ -33,89 +35,120 @@ $.fn.spQuery = (function () {
             if (m.tableStructure.d) {
                 var columns = m.tableStructure.d;
 
-                var thisAttachment = _.find(columns.results, function (o) { return o.EntityPropertyName == 'Attachments' });
+                var thisAttachment = _.find(columns.results, function (o) {
+                    return o.EntityPropertyName == 'Attachments'
+                });
                 if (thisAttachment) {
                     hasAttachments = true,
 
-                        temptableColumns.push({ data: thisAttachment.EntityPropertyName, orderable: true });
-                    temptableColumnDefs.push({ 'visible': true, 'width': '50px', 'targets': 0 });
+                        temptableColumns.push({
+                            data: thisAttachment.EntityPropertyName,
+                            orderable: true
+                        });
+                    temptableColumnDefs.push({
+                        'visible': true,
+                        'width': '50px',
+                        'targets': 0
+                    });
                 }
 
                 var initVal = thisAttachment ? 1 : 0;
 
-				var loadedNumber = 0;
+                var loadedNumber = 0;
                 for (var i = initVal; i < columns.results.length; i++) {
                     var thisRow = columns.results[(i - initVal)];
 
                     var hideTheseColumns = ['ContentType'];
-					if(thisRow.spLoadObject)
-					{
-	                    if ($(m.tableSelector + ' thead th[data-name="' + thisRow.EntityPropertyName + '"]').length > 0 && thisRow.EntityPropertyName != 'Attachments') {
-	                        if (hideTheseColumns.indexOf(thisRow.EntityPropertyName) == -1) {
-	                            var orderable = true;
-	
-	                            if (thisRow.TypeAsString == "MultiChoice") {
-	                                orderable = false;
-	                            }
-	
-	                            if (thisRow.AllowMultipleValues == true) {
-	                                orderable = false;
-	                            }
-	
-	                            temptableColumns.push({ data: thisRow.EntityPropertyName, orderable: orderable, 'visible': true,  });
-	                            temptableColumnDefs.push({ 'visible': true, 'width': '100px', 'targets': loadedNumber  });
-	                        }
-	                        else {
-	                            temptableColumns.push({ data: thisRow.EntityPropertyName, orderable: false, 'visible': false });
-	                            temptableColumnDefs.push({ 'visible': false , 'width': '100px', 'targets': loadedNumber  });
-	                        }
-	                    }	                    
-	                    loadedNumber++;
+                    if (thisRow.spLoadObject) {
+                        if ($(m.tableSelector + ' thead th[data-name="' + thisRow.EntityPropertyName + '"]').length > 0 && thisRow.EntityPropertyName != 'Attachments') {
+                            if (hideTheseColumns.indexOf(thisRow.EntityPropertyName) == -1) {
+                                var orderable = true;
+
+                                if (thisRow.TypeAsString == "MultiChoice") {
+                                    orderable = false;
+                                }
+
+                                if (thisRow.AllowMultipleValues == true) {
+                                    orderable = false;
+                                }
+
+                                temptableColumns.push({
+                                    data: thisRow.EntityPropertyName,
+                                    orderable: orderable,
+                                    'visible': true,
+                                });
+                                temptableColumnDefs.push({
+                                    'visible': true,
+                                    'width': '100px',
+                                    'targets': loadedNumber
+                                });
+                            } else {
+                                temptableColumns.push({
+                                    data: thisRow.EntityPropertyName,
+                                    orderable: false,
+                                    'visible': false
+                                });
+                                temptableColumnDefs.push({
+                                    'visible': false,
+                                    'width': '100px',
+                                    'targets': loadedNumber
+                                });
+                            }
+                        }
+                        loadedNumber++;
                     }
                 }
             }
         }
 
-        tableObjects[m.tableName] = { columns: temptableColumns }
+        tableObjects[m.tableName] = {
+            columns: temptableColumns
+        }
 
-        return { Columns: temptableColumns, ColumnDefs: temptableColumnDefs }
+        return {
+            Columns: temptableColumns,
+            ColumnDefs: temptableColumnDefs
+        }
     }
-	
-	function getSelect(m) {
-		var selectQ = "";
-		var expandQ = "";
-			
-		var theRequired = _.filter(m, { type: "required" });
-		var theColumns = _.filter(m, { type: "column" });
-		var theLookups = _.filter(m, { type: "lookup" });
-			
-		var theseColumns0 = _.map(theRequired, "column");		
-		var theseColumns1 = _.map(theColumns, "column");
-		var theseColumns2 = _.map(theLookups, "column");
-		
-		var columnsA = theseColumns0.concat(theseColumns1);
-		columnsA = columnsA.concat(theseColumns2);
 
-		var theseExpands = _.uniq(_.map(theLookups, "expand"));
-		
-		if(columnsA.length > 0)
-		{
-			selectQ = "$select=" + columnsA.join(",");
-		}
-		if(theseExpands.length > 0)
-		{
-			expandQ = "$expand=" + theseExpands.join(",");
-		}
-		
-		if(expandQ)
-		{
-			selectQ = selectQ + "&" + expandQ 
-		}
-		
-		
-		return selectQ;
-	}
-    
+    function getSelect(m) {
+        var selectQ = "";
+        var expandQ = "";
+
+        var theRequired = _.filter(m, {
+            type: "required"
+        });
+        var theColumns = _.filter(m, {
+            type: "column"
+        });
+        var theLookups = _.filter(m, {
+            type: "lookup"
+        });
+
+        var theseColumns0 = _.map(theRequired, "column");
+        var theseColumns1 = _.map(theColumns, "column");
+        var theseColumns2 = _.map(theLookups, "column");
+
+        var columnsA = theseColumns0.concat(theseColumns1);
+        columnsA = columnsA.concat(theseColumns2);
+
+        var theseExpands = _.uniq(_.map(theLookups, "expand"));
+
+        if (columnsA.length > 0) {
+            selectQ = "$select=" + columnsA.join(",");
+        }
+        if (theseExpands.length > 0) {
+            expandQ = "$expand=" + theseExpands.join(",");
+        }
+
+        if (expandQ) {
+            selectQ = selectQ + "&" + expandQ
+        }
+
+
+        return selectQ;
+    }
+
     function getSelectStruct(m) {
         var thisSelect = "$select=";
         var thisLookupSelect = ''
@@ -126,59 +159,94 @@ $.fn.spQuery = (function () {
         var excludeTheseTypes = ["Lookup", "UserMulti", "User"];
 
         var hasAttachments = false;
-		
-		//Load Columns
-		var columns = []
-		var loadedColumns = 0;
-        if (_.find(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) == -1 })) {
-            var Lookups = _.filter(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) == -1 });
-			
-            if (_.find(Lookups, function (o) { return o.InternalName == 'Attachments' })) {
+
+        //Load Columns
+        var columns = []
+        var loadedColumns = 0;
+        if (_.find(m.tableStructure.d.results, function (obj) {
+                return excludeTheseTypes.indexOf(obj.TypeAsString) == -1
+            })) {
+            var Lookups = _.filter(m.tableStructure.d.results, function (obj) {
+                return excludeTheseTypes.indexOf(obj.TypeAsString) == -1
+            });
+
+            if (_.find(Lookups, function (o) {
+                    return o.InternalName == 'Attachments'
+                })) {
                 hasAttachments = true,
-                columns.push({ type: "lookup", column : "AttachmentFiles", expand: "AttachmentFiles" });
+                    columns.push({
+                        type: "lookup",
+                        column: "AttachmentFiles",
+                        expand: "AttachmentFiles"
+                    });
             }
-
-            for (var i = 0; i < Lookups.length; i++) {
-	            var thisLookup = Lookups[i];
-	            var prefix = loadedColumns == 0 && !hasAttachments ? '' : ','	  
-	            
-	            if(thisLookup.spLoadObject)
-	            {	            	
-	 				columns.push({ type: "column", column : thisLookup.InternalName });
-	 				loadedColumns++;     			
-	 			}
-            }
-
-            columns.push({ type: "required", column : "GUID" });
-            columns.push({ type: "required", column : "ID" });
-
-            if (m.templateType == '101') {
-                columns.push({ type: "column", column : "EncodedAbsUrl" });
-            }
-        }
-        		
-		//Load Lookups
-        if (_.find(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) > -1 })) {
-            var Lookups = _.filter(m.tableStructure.d.results, function (obj) { return excludeTheseTypes.indexOf(obj.TypeAsString) > -1 });
 
             for (var i = 0; i < Lookups.length; i++) {
                 var thisLookup = Lookups[i];
-				
-				if(thisLookup.spLoadObject)
-				{
-	                var userTypes = ["UserMulti", "User"]
-	
-	                if (userTypes.indexOf(thisLookup.TypeAsString) > -1) {
-	                    var lookupColumns = ["Id", "EMail", "FirstName", "LastName", "WorkPhone", "Office", "Department", "JobTitle", "Title", "SipAddress", "Name"]
-	
-	                    for (var cols = 0; cols < lookupColumns.length; cols++) {
-	                        columns.push({ type: "lookup", column : thisLookup.EntityPropertyName + '/' + lookupColumns[cols], expand: thisLookup.EntityPropertyName });
-	                    }
-	                }
-	                else {
-	                    columns.push({ type: "lookup", column : thisLookup.EntityPropertyName + '/Id', expand: thisLookup.EntityPropertyName });
-	                    columns.push({ type: "lookup", column : thisLookup.EntityPropertyName + '/' + thisLookup.LookupField, expand: thisLookup.EntityPropertyName });
-	                }
+                var prefix = loadedColumns == 0 && !hasAttachments ? '' : ','
+
+                if (thisLookup.spLoadObject) {
+                    columns.push({
+                        type: "column",
+                        column: thisLookup.InternalName
+                    });
+                    loadedColumns++;
+                }
+            }
+
+            columns.push({
+                type: "required",
+                column: "GUID"
+            });
+            columns.push({
+                type: "required",
+                column: "ID"
+            });
+
+            if (m.templateType == '101') {
+                columns.push({
+                    type: "column",
+                    column: "EncodedAbsUrl"
+                });
+            }
+        }
+
+        //Load Lookups
+        if (_.find(m.tableStructure.d.results, function (obj) {
+                return excludeTheseTypes.indexOf(obj.TypeAsString) > -1
+            })) {
+            var Lookups = _.filter(m.tableStructure.d.results, function (obj) {
+                return excludeTheseTypes.indexOf(obj.TypeAsString) > -1
+            });
+
+            for (var i = 0; i < Lookups.length; i++) {
+                var thisLookup = Lookups[i];
+
+                if (thisLookup.spLoadObject) {
+                    var userTypes = ["UserMulti", "User"]
+
+                    if (userTypes.indexOf(thisLookup.TypeAsString) > -1) {
+                        var lookupColumns = ["Id", "EMail", "FirstName", "LastName", "WorkPhone", "Office", "Department", "JobTitle", "Title", "SipAddress", "Name"]
+
+                        for (var cols = 0; cols < lookupColumns.length; cols++) {
+                            columns.push({
+                                type: "lookup",
+                                column: thisLookup.EntityPropertyName + '/' + lookupColumns[cols],
+                                expand: thisLookup.EntityPropertyName
+                            });
+                        }
+                    } else {
+                        columns.push({
+                            type: "lookup",
+                            column: thisLookup.EntityPropertyName + '/Id',
+                            expand: thisLookup.EntityPropertyName
+                        });
+                        columns.push({
+                            type: "lookup",
+                            column: thisLookup.EntityPropertyName + '/' + thisLookup.LookupField,
+                            expand: thisLookup.EntityPropertyName
+                        });
+                    }
                 }
             }
         }
@@ -197,8 +265,7 @@ $.fn.spQuery = (function () {
 
                 orderby += prefix + m.orderStruct.theseColumns[thisOrder.column].data + ' ' + thisOrder.dir
             }
-        }
-        else {
+        } else {
             orderby = tableObjects[m.tableName].columns[0].data + ' asc';
         }
 
@@ -228,8 +295,7 @@ $.fn.spQuery = (function () {
                 var rowFetch = 5000;
                 useTop = "$skiptoken=" + encodeURIComponent("Paged=TRUE&p_ID=" + skipID) + "&$top=" + (rowFetch) + "&";
             }
-        }
-        else {
+        } else {
             useTop = "$skiptoken=" + encodeURIComponent("Paged=TRUE&p_ID=0") + "&$top=5000&";
         }
 
@@ -244,7 +310,10 @@ $.fn.spQuery = (function () {
         if (tables[thisTable]) {
             var thisTableMeta = tables[thisTable].originalCaller;
 
-            thisTableMeta.orderStruct = { thisOrder: thisOrder, theseColumns: tableObjects[thisTable].columns }
+            thisTableMeta.orderStruct = {
+                thisOrder: thisOrder,
+                theseColumns: tableObjects[thisTable].columns
+            }
             thisTableMeta.data = data;
             thisTableMeta.search = $('#' + thisTable + '_filter input[type="search"]').val();
 
@@ -256,8 +325,7 @@ $.fn.spQuery = (function () {
             //tables[thisTable].ajax.url('#' + newRestQ);
             if (data.start == 0) {
                 tables[thisTable].ajax.url(newRestQ);
-            }
-            else {
+            } else {
                 tables[thisTable].ajax.url(getRestCount(thisTableMeta))
             }
         }
@@ -279,9 +347,9 @@ $.fn.spQuery = (function () {
     }
 
     function conformRestDataToDataTable(e, settings, json, xhr, xtra) {
-    	json = json ? json : {};
-    	json.value = json.value ? json.value : [];
-    
+        json = json ? json : {};
+        json.value = json.value ? json.value : [];
+
         var ServerCall = IsArray(json.value);
 
         if (!$('table#' + xtra.tableName).is(':visible')) {
@@ -314,30 +382,24 @@ $.fn.spQuery = (function () {
                             var content = JSON.stringify(d2[o]);
 
                             d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content.length + '" data-typeof="Array">' + JSON.stringify(d2[o]) + '</span><span class="lync-presence"></span>';
-                        }
-                        else {
+                        } else {
                             var content = JSON.stringify(d2[o]);
 
                             d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content.length + '" data-typeof="Object">' + content + '</span><span class="lync-presence"></span>'
                         }
-                    }
-                    else if (d2[o] == undefined) {
+                    } else if (d2[o] == undefined) {
                         d2[o] = '';
-                    }
-                    else if (typeof d2[o] === "boolean") {
+                    } else if (typeof d2[o] === "boolean") {
                         if (o.toLowerCase() == "attachments") {
                             if (d2[o]) {
                                 d2[o] = $.fn.spEnvironment.fileAttachment();
-                            }
-                            else {
+                            } else {
                                 d2[o] = '';
                             }
-                        }
-                        else {
+                        } else {
                             if (d2[o]) {
                                 d2[o] = "Yes";
-                            }
-                            else {
+                            } else {
                                 d2[o] = "No";
                             }
                         }
@@ -363,10 +425,9 @@ $.fn.spQuery = (function () {
             json.data = tempData.data;
             json.recordsTotal = tempData.recordsTotal;
             json.recordsFiltered = tempData.recordsFiltered;
-            
+
             delete json.value;
-        }
-        else {
+        } else {
             json.fullData = mGlobal[xtra.path][xtra.tableName].currentJsonData.fullData;
             var tempData = returnPagedData({
                 meta: {},
@@ -382,7 +443,7 @@ $.fn.spQuery = (function () {
 
         if (mGlobal[xtra.path][xtra.tableName] != undefined) {
             mGlobal[xtra.path][xtra.tableName].currentJsonData = json;
-            
+
         }
 
         return json
@@ -401,9 +462,14 @@ $.fn.spQuery = (function () {
         if (m.meta && m.meta.search && m.meta.search.value) {
             var searchStageData = data;
 
-            var conditionSyntax = $.fn.spEnvironment.spSearchCondition({ columns: m.meta.columns, search: m.meta.search });
+            var conditionSyntax = $.fn.spEnvironment.spSearchCondition({
+                columns: m.meta.columns,
+                search: m.meta.search
+            });
 
-            var searchData = _.filter(searchStageData, function (o) { return eval(conditionSyntax) })
+            var searchData = _.filter(searchStageData, function (o) {
+                return eval(conditionSyntax)
+            })
 
             var endRowLength = searchData.length <= endRow ? searchData.length : endRow
             for (var r = startRow; r < endRowLength; r++) {
@@ -411,8 +477,7 @@ $.fn.spQuery = (function () {
             }
 
             recordsFiltered = searchData.length
-        }
-        else {
+        } else {
             for (var r = startRow; r < endRow; r++) {
                 pagedArray.push(data[r]);
             }
@@ -428,15 +493,23 @@ $.fn.spQuery = (function () {
 
     function fnDrawCallback(m, oSettings, json) {
         $('.dataTables_scrollHead th.css_dt_' + m.tableName + '.css_Attachments').html($.fn.spEnvironment.fileAttachment());
-        $('.css_dt_' + m.tableName + '.css_Attachments').css({ width: '50px', 'min-width': '50px', 'max-width': '50px' });
+        $('.css_dt_' + m.tableName + '.css_Attachments').css({
+            width: '50px',
+            'min-width': '50px',
+            'max-width': '50px'
+        });
 
         var thisData = tables[m.tableName].ajax.json().data;
 
         for (var thisRow = 0; thisRow < thisData.length; thisRow++) {
-            $('#' + m.tableID + ' tbody tr:eq(' + thisRow + ')').attr({ 'id': thisData[thisRow]['GUID'], 'p_id': thisData[thisRow]['ID'] })
+            $('#' + m.tableID + ' tbody tr:eq(' + thisRow + ')').attr({
+                'id': thisData[thisRow]['GUID'],
+                'p_id': thisData[thisRow]['ID']
+            })
         }
 
-        if (tables[m.tableName].lastRow && $('#' + tables[m.tableName].lastRow.id + ':visible').length) {
+        if (tables[m.tableName] && tables[m.tableName].lastRow != undefined && tables[m.tableName].lastRow && tables[m.tableName].lastRow.id && $('#' + tables[m.tableName].lastRow.id + ':visible').length) {
+
             $('#' + tables[m.tableName].lastRow.id + ':visible').click();
         }
 
@@ -466,7 +539,7 @@ $.fn.spQuery = (function () {
             };
 
             var ColumnsModel = buildtableColumns(m);
-            
+
             var selectStruct = getSelectStruct(m);
             m.ColumnsSelect = getSelect(selectStruct);
             var modelObjPath = m.path == undefined ? 'page' : m.path;
@@ -474,7 +547,9 @@ $.fn.spQuery = (function () {
 
             tables[m.tableName] = $(m.tableSelector)
                 .on('preXhr.dt', function (e, settings, data) {
-                    theLoader.show({ id: m.tableName + 'datatable' });
+                    theLoader.show({
+                        id: m.tableName + 'datatable'
+                    });
 
                     conformDataToSharePointRest(e, settings, data, m);
 
@@ -491,10 +566,17 @@ $.fn.spQuery = (function () {
                         url: getRestQuery(m)
                     },
                     "dom": m.dom != undefined ? m.dom : "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
-                    "oLanguage": m.oLanguage != undefined ? m.oLanguage : { "sLengthMenu": "_MENU_", "sSearch": "_INPUT_", "sSearchPlaceholder": "Search..." },
+                    "oLanguage": m.oLanguage != undefined ? m.oLanguage : {
+                        "sLengthMenu": "_MENU_",
+                        "sSearch": "_INPUT_",
+                        "sSearchPlaceholder": "Search..."
+                    },
                     "scrollX": '100%',
                     "scrollY": "400px",
-                    "lengthMenu": [[5, 10, 25, 50, 100, 200, 300, 400, 500, 1000], [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000]],
+                    "lengthMenu": [
+                        [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000],
+                        [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000]
+                    ],
                     "pageLength": m.pageLength != undefined && m.pageLength != '' ? m.pageLength : defaultPageSize,
                     "autoWidth": false,
                     "columns": ColumnsModel.Columns,
@@ -517,10 +599,12 @@ $.fn.spQuery = (function () {
                             }, 1000));
 
                         $('#' + m.tableName + ' input[type="search"]').addClass('iris-pager-nav');
-                        $('#' + m.tableName + '_filter').append($.fn.spEnvironment.datatable_refresh_html({ owner: m.tableName }));
+                        $('#' + m.tableName + '_filter').append($.fn.spEnvironment.datatable_refresh_html({
+                            owner: m.tableName
+                        }));
 
                         $('.actionRefresh').unbind('click', refreshServerData);
-                        $('.actionRefresh').bind('click', refreshServerData);                        
+                        $('.actionRefresh').bind('click', refreshServerData);
                     },
                     "fnDrawCallback": function (oSettings, json) {
 
@@ -528,8 +612,8 @@ $.fn.spQuery = (function () {
                             var thisElementData = $(thElement).data();
 
                             $('#' + m.tableName + ' tbody tr').each(function (tr, trElement) {
-								var columnName = thisElementData.name.replace(new RegExp(" ", "g"), "_");
-	
+                                var columnName = thisElementData.name.replace(new RegExp(" ", "g"), "_");
+
                                 $(trElement).find('td:eq(' + th + ')').addClass('css_dt_' + m.tableName + ' css_' + columnName)
                                 for (prop in thisElementData) {
                                     $(trElement).find('td:eq(' + th + ')').attr('data-' + prop, thisElementData[prop]);
@@ -550,7 +634,10 @@ $.fn.spQuery = (function () {
                             }
                         }
 
-                        var settings = { type: "default", redirectToProfile: true };
+                        var settings = {
+                            type: "default",
+                            redirectToProfile: true
+                        };
 
                         $('#' + m.tableName + ' .hide-json[data-type="JSON"][data-typeof="Object"]').each(function (objectIndex, objectElement) {
                             var thisJSONstring = $(objectElement).html();
@@ -562,8 +649,7 @@ $.fn.spQuery = (function () {
                                         $(objectElement).siblings('.lync-presence').append('<span class="user-table-style" data-iden="' + thisJSON.Id + '">');
                                         $(objectElement).siblings('.lync-presence').find('[data-iden="' + thisJSON.Id + '"]').html('<i class="fa fa-user-circle-o"></i> ' + thisJSON.Title);
                                         //$('.lync-presence').createpresence('i:0%23.f|membership|risiJa@state.gov', settings)
-                                    }
-                                    else {
+                                    } else {
                                         $(objectElement).siblings('.lync-presence').append('<span class="user-table-style" data-iden="' + thisJSON.Id + '">');
                                         $(objectElement).siblings('.lync-presence').find('[data-iden="' + thisJSON.Id + '"]').html('<i class="fa fa-group"></i> ' + thisJSON.Name);
                                     }
@@ -584,8 +670,7 @@ $.fn.spQuery = (function () {
                                             $(objectElement).siblings('.lync-presence').append('<span class="user-table-style" data-iden="' + thisJSON.Id + '" style="padding-right: 5px;">');
                                             $(objectElement).siblings('.lync-presence').find('[data-iden="' + thisJSON.Id + '"]').html('<i class="fa fa-user-circle-o"></i> ' + thisJSON.Title);
                                             //$('.lync-presence').createpresence('i:0%23.f|membership|risiJa@state.gov', settings)
-                                        }
-                                        else {
+                                        } else {
                                             $(objectElement).siblings('.lync-presence').append('<span class="user-table-style" data-iden="' + thisJSON.Id + '" style="padding-right: 5px;">');
                                             $(objectElement).siblings('.lync-presence').find('[data-iden="' + thisJSON.Id + '"]').html('<i class="fa fa-group"></i> ' + thisJSON.Name);
                                         }
@@ -646,7 +731,9 @@ $.fn.spQuery = (function () {
 
                         fnDrawCallback(m, oSettings, json);
 
-                        theLoader.hide({ id: m.tableName + 'datatable' });
+                        theLoader.hide({
+                            id: m.tableName + 'datatable'
+                        });
                     }
                 });
 
@@ -657,12 +744,18 @@ $.fn.spQuery = (function () {
     var temp = []
 
     return {
-        genTable: function (m) { genTable(m); },
-        getTables: function () { return tableObjects; },
-        nav: function (m) { nav = m },
+        genTable: function (m) {
+            genTable(m);
+        },
+        getTables: function () {
+            return tableObjects;
+        },
+        nav: function (m) {
+            nav = m
+        },
         getItemQuery: function (m) {
-        	var struct = getSelectStruct(m);
-        
+            var struct = getSelectStruct(m);
+
             return getSelect(struct);
         }
     }
