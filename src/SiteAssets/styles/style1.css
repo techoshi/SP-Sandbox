@@ -1,4 +1,8 @@
-.dataTables_paginate {
+.dataTables_wrapper select.form-control
+{
+    height: 35px;     
+}
+    .dataTables_paginate {
 
     display: none !Important;
 }
