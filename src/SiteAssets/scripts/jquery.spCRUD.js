@@ -52,10 +52,11 @@ $.fn.spCRUD = (function () {
 	                //expectedObject.path = expectedObject.path ? expectedObject.path : _spPageContextInfo.webAbsoluteUrl;
 	
 	                thisApp.objects[theseLists[i].source] = expectedObject;
-	                if($.fn.spCommon.checkUserPermission({ path: expectedObject.path, privilege : "viewListItems" }))
+	                if($.fn.spCommon.checkUserPermission({ path: expectedObject.path, privilege : "viewListItems" }) && expectedObject.config != true)
 	                {	         
+                        expectedObject.loaded = true;
 	                	loadTabStructure(expectedObject);       	                		                
-	                	getListMeta(expectedObject)		                
+	                	getListMeta(expectedObject);		                
 	                }
 	            }
 	        }
