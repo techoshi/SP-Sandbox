@@ -44,6 +44,88 @@ $.fn.spDB = (function () {
 
     }
 
+    function AddViewColumn(m)
+    {
+        $.fn.spAsyncQueue.call({
+            // _spPageContextInfo.webAbsoluteUrl - will give absolute URL of the site where you are running the code.
+            // You can replace this with other site URL where you want to apply the function
+
+            url: m.url + "/_api/web/Lists/getByTitle('" + m.Title + "')/Views/getByTitle('" + m.ViewTitle + "')/ViewFields/addViewField('" + m.columnName + "')",
+            method: "POST",
+           // data: "{'__metadata':{'type': 'SP.View'},'ViewType': '" + m.ViewType + "','Title':'" + m.ViewTitle + "','PersonalView':false,'ViewQuery':'" + viewQuery + "'}",
+            headers: {
+                //    // Accept header: Specifies the format for response data from the server.
+                //    "Accept": "application/json;odata=verbose",
+                //    //Content-Type header: Specifies the format of the data that the client is sending to the server
+                //    "Content-Type": "application/json;odata=verbose",
+                //    // X-RequestDigest header: When you send a POST request, it must include the form digest value in X-RequestDigest header
+                //    "X-RequestDigest": $("#__REQUESTDIGEST").val()
+                
+            },
+            done: function (a, status, xhr) {
+                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                    content: 'View Field ' + m.Title + ' added to View' + m.ViewTitle + '.',
+                    type: 'success'
+                }));
+            },
+            fail: function (response, errorCode, errorMessage) {
+                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                    content: 'View Field ' + m.Title + ' not added to View' + m.ViewTitle + '.' + response.responseJSON.error.message.value,
+                    type: 'danger'
+                }));
+            }
+        });
+    }
+
+    function CreateListView(m) {
+        //<Where><Eq><FieldRef Name=\"Location\" /><Value Type=\"Text\">India</Value></Eq></Where>
+        var viewQuery = "<OrderBy><FieldRef Name=\"Created\" /></OrderBy>";
+        
+        $.fn.spAsyncQueue.call({
+            // _spPageContextInfo.webAbsoluteUrl - will give absolute URL of the site where you are running the code.
+            // You can replace this with other site URL where you want to apply the function
+
+            url: m.url + "/_api/web/lists/getByTitle('" + m.Title + "')/views",
+            method: "POST",
+            data: "{'__metadata':{'type': 'SP.View'},'ViewType': '" + m.ViewType + "','Title':'" + m.ViewTitle + "','PersonalView':false,'ViewQuery':'" + viewQuery + "'}",
+            headers: {
+                //    // Accept header: Specifies the format for response data from the server.
+                //    "Accept": "application/json;odata=verbose",
+                //    //Content-Type header: Specifies the format of the data that the client is sending to the server
+                //    "Content-Type": "application/json;odata=verbose",
+                //    // X-RequestDigest header: When you send a POST request, it must include the form digest value in X-RequestDigest header
+                //    "X-RequestDigest": $("#__REQUESTDIGEST").val()
+                
+            },
+            done: function (a, status, xhr) {
+                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                    content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.',
+                    type: 'success'
+                }));
+
+                for (var c = 0; c < m.Columns.length; c++) {
+                    if (m.availableLists) {
+                        m.Columns[c].availableLists = m.availableLists
+                    }
+
+                    var thisAddModel = {
+                        url : m.url,
+                        Title : m.Title,
+                        ViewTitle : m.ViewTitle,
+                        columnName : m.Columns[c].Title
+                    }
+
+                    var thisField = AddViewColumn(thisAddModel);
+                }
+            },
+            fail: function (response, errorCode, errorMessage) {
+                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                    content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.' + response.responseJSON.error.message.value,
+                    type: 'danger'
+                }));
+            }
+        });
+    }
 
     function getListTypeID(m) {
         switch (m.type) {
@@ -355,6 +437,10 @@ $.fn.spDB = (function () {
                             thisField.originalRequest = originalRequest;
                             createListField(thisField);
                         }
+                        
+                        m.ViewTitle = m.Title + "PrimaryView";
+                        m.ViewType = "GRID";
+                        CreateListView(m)
                     },
                     fail: function (response, errorCode, errorMessage) {
                         $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({

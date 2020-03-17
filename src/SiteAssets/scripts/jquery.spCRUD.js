@@ -452,6 +452,7 @@ $.fn.spCRUD = (function () {
     }
 
     function loadTabStructure(m) {
+        
         thisApp.objects[m.source.toLowerCase()].title = m.thisVar;
         thisApp.objects[m.source.toLowerCase()].tabTitle = m.tabTitle ? m.tabTitle : m.thisVar;
         thisApp.objects[m.source.toLowerCase()].name = m.source.toLowerCase();
@@ -551,18 +552,22 @@ $.fn.spCRUD = (function () {
 
         $('.nav-link.grid-link').on('click', function () {
             var linkData = $(this).data();
-            theLoader.show({ id : "load-grid "});
+            theLoader.show({
+                id: "load-grid "
+            });
             if ($('#lf-grid-' + linkData.owner + ' .iframeContainer iframe').length == 0) {
-                
-                $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="/Sandbox/Lists/DCMain/DCMainView.aspx" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>');
+
+                $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="' + thisApp.objects[m.source.toLowerCase()].path + '/Lists/' + linkData.owner + '/' + linkData.owner + 'PrimaryView.aspx" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>');
             }
-            
-            setTimeout(function(){
+
+            setTimeout(function () {
                 var width = $("iframe:visible").parents('.tab-pane').width();
                 $("iframe:visible").width(width);
-                theLoader.hide({ id : "load-grid "})
-            }, 1000);      
-            
+                theLoader.hide({
+                    id: "load-grid "
+                })
+            }, 1000);
+
         });
     }
 
@@ -583,7 +588,6 @@ $.fn.spCRUD = (function () {
                 thisApp.objects[m.source.toLowerCase()].type = "List";
             }
         }
-
 
         //thisApp.objects[m.source.toLowerCase()].thisContent = $.fn.dosEnvironment.hbTemplates(thisApp.objects[m.source.toLowerCase()]);
 
@@ -2003,6 +2007,8 @@ $.fn.spCRUD = (function () {
             $('input[for="' + m.uuid + '"][value="' + m.value.id + '"]').prop('checked', true);
         }
     }
+
+    
 
     function addValue2Select(m) {
         if (m.selector && m.value && m.value.id && m.value.text) {
