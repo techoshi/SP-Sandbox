@@ -35,7 +35,7 @@ var thisLists = [{
 		url: _spPageContextInfo.webAbsoluteUrl,
 		Title: 'PC11',
 		type: "Generic List",
-		Description: 'Document Sources',
+		Description: 'Document Portfiolio Category',
 		Columns: [{
 			type: 'Text',
 			Title: 'PortfiolioCategory',

@@ -557,7 +557,7 @@ $.fn.spCRUD = (function () {
             });
             if ($('#lf-grid-' + linkData.owner + ' .iframeContainer iframe').length == 0) {
 
-                $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="' + thisApp.objects[m.source.toLowerCase()].path + '/Lists/' + linkData.owner + '/' + linkData.owner + 'PrimaryView.aspx" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>');
+                $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="' + thisApp.objects[m.source.toLowerCase()].path + '/Lists/' + linkData.owner + '/' + linkData.owner + 'PrimaryView.aspx" width="600" height="650" frameborder="0" style="border:0" allowfullscreen></iframe>');
             }
 
             setTimeout(function () {
@@ -2007,9 +2007,7 @@ $.fn.spCRUD = (function () {
             $('input[for="' + m.uuid + '"][value="' + m.value.id + '"]').prop('checked', true);
         }
     }
-
     
-
     function addValue2Select(m) {
         if (m.selector && m.value && m.value.id && m.value.text) {
             var data = {

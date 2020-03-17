@@ -32,32 +32,37 @@ $(document).ready(function () {
 						},
 						{
 							name: 'P11',
+							tabTitle: 'Clearance Priorities',
 							search: [''],
-							singular: 'Contractor',
+							singular: 'Clearance Priority',
 							config : true
 						},
 						{
 							name: 'S11',
+							tabTitle: 'Clearance Sources',
 							search: [''],
-							singular: 'Project',
+							singular: 'Clearance Source',
 							config : true
 						},
 						{
 							name: 'M11',
+							tabTitle: 'Markings',
 							search: [''],
-							singular: 'Contractor',
+							singular: 'Marking',
 							config : true
 						},
 						{
 							name: 'PC11',
+							tabTitle: 'Portfiolio Categories',
 							search: [''],
-							singular: 'Project',
+							singular: 'Portfiolio Category',
 							config : true
 						},
 						{
-							name: 'LP1',
+							name: 'LP11',
+							tabTitle: 'Lead Portfolios',
 							search: [''],
-							singular: 'Project',
+							singular: 'Lead Portfolio',
 							config : true
 						}
 					]
