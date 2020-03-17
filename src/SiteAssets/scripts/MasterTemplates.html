@@ -61,13 +61,16 @@
 <script type="text/template" id="list-family">
 <ul class="nav nav-tabs" id="lf-item-container-{{name}}" role="lf-item-container-{{name}}">
 	  <li class="nav-item">
-		<a class="nav-link active" id="data-tab" data-toggle="tab" href="#lf-list-{{name}}" data-hastable="true" data-tablename="{{name}}" role="tab" aria-controls="data-tab" aria-selected="true">Data</a>
+		<a class="nav-link datatable-link active" id="data-tab" data-toggle="tab" href="#lf-list-{{name}}" data-hastable="true" data-tablename="{{name}}" role="tab" aria-controls="data-tab" aria-selected="true">Data</a>
 	  </li>
 	  <!--li class="nav-item">
 		<a class="nav-link" id="form-tab" data-toggle="tab" href="#lf-form-{{name}}" role="tab" aria-controls="form-tab" aria-selected="false">Form</a>
 	  </li-->
 	  <li class="nav-item">
 		<a class="nav-link" id="tree-tab" data-toggle="tab" href="#lf-tree-{{name}}" role="tab" aria-controls="tree-tab" aria-selected="false">Tree</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link grid-link" id="grid-tab" data-toggle="tab" href="#lf-grid-{{name}}" id="link-grid-{{name}}" role="tab" data-owner="{{name}}" aria-controls="grid-tab" aria-selected="false">Grid</a>
 	  </li>
 </ul>
 <div class="tab-content" id="lf-content-container-{{name}}" style="padding-top: 20px;">
@@ -79,6 +82,9 @@
 	  </div>
 	  <!--div class="tab-pane fade" id="lf-form-{{name}}" role="tabpanel" aria-labelledby="form-tab">{{> spForm}}</div-->
 	<div class="tab-pane fade" id="lf-tree-{{name}}" role="tabpanel" aria-labelledby="tree-tab">{{> jsTree}}</div>
+	<div class="tab-pane fade " id="lf-grid-{{name}}" role="tabpanel" aria-labelledby="tree-tab">
+		<div class="iframeContainer">
+	</div>
 </div>
 </script>
 <script type="text/template" id="tabs-template">

@@ -541,12 +541,28 @@ $.fn.spCRUD = (function () {
 
         $('#spActions-wrap-' + m.source.toLowerCase()).html(TabsActions);
 
-        $('.nav-link').on('click', function () {
+        $('.nav-link.datatable-link').on('click', function () {
             var linkData = $(this).data();
 
             if (tables[linkData.owner] && tables[linkData.owner].ajax) {
                 tables[linkData.owner].ajax.reload();
             }
+        });
+
+        $('.nav-link.grid-link').on('click', function () {
+            var linkData = $(this).data();
+            theLoader.show({ id : "load-grid "});
+            if ($('#lf-grid-' + linkData.owner + ' .iframeContainer iframe').length == 0) {
+                
+                $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="/Sandbox/Lists/DCMain/DCMainView.aspx" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>');
+            }
+            
+            setTimeout(function(){
+                var width = $("iframe:visible").parents('.tab-pane').width();
+                $("iframe:visible").width(width);
+                theLoader.hide({ id : "load-grid "})
+            }, 1000);      
+            
         });
     }
 
