@@ -396,6 +396,7 @@ $.fn.spCRUD = (function () {
 
     function loadTabStructure(m) {
         thisApp.objects[m.source.toLowerCase()].title = m.thisVar;
+        thisApp.objects[m.source.toLowerCase()].tabTitle = m.tabTitle ? m.tabTitle : m.thisVar;
         thisApp.objects[m.source.toLowerCase()].name = m.source.toLowerCase();
         if ($('.spa-app-items li').length == 0) {
             thisApp.objects[m.source.toLowerCase()].active = true;
@@ -1131,11 +1132,11 @@ $.fn.spCRUD = (function () {
                             break;
                         case "radio":
                             if ($(element).prop('checked')) {
-                                formObjects[thisCurrentObject] = $(element).val();
+                                formObjects[thisCurrentObject] = $(element).val() ? $(element).val(): null;
                             }
                             break;
                         case "select-one":
-                            formObjects[thisCurrentObject] = $(element).find('option:selected').val();
+                            formObjects[thisCurrentObject] = $(element).find('option:selected').val() ? $(element).find('option:selected').val() : null;
                             break;
                         case "select-multiple":
                             var multiValue = $(element).val();

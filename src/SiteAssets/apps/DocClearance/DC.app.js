@@ -13,6 +13,7 @@ $(document).ready(function () {
 				$.fn.spCRUD.getList({
 					objects: [{
 							name: 'DCMain',
+							tabTitle: 'Document Clearance',
 							search: [''],
 							singular: 'Document Clearance',
 							table: {

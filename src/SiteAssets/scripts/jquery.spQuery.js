@@ -610,6 +610,7 @@ $.fn.spQuery = (function () {
 
                         $('#' + m.tableName + '_wrapper .dataTables_scrollHead th').each(function (th, thElement) {
                             var thisElementData = $(thElement).data();
+                            $(thElement).html(_.startCase($(thElement).html()));
 
                             $('#' + m.tableName + ' tbody tr').each(function (tr, trElement) {
                                 var columnName = thisElementData.name.replace(new RegExp(" ", "g"), "_");
