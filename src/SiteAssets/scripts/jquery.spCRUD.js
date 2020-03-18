@@ -565,8 +565,10 @@ $.fn.spCRUD = (function () {
                 id: "load-grid "
             });
             if ($('#lf-grid-' + linkData.owner + ' .iframeContainer iframe').length == 0) {
+                var pathRoute = thisApp.objects[m.source.toLowerCase()].baseTemplate == '101' ? "/" + linkData.owner + "/Forms": "/" + "Lists" + "/" + linkData.owner
 
-                $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="' + thisApp.objects[m.source.toLowerCase()].path + '/Lists/' + linkData.owner + '/' + linkData.owner + 'PrimaryView.aspx" width="600" height="650" frameborder="0" style="border:0" allowfullscreen></iframe>');
+                var thisListPath = thisApp.objects[m.source.toLowerCase()].path + pathRoute + "/" + linkData.owner + "PrimaryView.aspx";          
+                $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="' + thisListPath + '" width="600" height="650" frameborder="0" style="border:0; border: 0px; width: 100%; min-width: 1500px; height: 600px;" allowfullscreen></iframe>');
             }
 
             setTimeout(function () {

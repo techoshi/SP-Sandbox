@@ -124,6 +124,10 @@ $.fn.spQuery = (function () {
         var theLookups = _.filter(m, {
             type: "lookup"
         });
+        
+        var theFilters = _.filter(m, {
+            type: "filter"
+        });
 
         var theseColumns0 = _.map(theRequired, "column");
         var theseColumns1 = _.map(theColumns, "column");
@@ -143,6 +147,11 @@ $.fn.spQuery = (function () {
 
         if (expandQ) {
             selectQ = selectQ + "&" + expandQ
+        }
+
+        if(theFilters.length > 0)
+        {
+            selectQ += "&$filter=" + theFilters[0].condition;
         }
 
 
@@ -203,10 +212,24 @@ $.fn.spQuery = (function () {
                 column: "ID"
             });
 
-            if (m.templateType == '101') {
+            var thisTemplateType = '100';
+            if(m.templateType && m.templateType == '101')
+            {
+                thisTemplateType = '101'
+            }
+            else if(m.tableStructure && m.tableStructure.baseTemplate && m.tableStructure.baseTemplate == '101')
+            {
+                thisTemplateType = '101'
+            }
+
+            if (thisTemplateType == '101') {
                 columns.push({
                     type: "column",
                     column: "EncodedAbsUrl"
+                });
+                columns.push({
+                    type: "filter",
+                    condition: "startswith(ContentTypeId, '0x0101')",
                 });
             }
         }
