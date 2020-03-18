@@ -1,8 +1,0 @@
-.iframeContainer iframe {
-    border: none;
-    margin: 0;
-    padding: 0;
-    display: block;
-}
-
-.iframeContainer {display: table-row; height: 100%; background-color: white; overflow: hidden }
