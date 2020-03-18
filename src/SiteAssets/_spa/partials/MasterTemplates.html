@@ -151,7 +151,7 @@
 		{{/if}}
 		{{#d.results}}
 			{{#if spLoadObject}}
-			<div class="form-group {{#switch TypeAsString}}{{#case "Attachments" "File" }}col-md-12{{/case}}{{#default}}col-md-6{{/default}}{{/switch}}">
+			<div class="form-group {{#switch TypeAsString}}{{#case "Attachments" "File" }}col-md-12{{/case}}{{#default}}col-md-6 col-sm-12 col-lg-4{{/default}}{{/switch}}">
 				{{#switch TypeAsString}}
 					{{#case "Text" "Choice" "MultiChoice" "Lookup" "Note" "UserMulti" "Attachments" "File" "User" "DateTime" "Number" "Currency"}}
 						<label for="{{Title}}" style="{{#ifCondition Title '== "Title"'}}{{#ifCondition formType '== "create"'}}Display:none;{{/ifCondition}}{{/ifCondition}} width: 100%;">{{{replace Title '_' ' '}}}{{#if Required}}<span style="color:red;">*</span>{{/if}}</label>
