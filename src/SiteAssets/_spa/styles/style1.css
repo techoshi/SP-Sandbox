@@ -1,4 +1,9 @@
-
+.dataTables_wrapper {
+    font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 12px !important;
+    font-weight: 400;
+}
 
 .dataTables_wrapper select.form-control
 {
