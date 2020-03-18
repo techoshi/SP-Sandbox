@@ -56,7 +56,7 @@ var thisLists = [{
 	{
 		url: _spPageContextInfo.webAbsoluteUrl,
 		Title: 'DCMain',
-		type: "Generic List",
+		type: "Document Library",
 		Description: 'Document Clearance APp',
 		Columns: [{
 			type: 'FieldLookup',

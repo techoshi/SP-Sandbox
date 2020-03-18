@@ -306,13 +306,22 @@ $.fn.spCRUD = (function () {
                     break;
             }
         }
-
+        var newFileArray = [];
         for (i = 0; i < sfm.files.length; i++) {
             if (sfm.files[i].size == undefined) {
                 sfm.files[i].extension = getFileExtension(sfm.files[i].FileName);
                 sfm.files[i].exactURL = window.location.origin + sfm.files[i].ServerRelativeUrl;
             }
+
+            var thisTempFileObject = {};
+            for (ii in sfm.files[i]) {
+                thisTempFileObject[ii] = sfm.files[i][ii];
+            }
+            thisTempFileObject[ii] = typeof sfm.files[i].ServerRelativeUrl == "boolean" ? sfm.files[i].ServerRelativeUrl : false;
+            newFileArray.push(thisTempFileObject);
         }
+
+        sfm.files = newFileArray;
 
         $('[data-filecontainer=' + sfm.box + '] .box__inventory').html($.fn.spEnvironment.fileInventory(sfm));
 
@@ -341,7 +350,7 @@ $.fn.spCRUD = (function () {
             if (m.allowedExtensions.length > 0) {
                 var thisExtension = $.fn.spCommon.getExtension(m.file.name);
 
-                var addFile = m.allowedExtensions.indexOf(thisExtension) > -1;
+                var addFile = m.allowedExtensions.indexOf(thisExtension.toLowerCase()) > -1;
 
                 if (!addFile) {
                     toastr.error('File ' + m.file.name + ' not added to queue.', ' File extension ' + thisExtension + ' not allowed');
@@ -452,7 +461,7 @@ $.fn.spCRUD = (function () {
     }
 
     function loadTabStructure(m) {
-        
+
         thisApp.objects[m.source.toLowerCase()].title = m.thisVar;
         thisApp.objects[m.source.toLowerCase()].tabTitle = m.tabTitle ? m.tabTitle : m.thisVar;
         thisApp.objects[m.source.toLowerCase()].name = m.source.toLowerCase();
@@ -740,7 +749,7 @@ $.fn.spCRUD = (function () {
         fileLoader({
             thisObject: '.' + m.source.toLowerCase() + '-attachments',
             validation: {
-                allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'docx', 'pdf', 'xlsx', 'txt', 'xls', 'ppt', 'pptx', 'doc'],
+                allowedExtensions: ["jpeg", "jpg", "gif", "png", "docx", "pdf", "xlsx", "txt", "xls", "ppt", "pptx", "doc", "zip", "7z", "psd"],
                 sizeLimit: 1024 * 1024 * 1024 * 2, // 50 kB = 50 * 1024 bytes,
                 multiple: thisApp.objects[m.source.toLowerCase()].type == "Document Library" ? false : true
             }
@@ -1543,9 +1552,24 @@ $.fn.spCRUD = (function () {
 
                                             },
                                             done: function (a) {
+
+                                                var callerData = $(m.currentTarget).data();
+
+                                                var callerId = '#' + callerData.owner
+                                                $(callerId).parents('.modal').modal('hide');
+
+                                                setTimeout(function () {
+                                                    var thisowner = $(callerId).parents('.modal').data('owner');
+                                                    $(callerId).parents('.modal').remove();
+                                                    $('.fillin-modal').remove();
+                                                    tables[thisowner].ajax.reload();
+                                                }, 200);
+
                                                 toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                             }
                                         }
+
+                                        
 
                                         $.fn.spCommon.ajax(crudRequest);
 
@@ -1580,6 +1604,17 @@ $.fn.spCRUD = (function () {
 
                             },
                             done: function (a) {
+                                var callerData = $(m.currentTarget).data();
+                                var callerId = '#' + callerData.owner
+                                $(callerId).parents('.modal').modal('hide');
+
+                                setTimeout(function () {
+                                    var thisowner = $(callerId).parents('.modal').data('owner');
+                                    $(callerId).parents('.modal').remove();
+                                    $('.fillin-modal').remove();
+                                    tables[thisowner].ajax.reload();
+                                }, 200);
+
                                 toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                             }
                         }
@@ -2007,7 +2042,7 @@ $.fn.spCRUD = (function () {
             $('input[for="' + m.uuid + '"][value="' + m.value.id + '"]').prop('checked', true);
         }
     }
-    
+
     function addValue2Select(m) {
         if (m.selector && m.value && m.value.id && m.value.text) {
             var data = {

@@ -3,6 +3,18 @@
 
 $.fn.spDB = (function () {
 
+    function getListTypeID(m) {
+        switch (m.type) {
+            default:
+            case 'Generic List':
+            case 'GenericList':
+                return 100;
+            case 'Document Library':
+            case 'DocumentLibrary':
+                return 101;
+        }
+    }
+
     function deleteList(m) {
         for (var index = 0; index < m.length; index++) {
             var element = m[index];
@@ -125,18 +137,6 @@ $.fn.spDB = (function () {
                 }));
             }
         });
-    }
-
-    function getListTypeID(m) {
-        switch (m.type) {
-            default:
-            case 'Generic List':
-            case 'GenericList':
-                return 100;
-            case 'Document Library':
-            case 'DocumentLibrary':
-                return 101;
-        }
     }
 
     function getFieldStruct(m) {

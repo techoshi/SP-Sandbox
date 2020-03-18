@@ -24,8 +24,8 @@ $(document).ready(function () {
 								columns: [{
 									name: 'Title',
 									css: {
-										'width': '100px',
-										'min-width': '100px'
+										'width': '300px',
+										'min-width': '300px'
 									}
 								}]
 							}
