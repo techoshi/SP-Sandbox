@@ -234,7 +234,8 @@ $.fn.spQuery = (function () {
                 {
                     columns.push({
                         type: "filter",
-                        condition: "startswith(ContentTypeId, '0x0101')",
+                        condition: "FSObjType eq 0"
+                        //condition: "startswith(ContentTypeId, '0x0101')",
                     });
                 }
             }
