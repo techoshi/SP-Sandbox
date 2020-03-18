@@ -19,6 +19,8 @@ $.fn.spCRUD = (function () {
         loadLists();
     }
 
+    var currentRecord = {};
+
     function removeFile(e) {
         var thisRowIndex = $(this).parents('tr').index();
         var parent = $(this).parents('.file_inventory');
@@ -834,7 +836,9 @@ $.fn.spCRUD = (function () {
         theLoader.show({
             id: owner + '-item-load'
         });
-
+        
+        currentRecord = undefined;
+        
         switch (action) {
             case 'view':
             case 'edit':
@@ -872,7 +876,7 @@ $.fn.spCRUD = (function () {
                         url: m.path + "/_api/" + actionURL + "",
                         done: function (a) {
                             var returnedData = a.d;
-
+                            currentRecord = returnedData;
                             if (templateType == '101') {
                                 returnedData.FileLeafRef = actionData.FileLeafRef;
                             }
@@ -1584,45 +1588,122 @@ $.fn.spCRUD = (function () {
                                         break;
                                 }
                             }
-                        })
+                        });
                         break;
                     case 'update':
                         headers = updateHeader(headers);
 
-                        formObjects['__metadata'] = {
-                            'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
-                        };
-                        var updateFileLeafRef = $(caller).data().FileLeafRef;
-                        var url101Update = parentObject.path + "/_api/Web/GetFileByServerRelativePath(decodedurl='" + updateFileLeafRef + "')/ListItemAllFields"
+                        
+                        if(fileObjects && fileObjects.length > 0)
+                        {
+                            if(fileObjects[0].name.toLowerCase() == $.fn.spCRUD.currentRecord().FileLeafRef.toLowerCase())
+                            {
+                                triggerDocumentLibraryUpload({
+                                    parentObject: parentObject,
+                                    overwrite: true,
+                                    fileObjects: fileObjects,
+                                    thisData: thisData,
+                                    fail: function (f2) {
+                                        var matchedError = false;
+        
+                                        if (matchedError == false && f2.responseJSON.error.message.value.indexOf('already exists')) {
+                                            toastr.error(f2.responseJSON.error.message.value.replace('i:0#.f|membership|', ''), 'File already exists!');
+                                            matchedError = true;
+                                        }
+        
+                                    },
+                                    done: function (r2) {
+        
+                                        switch (thisActionType.toLowerCase()) {
+                                            default:
+                                            case 'update':
+        
+                                                headers = updateHeader(headers);
+        
+                                                formObjects['__metadata'] = {
+                                                    'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
+                                                };
+        
+                                                var crudRequest = {
+                                                    headers: headers,
+                                                    method: 'POST',
+                                                    url: r2.d.ListItemAllFields.__deferred.uri,
+                                                    data: JSON.stringify(formObjects),
+                                                    fail: function (a) {
+                                                        toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                                                    },
+                                                    always: function (a) {
+        
+                                                    },
+                                                    done: function (a) {
+        
+                                                        var callerData = $(m.currentTarget).data();
+        
+                                                        var callerId = '#' + callerData.owner
+                                                        $(callerId).parents('.modal').modal('hide');
+        
+                                                        setTimeout(function () {
+                                                            var thisowner = $(callerId).parents('.modal').data('owner');
+                                                            $(callerId).parents('.modal').remove();
+                                                            $('.fillin-modal').remove();
+                                                            tables[thisowner].ajax.reload();
+                                                        }, 200);
+        
+                                                        toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
+                                                    }
+                                                }
+                                                        
+                                                $.fn.spCommon.ajax(crudRequest);
+        
+                                                break;                                    
+                                        }
+                                    }
+                                });
 
-                        var crudRequest = {
-                            headers: headers,
-                            method: 'POST',
-                            url: url101Update,
-                            data: JSON.stringify(formObjects),
-                            fail: function (a) {
-                                toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                            },
-                            always: function (a) {
-
-                            },
-                            done: function (a) {
-                                var callerData = $(m.currentTarget).data();
-                                var callerId = '#' + callerData.owner
-                                $(callerId).parents('.modal').modal('hide');
-
-                                setTimeout(function () {
-                                    var thisowner = $(callerId).parents('.modal').data('owner');
-                                    $(callerId).parents('.modal').remove();
-                                    $('.fillin-modal').remove();
-                                    tables[thisowner].ajax.reload();
-                                }, 200);
-
-                                toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                             }
+                            else
+                            {
+                                toastr.error('File name must be the same in order to update file.', 'Form Not Submitted!');
+                            }                            
                         }
-
-                        $.fn.spCommon.ajax(crudRequest);
+                        else
+                        {
+                            formObjects['__metadata'] = {
+                                'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
+                            };
+                            var updateFileLeafRef = $(caller).data().FileLeafRef;
+                            var url101Update = parentObject.path + "/_api/Web/GetFileByServerRelativePath(decodedurl='" + updateFileLeafRef + "')/ListItemAllFields"
+                            
+                            var crudRequest = {
+                                headers: headers,
+                                method: 'POST',
+                                url: url101Update,
+                                data: JSON.stringify(formObjects),
+                                fail: function (a) {
+                                    toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                                },
+                                always: function (a) {
+    
+                                },
+                                done: function (a) {
+                                    var callerData = $(m.currentTarget).data();
+                                    var callerId = '#' + callerData.owner
+                                    $(callerId).parents('.modal').modal('hide');
+    
+                                    setTimeout(function () {
+                                        var thisowner = $(callerId).parents('.modal').data('owner');
+                                        $(callerId).parents('.modal').remove();
+                                        $('.fillin-modal').remove();
+                                        tables[thisowner].ajax.reload();
+                                    }, 200);
+    
+                                    toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
+                                }
+                            }
+    
+                            $.fn.spCommon.ajax(crudRequest);
+                        }
+                        
                         break;
                     case 'delete':
                         var crudRequest = {
@@ -1677,6 +1758,23 @@ $.fn.spCRUD = (function () {
 
         var thesePendingFiles = [];
 
+        if (m.fileObjects) {
+            for (var thisFile = 0; thisFile < m.fileObjects.length; thisFile++) {
+                var itemForQueue = uploadTheFile({
+                    fileObjects: m.fileObjects,
+                    thisFile: thisFile,
+                    thisData: m.thisData,
+                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.thisData.sptype + "')/RootFolder/Files/add(overwrite=" + overWriteFile + ", url='" + m.fileObjects[thisFile].name + "')",
+                    done: m.done,
+                    fail: m.fail
+                });
+
+                itemForQueue.loaded = false;
+
+                thesePendingFiles.push(itemForQueue);
+            }
+        }
+
         function processQueue() {
             var tempList = _.filter(thesePendingFiles, function (o) {
                 return o.loaded == undefined || o.loaded == false;
@@ -1700,23 +1798,6 @@ $.fn.spCRUD = (function () {
 
                     $.fn.spCommon.ajax(tempList[0].xhrRequest);
                 });
-            }
-        }
-
-        if (m.fileObjects) {
-            for (var thisFile = 0; thisFile < m.fileObjects.length; thisFile++) {
-                var itemForQueue = uploadTheFile({
-                    fileObjects: m.fileObjects,
-                    thisFile: thisFile,
-                    thisData: m.thisData,
-                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.thisData.sptype + "')/RootFolder/Files/add(overwrite=" + overWriteFile + ", url='" + m.fileObjects[thisFile].name + "')",
-                    done: m.done,
-                    fail: m.fail
-                });
-
-                itemForQueue.loaded = false;
-
-                thesePendingFiles.push(itemForQueue);
             }
         }
 
@@ -2113,6 +2194,9 @@ $.fn.spCRUD = (function () {
         },
         updateLookups: function (m) {
             updateLookups(m);
+        },
+        currentRecord : function() {
+            return currentRecord;
         }
     }
 })();
