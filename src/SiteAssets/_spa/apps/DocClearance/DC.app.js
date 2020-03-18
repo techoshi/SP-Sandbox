@@ -53,9 +53,9 @@ $(document).ready(function () {
 						},
 						{
 							name: 'PC11',
-							tabTitle: 'Portfiolio Categories',
+							tabTitle: 'Portfolio Categories',
 							search: [''],
-							singular: 'Portfiolio Category',
+							singular: 'Portfolio Category',
 							config : true
 						},
 						{
@@ -63,6 +63,20 @@ $(document).ready(function () {
 							tabTitle: 'Lead Portfolios',
 							search: [''],
 							singular: 'Lead Portfolio',
+							config : true
+						},
+						{
+							name: 'ST11',
+							tabTitle: 'Doc Status',
+							search: [''],
+							singular: 'Document Status',
+							config : true
+						},
+						{
+							name: 'UT11',
+							tabTitle: 'Role Types',
+							search: [''],
+							singular: 'Role Type',
 							config : true
 						}
 					]
