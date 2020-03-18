@@ -57,7 +57,7 @@ var thisLists = [{
 		url: _spPageContextInfo.webAbsoluteUrl,
 		Title: 'DCMain',
 		type: "Document Library",
-		Description: 'Document Clearance APp',
+		Description: 'Document Clearance App',
 		Columns: [{
 			type: 'FieldLookup',
 			Title: 'Priority',
