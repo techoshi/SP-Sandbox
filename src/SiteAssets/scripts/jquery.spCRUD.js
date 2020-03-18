@@ -850,7 +850,8 @@ $.fn.spCRUD = (function () {
                         tableID: owner,
                         tableSelector: '#' + owner,
                         tableStructure: thisApp.objects[owner],
-                        templateType: templateType
+                        templateType: templateType,
+                        itemCall : true
                     })
                 } else {
                     actionURL += '?' + $.fn.spQuery.getItemQuery({

@@ -159,6 +159,8 @@ $.fn.spQuery = (function () {
     }
 
     function getSelectStruct(m) {
+        m.itemCall = typeof m.itemCall == "boolean" ? m.itemCall : false;
+
         var thisSelect = "$select=";
         var thisLookupSelect = ''
         var thisExpand = "&$expand=";
@@ -227,10 +229,14 @@ $.fn.spQuery = (function () {
                     type: "column",
                     column: "EncodedAbsUrl"
                 });
-                columns.push({
-                    type: "filter",
-                    condition: "startswith(ContentTypeId, '0x0101')",
-                });
+                
+                if(!m.itemCall)
+                {
+                    columns.push({
+                        type: "filter",
+                        condition: "startswith(ContentTypeId, '0x0101')",
+                    });
+                }
             }
         }
 
