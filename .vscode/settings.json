@@ -1,0 +1,11 @@
+{
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "version": "v1",
+            "sp-auth" : "./SPAuth.json"
+        },
+        "production": {
+            "host": "https://eminentitco.sharepoint.com/"
+        }
+    }
+}
