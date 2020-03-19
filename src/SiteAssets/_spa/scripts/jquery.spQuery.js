@@ -551,6 +551,12 @@ $.fn.spQuery = (function () {
         setTimeout(function () {
             $('.dataTable:visible').find('#' + m.tableID + '_wrapper .dataTables_scrollHeadInner .table:hidden, #' + m.tableID + '_wrapper .dataTables_scrollHeadInner:hidden, .dataTable').css('width', '100%');
         }, 300);
+
+        var rootObject = $.fn.spCRUD.data();
+        if(rootObject.lastSave && rootObject.lastSave.action == "save")
+        {
+            $.fn.spCRUD.reloadEditForm();
+        }
     }
 
     function refreshServerData(m) {

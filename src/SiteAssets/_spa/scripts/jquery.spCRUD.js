@@ -8,7 +8,12 @@ $.fn.spCRUD = (function () {
 
     var thisApp = {
         objects: {},
-        lastMainFormSave : {}
+        lastSave : { 
+            mainSaveData : {},
+            action : "",
+            owner : "",
+            templateType: 0
+        }
     };
     var theseLists = [];
     var lookupDataPoints = {};
@@ -178,8 +183,6 @@ $.fn.spCRUD = (function () {
                 listGuid: thisSPListLookups[iLookUp].LookupList.replace('{', '').replace('}', '')
             });
         }
-
-        //setTimeout(function(){ loadFormData(m) }, 500);
     }
 
     function loadTheLookupData(o) {
@@ -840,10 +843,10 @@ $.fn.spCRUD = (function () {
         $('#modal-' + thisMo + '-' + m.source + ' [data-toggle="popover"]').popover();
     }
 
-    function modalBinds() {
-        var thisData = $(this).data();
-        var action = thisData.action;
-        var owner = thisData.owner.toLowerCase();
+    function modalLoader(m)
+    {
+        var action = m.action;
+        var owner = m.owner.toLowerCase();
 
         var thisCaller = _.filter(theseLists, function (r) {
             return r.name.toLowerCase() == owner
@@ -861,9 +864,54 @@ $.fn.spCRUD = (function () {
 
             thisCaller[0].action = action;
             thisCaller[0].owner = owner;
+            if(typeof m.dataPresent == "boolean" && m.dataPresent){
+                thisCaller[0].dataPresent = m.dataPresent;
+                thisCaller[0].actionData = m.actionData;
+            }
+            else
+            {
+                thisCaller[0].dataPresent = false;
+            }
             reloadLookupData(thisCaller[0]);
             initModalContent(thisCaller[0]);
         }
+    }
+
+    function modalBinds() {
+        var thisData = $(this).data();
+        
+        modalLoader(thisData);
+    }
+
+
+    function reloadEditForm()
+    {
+        if($.fn.spCRUD.data().lastSave.action == "save")
+        {
+            var allAvailableData = mGlobal.page[$.fn.spCRUD.data().lastSave.owner].currentJsonData.fullData;
+
+            var foundRow = [];
+            if($.fn.spCRUD.data().lastSave.templateType == '100')
+            {
+                foundRow =  _.filter(allAvailableData, function(f){ return f.ID == $.fn.spCRUD.data().lastSave.mainSaveData.ID}); 
+            }
+            else if ($.fn.spCRUD.data().lastSave.templateType == '101')
+            {
+                foundRow =  _.filter(allAvailableData, function(f){ return f.FileLeafRef == $.fn.spCRUD.data().lastSave.mainSaveData.Name}); 
+            }
+        }
+
+        var thisData = {
+            owner : $.fn.spCRUD.data().lastSave.owner,
+            action : "edit"
+        };
+
+        if(foundRow.length > 0)
+        {
+            thisData.dataPresent = true;
+            thisData.actionData = foundRow[0];
+        }
+        modalLoader(thisData);
     }
 
     function loadFormData(m) {
@@ -876,9 +924,12 @@ $.fn.spCRUD = (function () {
         var actionData = {};
         var itemURL = ''
 
-        if (action != 'create' && selectedRow == -1) {
-            toastr.error('Please select a row to ' + action + '.', 'No row selected!');
-            return -1;
+        if(m.dataPresent == false)
+        {
+            if (action != 'create' && (selectedRow == -1)) {
+                toastr.error('Please select a row to ' + action + '.', 'No row selected!');
+                return -1;
+            }
         }
 
         var templateType = $('#form-' + action + '-' + owner + '').data('basetemplate');
@@ -893,7 +944,7 @@ $.fn.spCRUD = (function () {
             case 'view':
             case 'edit':
 
-                actionData = tables[owner].ajax.json().data[selectedRow];
+                actionData = m.dataPresent ? m.actionData :tables[owner].ajax.json().data[selectedRow];
                 itemURL = actionData['odata.editLink'];
 
                 actionURL = actionData['odata.editLink'];
@@ -919,7 +970,7 @@ $.fn.spCRUD = (function () {
 
                 var getDataForType = ['view', 'edit'];
 
-                if (getDataForType.indexOf(action) > -1 && selectedRow > -1) {
+                if (getDataForType.indexOf(action) > -1 && (selectedRow > -1 || m.dataPresent)) {
                     $.fn.spCommon.ajax({
                         source: m.owner,
                         method: 'GET',
@@ -1461,6 +1512,10 @@ $.fn.spCRUD = (function () {
             'type': 'SP.Data.' + thisData.sptype.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
         }
 
+        thisApp.lastSave.mainSaveData = {};
+        thisApp.lastSave.owner = "";
+        thisApp.lastSave.action = "";
+
         if (destinationURL && !inTestMode) {
             if (baseTemplate == '100') {
                 var crudRequest = {
@@ -1482,7 +1537,11 @@ $.fn.spCRUD = (function () {
                         default:
                         case 'save':
                             var returnedData = r.d;
-                            thisApp.lastMainFormSave = r.d;
+                            thisApp.lastSave.mainSaveData = r.d;
+                            thisApp.lastSave.owner = thisData.owner;
+                            thisApp.lastSave.action = thisActionType.toLowerCase();
+                            thisApp.lastSave.templateType = baseTemplate;
+
                             setTimeout(function () {
                                 triggerGenericListUploads({
                                     parentObject: parentObject,
@@ -1587,7 +1646,11 @@ $.fn.spCRUD = (function () {
 
                             },
                             done: function (r2) {
-                                thisApp.lastMainFormSave = r2.d;
+                                thisApp.lastSave.mainSaveData = r2.d;
+                                thisApp.lastSave.owner = parentObject.owner;
+                                thisApp.lastSave.action = thisActionType.toLowerCase();
+                                thisApp.lastSave.templateType = baseTemplate;
+
                                 switch (thisActionType.toLowerCase()) {
                                     default:
                                     case 'save':
@@ -2248,6 +2311,9 @@ $.fn.spCRUD = (function () {
         },
         currentRecord: function () {
             return currentRecord;
+        },
+        reloadEditForm : function() {
+            return reloadEditForm();
         }
     }
 })();
