@@ -13,6 +13,7 @@ $.fn.spCRUD = (function () {
     var lookupDataPoints = {};
     var hasConfig = false;
     var loadConfigs = false;
+    var hashidden = false;
 
     function loadConfigsLists() {
         loadConfigs = true;
@@ -50,6 +51,10 @@ $.fn.spCRUD = (function () {
 
         hasConfig = _.filter(theseLists, {
             config: true
+        }).length > 0 ? true : false;
+
+        hashidden = _.filter(theseLists, {
+            hidden: true
         }).length > 0 ? true : false;
 
         $.fn.spCommon.getUserPermissions({
@@ -477,7 +482,6 @@ $.fn.spCRUD = (function () {
         $('.spa-app-items').append(thisNavLiTemplate(thisApp.objects[m.source.toLowerCase()]));
 
         var tabContent = thisNavDivTemplate(thisApp.objects[m.source.toLowerCase()]);
-
 
         //Plug here
         $('#sp-app-contents').append(tabContent);
