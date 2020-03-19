@@ -71,28 +71,6 @@ var thisLists = [
 			MaxLength: 100
 		}]
 	},
-	// {
-	// 	url: _spPageContextInfo.webAbsoluteUrl,
-	// 	Title: 'PC11',
-	// 	type: "Generic List",
-	// 	Description: 'Document Portfiolio Category',
-	// 	Columns: [{
-	// 		type: 'Text',
-	// 		Title: 'PortfiolioCategory',
-	// 		MaxLength: 100
-	// 	}]
-	// },
-	// {
-	// 	url: _spPageContextInfo.webAbsoluteUrl,
-	// 	Title: 'LP11',
-	// 	type: "Generic List",
-	// 	Description: 'Document Lead Portfolios',
-	// 	Columns: [{
-	// 		type: 'Text',
-	// 		Title: 'LeadPortfolio',
-	// 		MaxLength: 100
-	// 	}]
-	// },
 	{
 		url: _spPageContextInfo.webAbsoluteUrl,
 		Title: 'DCMain',
@@ -134,26 +112,6 @@ var thisLists = [
 				AllowMultipleValues: false,
 				LookupFieldName: 'Marking'
 			}
-			// ,
-			// {
-			// 	type: 'FieldLookup',
-			// 	Title: 'PortfiolioCategory',
-			// 	LookupListId: {
-			// 		listName: "PC11"
-			// 	},
-			// 	AllowMultipleValues: false,
-			// 	LookupFieldName: 'PortfiolioCategory'
-			// },
-			// {
-			// 	type: 'FieldLookup',
-			// 	Title: 'LeadPortfolio',
-			// 	LookupListId: {
-			// 		listName: "LP11"
-			// 	},
-			// 	AllowMultipleValues: false,
-			// 	LookupFieldName: 'LeadPortfolio'
-			// }
-
 		]
 	},
 	{
@@ -182,7 +140,7 @@ var thisLists = [
 			},
 			{
 				type: 'FieldUser',
-				Title: 'Role',
+				Title: 'Participant',
 				AllowMultipleValues: false,
 			},
 			{
@@ -210,3 +168,28 @@ $(document).ready(function () {
 		$('#DeltaPlaceHolderMain').append('<h1>The JS Application does not load during SharePoint Edit Mode</h1>');
 	}
 });
+
+
+
+	// {
+	// 	url: _spPageContextInfo.webAbsoluteUrl,
+	// 	Title: 'PC11',
+	// 	type: "Generic List",
+	// 	Description: 'Document Portfiolio Category',
+	// 	Columns: [{
+	// 		type: 'Text',
+	// 		Title: 'PortfiolioCategory',
+	// 		MaxLength: 100
+	// 	}]
+	// },
+	// {
+	// 	url: _spPageContextInfo.webAbsoluteUrl,
+	// 	Title: 'LP11',
+	// 	type: "Generic List",
+	// 	Description: 'Document Lead Portfolios',
+	// 	Columns: [{
+	// 		type: 'Text',
+	// 		Title: 'LeadPortfolio',
+	// 		MaxLength: 100
+	// 	}]
+	// },

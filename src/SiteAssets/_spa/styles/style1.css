@@ -1,5 +1,14 @@
-.form-group .form-control {
-    height: 38px;
+.form-container .form-group {
+     margin-bottom: 0;
+}
+
+.form-group label {
+    font-size: 12px;
+}
+
+.form-group .form-control, .select2-container {
+    height: 28px;
+    font-size: 12px;
 }
 
 .dataTables_wrapper {
@@ -7,6 +16,10 @@
     -webkit-font-smoothing: antialiased;
     font-size: 12px !important;
     font-weight: 400;
+}
+
+.hidden-tab {
+    display: none;
 }
 
 .dataTables_wrapper select.form-control
@@ -22,11 +35,11 @@
     height: auto !Important;
 }
 
-.select2-selection,
+/* .select2-selection,
 .select2-container .select2-selection--single {
     height: calc(1.5em + .75rem + 2px);
     padding-top: 5px;
-}
+} */
 
 .center-modal {
     position: absolute;

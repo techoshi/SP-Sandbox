@@ -7,16 +7,20 @@ $.fn.spCRUD = (function () {
     }();
 
     var thisApp = {
-        objects: {}
+        objects: {},
+        lastMainFormSave : {}
     };
     var theseLists = [];
     var lookupDataPoints = {};
-    var hasConfig = false;
-    var loadConfigs = false;
-    var hashidden = false;
+
+    var settings = {
+        hasConfig : false,
+        loadConfigs : false,
+        hashidden : false
+    }
 
     function loadConfigsLists() {
-        loadConfigs = true;
+        settings.loadConfigs = true;
         loadLists();
     }
 
@@ -49,11 +53,11 @@ $.fn.spCRUD = (function () {
             theseLists[i].path = theseLists[i].path ? theseLists[i].path : _spPageContextInfo.webAbsoluteUrl;
         }
 
-        hasConfig = _.filter(theseLists, {
+        settings.hasConfig = _.filter(theseLists, {
             config: true
         }).length > 0 ? true : false;
 
-        hashidden = _.filter(theseLists, {
+        settings.hashidden = _.filter(theseLists, {
             hidden: true
         }).length > 0 ? true : false;
 
@@ -80,7 +84,7 @@ $.fn.spCRUD = (function () {
                         if ($.fn.spCommon.checkUserPermission({
                                 path: expectedObject.path,
                                 privilege: "viewListItems"
-                            }) && (expectedObject.config != true || loadConfigs == true)) {
+                            }) && (expectedObject.config != true || settings.loadConfigs == true)) {
                             expectedObject.loaded = true;
                             loadTabStructure(expectedObject);
                             getListMeta(expectedObject);
@@ -700,24 +704,43 @@ $.fn.spCRUD = (function () {
 
         thisApp.objects[m.source.toLowerCase()].formType = m.action;
         if (m.action != "delete") {
+            var mainFormContent = $.fn.spEnvironment.baseForm(thisApp.objects[m.source]);
+            var thisChildObject;
+            var thisChildHtml = ""
+            var hasChild = false;
+            if(thisApp.objects[m.source].children && m.action == "edit")
+            {
+                hasChild = true;
+                thisChildObject = JSON.parse(JSON.stringify(thisApp.objects[thisApp.objects[m.source].children.listName.toLowerCase()]));  
+                thisChildObject.d.results = _.filter(thisChildObject.d.results, function(o){ return o.StaticName != "Attachments" });
+                thisChildHtml = $.fn.spEnvironment.baseForm(thisChildObject);
+                
+                if(hasChild)
+                {
+                    thisApp.objects[m.source].childFormHTML = thisChildHtml;
+                    mainFormContent += thisChildHtml;
+                }
+            }            
+
             crudModal += $.fn.spEnvironment.baseModal({
                 id: m.action + '-' + m.source,
                 owner: m.source,
                 action: m.action,
                 title: m.action.capitalize() + ' ' + m.singular,
                 minWidth: "65%",
-                content: $.fn.spEnvironment.baseForm(thisApp.objects[m.source])
+                content: mainFormContent
             });
         } else {
+            var mainFormContent = $.fn.spEnvironment.deleteItem(thisApp.objects[m.source]);            
+
             crudModal += $.fn.spEnvironment.baseModal({
                 id: m.action + '-' + m.source,
                 owner: m.source,
                 action: m.action,
                 title: m.action.capitalize() + ' ' + m.singular,
-                content: $.fn.spEnvironment.deleteItem(thisApp.objects[m.source])
+                content: mainFormContent
             });
         }
-
 
         $('body').append(crudModal);
 
@@ -1171,6 +1194,7 @@ $.fn.spCRUD = (function () {
 
                     thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
                         return _.extend({}, element, {
+                            hidden : false,
                             spLoadObject: false,
                             spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length
                         });
@@ -1458,7 +1482,7 @@ $.fn.spCRUD = (function () {
                         default:
                         case 'save':
                             var returnedData = r.d;
-
+                            thisApp.lastMainFormSave = r.d;
                             setTimeout(function () {
                                 triggerGenericListUploads({
                                     parentObject: parentObject,
@@ -1563,7 +1587,7 @@ $.fn.spCRUD = (function () {
 
                             },
                             done: function (r2) {
-
+                                thisApp.lastMainFormSave = r2.d;
                                 switch (thisActionType.toLowerCase()) {
                                     default:
                                     case 'save':
@@ -1774,6 +1798,8 @@ $.fn.spCRUD = (function () {
         }
     }
 
+
+
     function triggerDocumentLibraryUpload(m) {
         var overWriteFile = typeof m.overwrite == 'boolean' ? m.overwrite : false;
 
@@ -1798,18 +1824,18 @@ $.fn.spCRUD = (function () {
         else
         {
             toastr.info('Please load a file in the form.');
-        }
-
+        }  
+        
         function processQueue() {
             var tempList = _.filter(thesePendingFiles, function (o) {
                 return o.loaded == undefined || o.loaded == false;
             });
-
+    
             if (tempList.length > 0) {
                 tempList[0].theFile.then(function (buffer) {
                     tempList[0].xhrRequest.data = buffer;
                     tempList[0].xhrRequest.always = function (r) {
-
+    
                         if (_.find(thesePendingFiles, function (o) {
                                 return o.loaded == undefined || o.loaded == false;
                             })) {
@@ -1817,10 +1843,10 @@ $.fn.spCRUD = (function () {
                                 return o.loaded == undefined || o.loaded == false;
                             }).loaded = true;
                         }
-
+    
                         processQueue();
                     };
-
+    
                     $.fn.spCommon.ajax(tempList[0].xhrRequest);
                 });
             }
@@ -1831,32 +1857,6 @@ $.fn.spCRUD = (function () {
 
     function triggerGenericListUploads(m) {
         var thesePendingFiles = [];
-
-        function processQueue() {
-            var tempList = _.filter(thesePendingFiles, function (o) {
-                return o.loaded == undefined || o.loaded == false;
-            });
-
-            if (tempList.length > 0) {
-                tempList[0].theFile.then(function (buffer) {
-                    tempList[0].xhrRequest.data = buffer;
-                    tempList[0].xhrRequest.always = function (r) {
-
-                        if (_.find(thesePendingFiles, function (o) {
-                                return o.loaded == undefined || o.loaded == false;
-                            })) {
-                            _.find(thesePendingFiles, function (o) {
-                                return o.loaded == undefined || o.loaded == false;
-                            }).loaded = true;
-                        }
-
-                        processQueue();
-                    };
-
-                    $.fn.spCommon.ajax(tempList[0].xhrRequest);
-                });
-            }
-        }
 
         if (m.fileObjects) {
             for (var thisFile = 0; thisFile < m.fileObjects.length; thisFile++) {
@@ -1871,6 +1871,32 @@ $.fn.spCRUD = (function () {
                 itemForQueue.loaded = false;
 
                 thesePendingFiles.push(itemForQueue);
+            }
+        }
+
+        function processQueue() {
+            var tempList = _.filter(thesePendingFiles, function (o) {
+                return o.loaded == undefined || o.loaded == false;
+            });
+    
+            if (tempList.length > 0) {
+                tempList[0].theFile.then(function (buffer) {
+                    tempList[0].xhrRequest.data = buffer;
+                    tempList[0].xhrRequest.always = function (r) {
+    
+                        if (_.find(thesePendingFiles, function (o) {
+                                return o.loaded == undefined || o.loaded == false;
+                            })) {
+                            _.find(thesePendingFiles, function (o) {
+                                return o.loaded == undefined || o.loaded == false;
+                            }).loaded = true;
+                        }
+    
+                        processQueue();
+                    };
+    
+                    $.fn.spCommon.ajax(tempList[0].xhrRequest);
+                });
             }
         }
 

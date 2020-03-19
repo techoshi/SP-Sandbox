@@ -29,6 +29,15 @@ $(document).ready(function () {
 										'min-width': '300px'
 									}
 								}]
+							},
+							children: {
+								listName : 'WKFL',
+								sectionName : "Approval/Review Area",
+								condition : "DCMain eq {{ID}}",
+								repeatable : true,
+								wholeForm : false,
+								columns : ["RoleType","Participant","Status","DateApproved"],
+								availableParent: ["edit"]
 							}
 						},
 						{
@@ -36,7 +45,7 @@ $(document).ready(function () {
 							tabTitle: 'Document Clearance Flow',
 							search: [''],
 							singular: 'Document Clearance Flow',
-							config : true,
+							hidden : true,
 							table: {
 								css: {
 									'width': '200px',
