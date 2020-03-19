@@ -1,4 +1,5 @@
-var thisLists = [{
+var thisLists = [
+	{
 		url: _spPageContextInfo.webAbsoluteUrl,
 		Title: 'ST11',
 		type: "Generic List",
@@ -157,10 +158,20 @@ var thisLists = [{
 	},
 	{
 		url: _spPageContextInfo.webAbsoluteUrl,
-		Title: 'APWork',
-		type: "Document Library",
-		Description: 'Review and Clear',
-		Columns: [{
+		Title: 'WKFL',
+		type: "Generic List",
+		Description: 'Document Clearance WorkFlow',
+		Columns: [
+			{
+				type: 'FieldLookup',
+				Title: 'DCMain',
+				LookupListId: {
+					listName: "DCMain"
+				},
+				AllowMultipleValues: false,
+				LookupFieldName: 'Title'
+			},
+			{
 				type: 'FieldLookup',
 				Title: 'RoleType',
 				LookupListId: {

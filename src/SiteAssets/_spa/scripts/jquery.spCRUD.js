@@ -177,8 +177,11 @@ $.fn.spCRUD = (function () {
         var m = o.m;
         var a = o.a;
 
+        var usedLookup = _.get(a.d.results[thisLookupData], m.object.LookupField) == undefined ? "Title" : m.object.LookupField;
+
         for (var thisLookupData = 0; thisLookupData < a.d.results.length; thisLookupData++) {
-            a.d.results[thisLookupData].lookupText = a.d.results[thisLookupData][m.object.LookupField];
+
+            a.d.results[thisLookupData].lookupText = a.d.results[thisLookupData][usedLookup];
         }
     }
 
