@@ -11,7 +11,8 @@ $(document).ready(function () {
 				$.fn.spCRUD.clear({});
 
 				$.fn.spCRUD.getList({
-					objects: [{
+					objects: [
+						{
 							name: 'DCMain',
 							tabTitle: 'Document Clearance',
 							search: [''],
@@ -30,6 +31,26 @@ $(document).ready(function () {
 								}]
 							}
 						},
+						{
+							name: 'WKFL',
+							tabTitle: 'Document Clearance Flow',
+							search: [''],
+							singular: 'Document Clearance Flow',
+							config : true,
+							table: {
+								css: {
+									'width': '200px',
+									'min-width': '200px'
+								},
+								columns: [{
+									name: 'Title',
+									css: {
+										'width': '300px',
+										'min-width': '300px'
+									}
+								}]
+							},
+						},						
 						{
 							name: 'P11',
 							tabTitle: 'Clearance Priorities',
