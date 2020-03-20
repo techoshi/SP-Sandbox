@@ -27,7 +27,7 @@ $.fn.spCommon = (function () {
                             close: true,
                             click: function () {
                             	theLoader.show({ id : 'reload-page' });
-                            	setTimeout(function () { window.location.reload() }, 500);
+                            	setTimeout(function () { window.location.reload(); }, 500);
                             }
                         }]
                 });
@@ -43,7 +43,7 @@ $.fn.spCommon = (function () {
 
 
     function registerForms() {
-        alert('Click Saved')
+        alert('Click Saved');
     }
 
     function initSettings() {
@@ -67,7 +67,7 @@ $.fn.spCommon = (function () {
         }*/
 
         var headers = m.headers != undefined ? m.headers : {};
-        headers["Accept"] = headers["Accept"] ? headers["Accept"] : "application/json; odata=verbose"; //It defines the Data format   
+        headers.Accept = headers.Accept ? headers.Accept : "application/json; odata=verbose"; //It defines the Data format   
         headers["content-type"] = headers["content-type"] ? headers["content-type"] : "application/json;odata=verbose"; //It defines the content type as JSON  
         headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
 
@@ -146,7 +146,7 @@ $.fn.spCommon = (function () {
             always: function (a) {
                 loadLists();
             }
-        }
+        };
 
         $.fn.spCommon.ajax(thisAjax);
     }
@@ -157,7 +157,7 @@ $.fn.spCommon = (function () {
             return getExtension(m);
         },
         addHandlebar: function (o) {
-            return o ? Handlebars.compile(o) : function () { console.log('Handlebar Not Present') };
+            return o ? Handlebars.compile(o) : function () { console.log('Handlebar Not Present'); };
         },
         addHandlebarPartial: function (m) {
             if (typeof m == 'object' && m.name) {
@@ -188,7 +188,7 @@ $.fn.spCommon = (function () {
 				
 				console.log(m.urls[i]);
 				
-				var site = { path : m.urls[i], privileges : [] }
+				var site = { path : m.urls[i], privileges : [] };
 				//theseLists[i].path = theseLists[i].path ? theseLists[i].path : _spPageContextInfo.webAbsoluteUrl; 
 			
 				var ajaxStruct = {
@@ -197,7 +197,7 @@ $.fn.spCommon = (function () {
 					async: false,
 					done : function (a) { 
 					}
-				}
+				};
 				
 				var returnedData = $.fn.spCommon.ajax(ajaxStruct);
 				
@@ -232,7 +232,7 @@ $.fn.spCommon = (function () {
 				return false;
 			}
 		}
-    }
+    };
 })();
 
 $.fn.spCommon.addHandlebarPartial({ name: 'jsTree', content: $('#sp_jstree_template').html() });

@@ -1,5 +1,5 @@
 <script type="text/template" id="the_loader_template">
-    
+
 	<div class="modal-backdrop in the-Loader-wrap app-loader-text-centered {{id}}" style="opacity: 0; z-index: 999999;">
 		<div class="app-loader">
 			<div class="app-loader-text">
@@ -19,7 +19,7 @@
 </script>
 
 <script type="text/template" id="sp_tab_container">
-<div class="row">
+	<div class="row">
 	<div class="col-md-12 container" style="padding: 20px 0px 0px 50px">
 		<ul class="nav nav-tabs spa-app-items">
 		</ul>
@@ -30,7 +30,7 @@
 </script>
 
 <script type="text/template" id="sp_file_attachment">
-<i class="fa fa-paperclip" />
+	<i class="fa fa-paperclip" />
 </script>
 
 <script type="text/template" id="sp_jstree_template">
@@ -59,7 +59,7 @@
 	<div class="tab-pane {{#if active}}active{{/if}}" id="nav-{{name}}" role="" aria-labelledby="{{name}}-tab">{{> listTabs}}</div>
 </script>
 <script type="text/template" id="list-family">
-<ul class="nav nav-tabs" id="lf-item-container-{{name}}" role="lf-item-container-{{name}}">
+	<ul class="nav nav-tabs" id="lf-item-container-{{name}}" role="lf-item-container-{{name}}">
 	  <li class="nav-item">
 		<a class="nav-link datatable-link active" id="data-tab" data-toggle="tab" href="#lf-list-{{name}}" data-hastable="true" data-owner="{{name}}" data-tablename="{{name}}" role="tab" aria-controls="data-tab" aria-selected="true">Data</a>
 	  </li>
@@ -87,7 +87,7 @@
 </div>
 </script>
 <script type="text/template" id="tabs-template">
-<ul class="nav nav-tabs" id="tab-item-container-{{name}}" role="lf-item-container-{{name}}">
+	<ul class="nav nav-tabs" id="tab-item-container-{{name}}" role="lf-item-container-{{name}}">
 	{{#tabs}}		
 	  <li class="nav-item">
 		<a 
@@ -130,7 +130,7 @@
 
 </script>
 <script type="text/template" id="sp_delete_item">
-<div class="form col-md-12 form-container" id="form-{{formType}}-{{name}}" data-source="{{name}}" data-formtype="{{formType}}"	 data-basetemplate="{{baseTemplate}}">
+	<div class="form col-md-12 form-container" id="form-{{formType}}-{{name}}" data-source="{{name}}" data-formtype="{{formType}}"	 data-basetemplate="{{baseTemplate}}">
 	<input type="hidden" name="{{@root.name}}.ID" data-name="ID"/>
 	<h2>You are about to delete an item. Continue?</h2>
 	<button type="button" class="btn btn-primary delete-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Delete">Delete</button>
@@ -151,7 +151,7 @@
 		{{/if}}
 		{{#d.results}}
 			{{#if spLoadObject}}
-			<div class="form-group {{#switch TypeAsString}}{{#case "Attachments" "File" }}col-md-12{{/case}}{{#default}}col-md-6 col-sm-12 col-lg-4{{/default}}{{/switch}}">
+			<div class="form-group {{#switch TypeAsString}}{{#case "Attachments" "File" }}col-md-12{{/case}}{{#default}}col-md-4 col-sm-12 col-lg-3{{/default}}{{/switch}}">
 				{{#switch TypeAsString}}
 					{{#case "Text" "Choice" "MultiChoice" "Lookup" "Note" "UserMulti" "Attachments" "File" "User" "DateTime" "Number" "Currency"}}
 						<label for="{{Title}}" style="{{#ifCondition Title '== "Title"'}}{{#ifCondition formType '== "create"'}}Display:none;{{/ifCondition}}{{/ifCondition}} width: 100%;">{{{replace Title '_' ' '}}}{{#if Required}}<span style="color:red;">*</span>{{/if}}</label>
@@ -392,7 +392,7 @@
 </script>
 
 <script type="text/template" id="list-anchor-items-template">
-<ul class="list-anchors" id="list-anchor-items-{{name}}">
+	<ul class="list-anchors" id="list-anchor-items-{{name}}">
 	{{#actions}}		
 	  <li class="list-anchor-items">
 		<a class="{{classes}}" id="{{id}}" href="{{href}}" {{{attributes}}}> {{{i}}} {{title}}</a>
@@ -403,7 +403,7 @@
 
 
 <script type="text/template" id="sp-modal-template">
-<div class="modal fade" id="modal-{{id}}" data-action="{{action}}" data-owner="{{owner}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
+	<div class="modal fade" id="modal-{{id}}" data-action="{{action}}" data-owner="{{owner}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
 <!-- Modal -->
 	<div class="modal-dialog {{#if modalcentered}}modal-dialog-centered{{/if}}" role="document" style="{{#if minWidth}}min-width: {{minWidth}};{{/if}}">
 		<div class="modal-content">
@@ -425,14 +425,14 @@
 </script>
 
 <script type="text/template" id="sp-search-condition">
-{{#columns}}
+	{{#columns}}
 	o["{{name}}"].toString().toLowerCase().indexOf("{{toLowerCase ../search.value}}") > -1 {{#if @last}}{{else }}  || {{/if}}
 {{/columns}}
 </script>
 
 
 <script type="text/template" id="sp-modal-fillin-template">
-{{#d.results}}
+	{{#d.results}}
 <div class="modal fade fillin-modal" id="modal-fillin-{{@root.name}}-{{Title}}" data-choicetype="{{EditFormat}}" data-action="{{@root.action}}" data-source="{{@root.name}}" data-entity="{{EntityPropertyName}}" data-for="{{Title}}" data-uiid="{{uiID}}" data-c data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
 <!-- Modal -->
 	<div class="modal-dialog modal-dialog-centered" role="fill-in-modal" style="min-width: 600px;">
@@ -459,7 +459,7 @@
 
 
 <script type="text/template" id="prompt-modal-template">
-<div class="modal fade" id="{{promptID}}" data-choicetype="{{EditFormat}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
+	<div class="modal fade" id="{{promptID}}" data-choicetype="{{EditFormat}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
 <!-- Modal -->
 	<div class="modal-dialog modal-dialog-centered" role="{{promptID}}-modal" style="min-width: {{width}};">
 		<div class="modal-content" style="height: {{height}}">
@@ -492,7 +492,7 @@
 </script>
 
 <script type="text/template" id="bootstrap-alert">
-<div class="alert alert-{{type}}" role="alert">
+	<div class="alert alert-{{type}}" role="alert">
 {{content}}
 </div>
 </script>

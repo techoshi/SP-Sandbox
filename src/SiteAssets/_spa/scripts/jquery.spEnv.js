@@ -3,7 +3,7 @@ var inEditMode = false;
 var inTestMode = false;
 var spSettings = {
     maxQueryItems: 5000
-}
+};
 
 if (inDesignMode == "1") {
     inEditMode = true;
@@ -36,11 +36,11 @@ $.fn.spEnvironment = {
 };
 
 
-$.fn.getType = function () { return this[0].tagName == "INPUT" ? this[0].type.toLowerCase() : this[0].tagName.toLowerCase(); }
+$.fn.getType = function () { return this[0].tagName == "INPUT" ? this[0].type.toLowerCase() : this[0].tagName.toLowerCase(); };
 
 var theLoader = function () {
 
-    $.fn.spEnvironment.theLoaderTemplate = $('#the_loader_template').html() ? Handlebars.compile($('#the_loader_template').html()) : function () { console.log('Handlebar Not Present') };
+    $.fn.spEnvironment.theLoaderTemplate = $('#the_loader_template').html() ? Handlebars.compile($('#the_loader_template').html()) : function () { console.log('Handlebar Not Present'); };
 
     var addThis = function (model) {
 
@@ -55,9 +55,9 @@ var theLoader = function () {
 
         addThis(model);
         $('.' + model.id + '').show();
-        $('.' + model.id + '').fadeTo(100, .5, function () {
+        $('.' + model.id + '').fadeTo(100, 0.5, function () {
 
-        })
+        });
     };
 
     var hideThis = function (model) {
@@ -74,13 +74,13 @@ var theLoader = function () {
     var Unfade = function (element) {
         var op = 0.1;
         var timer = setInterval(function () {
-            if (op < .5) {
+            if (op < 0.5) {
                 flag = true;
                 element.css('opacity', op);
                 element.css('filter', 'alpha(opacity=' + op * 100 + ')');
                 op += op * 0.1;
 
-                if (op >= .5) {
+                if (op >= 0.5) {
                     clearInterval(timer);
                 }
             }

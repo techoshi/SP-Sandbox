@@ -259,7 +259,7 @@ iGlobal.ellipse.html = function () {
     if ($('.dataTables_scroll').length > 0) {
         var height = $($('.dataTables_scroll .dataTables_scrollBody table#' + iGlobal.ellipse.ownerId).parent().parent()).css('height');
         var h1 = (height && height.indexOf('px') > -1) ? height.replace('px', '') : height;
-        var h2 = .4 * h1;
+        var h2 = 0.4 * h1;
 
         html += '<div id="' + iGlobal.ellipse.id + '" class="modal-backdrop in" style="display: none; z-index: 999999; position: absolute; bottom: 10px; margin-bottom: 0px; left: 15px; right: 15px;">';
         html += '<div id="circleG" style="margin-top: ' + h2 + 'px">';
@@ -289,7 +289,7 @@ iGlobal.ellipse.show = function (model) {
     }
 
     if ($('#' + iGlobal.ellipse.id).length > 0 && ($('#' + iGlobal.ellipse.id).css('display') == 'none')) {
-        var height = $($('.dataTables_scroll .dataTables_scrollBody table#' + iGlobal.ellipse.ownerId).parent().parent()).css('height').replace('px', '') * .4;
+        var height = $($('.dataTables_scroll .dataTables_scrollBody table#' + iGlobal.ellipse.ownerId).parent().parent()).css('height').replace('px', '') * 0.4;
         $('#' + iGlobal.ellipse.id).css('opacity', 0);
         $('#' + iGlobal.ellipse.id + ' #circleG').css('margin-top', height + 'px');
         $('#' + iGlobal.ellipse.id).show();
@@ -317,14 +317,14 @@ iGlobal.ellipse.unfade = function (element) {
 
     var timer = setInterval(function () {
 
-        if (op < .5) {
+        if (op < 0.5) {
 
             flag = true;
             element.css('opacity', op);
             element.css('filter', 'alpha(opacity=' + op * 100 + ')');
             op += op * 0.1;
 
-            if (op >= .5)
+            if (op >= 0.5)
                 clearInterval(timer);
         }
     }, 100);
@@ -487,25 +487,25 @@ iGlobal.pager.navExtentions = function (model) {
     }
 
     if (model.NavExtension != undefined) {
-        for (var i = 0; i < model.NavExtension.length; i++) {
-            if (model.NavExtension[i].FUNCTION != undefined) {
-                model.NavExtension[i].FUNCTION(iGlobal.pager.id);
+        for (var i2 = 0; i2 < model.NavExtension.length; i2++) {
+            if (model.NavExtension[i2].FUNCTION != undefined) {
+                model.NavExtension[i2].FUNCTION(iGlobal.pager.id);
             }
         }
     }
 
     if (model.NavExtension != undefined) {
-        for (var i = 0; i < model.NavExtension.length; i++) {
-            if (model.NavExtension[i].BIND != undefined) {
-                model.NavExtension[i].BIND(iGlobal.pager.id);
+        for (var i3 = 0; i3 < model.NavExtension.length; i3++) {
+            if (model.NavExtension[i3].BIND != undefined) {
+                model.NavExtension[i3].BIND(iGlobal.pager.id);
             }
         }
     }
 
     if (model.NavExtension != undefined) {
-        for (var i = 0; i < model.NavExtension.length; i++) {
-            if (model.NavExtension[i].CSS != undefined) {
-                model.NavExtension[i].CSS(iGlobal.pager.id);
+        for (var i4 = 0; i4 < model.NavExtension.length; i4++) {
+            if (model.NavExtension[i4].CSS != undefined) {
+                model.NavExtension[i4].CSS(iGlobal.pager.id);
             }
         }
     }

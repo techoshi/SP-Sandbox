@@ -343,7 +343,7 @@ $.fn.spDB = (function () {
 
                 for (var c = 0; c < m.Columns.length; c++) {
                     if (m.availableLists) {
-                        m.Columns[c].availableLists = m.availableLists
+                        m.Columns[c].availableLists = m.availableLists;
                     }
 
                     var thisAddModel = {
@@ -351,7 +351,7 @@ $.fn.spDB = (function () {
                         Title: m.Title,
                         ViewTitle: m.ViewTitle,
                         columnName: m.Columns[c].Title
-                    }
+                    };
 
                     var thisField = AddViewColumn(thisAddModel);
                 }
@@ -385,7 +385,7 @@ $.fn.spDB = (function () {
                 content: 'Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!',
                 type: 'danger'
             }));
-        }
+        };
         $.fn.spAsyncQueue.call(m);
     }
 
@@ -419,7 +419,7 @@ $.fn.spDB = (function () {
                         var listData = a;
 
                         var ListType = m.type;
-                        var listURL = m.url + "/_api/web/lists" + "(guid'" + a.d.Id + "')"
+                        var listURL = m.url + "/_api/web/lists" + "(guid'" + a.d.Id + "')";
                         list[m.Title].Id = a.d.Id;
                         toastr.success(m.type + ' ' + m.Title + ' created!', 'List Created!');
 
@@ -429,19 +429,19 @@ $.fn.spDB = (function () {
                         }));
                         for (var c = 0; c < m.Columns.length; c++) {
                             if (m.availableLists) {
-                                m.Columns[c].availableLists = m.availableLists
+                                m.Columns[c].availableLists = m.availableLists;
                             }
 
                             var thisField = getFieldStruct(m.Columns[c]);
 
-                            thisField.url = listURL + thisField.url
+                            thisField.url = listURL + thisField.url;
                             thisField.originalRequest = originalRequest;
                             createListField(thisField);
                         }
 
                         m.ViewTitle = m.Title + "PrimaryView";
                         m.ViewType = "GRID";
-                        CreateListView(m)
+                        CreateListView(m);
                     },
                     fail: function (response, errorCode, errorMessage) {
                         $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
@@ -463,19 +463,6 @@ $.fn.spDB = (function () {
             }
         }
     }
-    const sleep = (milliseconds) => {
-        return new Promise(resolve => setTimeout(resolve, milliseconds))
-    }
-
-    function waitForQueue() {
-        var loop = 0;
-
-        while ($.fn.spAsyncQueue.queue().length > 0) {
-            sleep(1000).then(() => {
-                console.log('Waiting for Queue');
-            })
-        }
-    }
 
     function ProcessRequest(m) {
         if (m) {
@@ -485,7 +472,7 @@ $.fn.spDB = (function () {
 
             var listReturn = createList(listObject);
 
-            for (list in listReturn) {
+            for (var list in listReturn) {
                 lists[list] = listReturn[list];
             }
 
@@ -538,7 +525,7 @@ $.fn.spDB = (function () {
                 var element = loadObjects[index];
 
                 if (!element.url) {
-                    element.url = _spPageContextInfo.webAbsoluteUrl
+                    element.url = _spPageContextInfo.webAbsoluteUrl;
                 }
             }
 
@@ -551,7 +538,7 @@ $.fn.spDB = (function () {
                 function () {
                     createLists();
                 }, 50);
-            intervalNumbs.push(thisNumb)
+            intervalNumbs.push(thisNumb);
         }
     }
 
@@ -560,29 +547,33 @@ $.fn.spDB = (function () {
         if (typeof m == "object") {
             var headers = {};
             var formObjects = {};
-    
-            formObjects['__metadata'] = {
+
+            formObjects.__metadata = {
                 'type': 'SP.Data.' + m.listName.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
-            }
-    
+            };
+
+            var crudRequestDone = function (a) {
+                toastr.success('Data saved');
+            };
+
+            var crudRequestFail = function (a) {
+                toastr.error('There was an issue saving the data, please refresh the page and try again.');
+            };
+
             if (m.data) {
                 for (var index = 0; index < m.data.length; index++) {
                     var element = m.data[index];
-                    element['__metadata'] = formObjects['__metadata'];
-    
+                    element.__metadata = formObjects.__metadata;
+
                     var crudRequest = {
                         headers: headers,
                         method: 'POST',
                         url: m.path + "/_api/web/lists/GetByTitle('" + m.listName + "')/items",
                         data: JSON.stringify(element),
-                        fail: function (a) {
-                            toastr.error('There was an issue saving the data, please refresh the page and try again.');
-                        },
-                        done: function (a) {
-                            toastr.success('Data saved');
-                        }
-                    }
-    
+                        fail: crudRequestFail,
+                        done: crudRequestDone
+                    };
+
                     $.fn.spCommon.ajax(crudRequest);
                 }
             }
@@ -590,8 +581,7 @@ $.fn.spDB = (function () {
     }
 
     return {
-        loadData: function(m)
-        {
+        loadData: function (m) {
             return loadData(m);
         },
         createApp: function (m) {
@@ -628,5 +618,5 @@ $.fn.spDB = (function () {
                 ]
             });
         }
-    }
+    };
 })();

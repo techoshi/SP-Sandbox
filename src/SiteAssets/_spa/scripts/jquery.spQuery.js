@@ -24,7 +24,7 @@ $.fn.spQuery = (function () {
     }
 
     function registerForms() {
-        alert('Click Saved')
+        alert('Click Saved');
     }
 
     function buildtableColumns(m) {
@@ -36,15 +36,15 @@ $.fn.spQuery = (function () {
                 var columns = m.tableStructure.d;
 
                 var thisAttachment = _.find(columns.results, function (o) {
-                    return o.EntityPropertyName == 'Attachments'
+                    return o.EntityPropertyName == 'Attachments';
                 });
                 if (thisAttachment) {
-                    hasAttachments = true,
+                    hasAttachments = true;
 
-                        temptableColumns.push({
-                            data: thisAttachment.EntityPropertyName,
-                            orderable: true
-                        });
+                    temptableColumns.push({
+                        data: thisAttachment.EntityPropertyName,
+                        orderable: true
+                    });
                     temptableColumnDefs.push({
                         'visible': true,
                         'width': '50px',
@@ -103,12 +103,12 @@ $.fn.spQuery = (function () {
 
         tableObjects[m.tableName] = {
             columns: temptableColumns
-        }
+        };
 
         return {
             Columns: temptableColumns,
             ColumnDefs: temptableColumnDefs
-        }
+        };
     }
 
     function getSelect(m) {
@@ -124,7 +124,7 @@ $.fn.spQuery = (function () {
         var theLookups = _.filter(m, {
             type: "lookup"
         });
-        
+
         var theFilters = _.filter(m, {
             type: "filter"
         });
@@ -146,11 +146,10 @@ $.fn.spQuery = (function () {
         }
 
         if (expandQ) {
-            selectQ = selectQ + "&" + expandQ
+            selectQ = selectQ + "&" + expandQ;
         }
 
-        if(theFilters.length > 0)
-        {
+        if (theFilters.length > 0) {
             selectQ += "&$filter=" + theFilters[0].condition;
         }
 
@@ -162,7 +161,7 @@ $.fn.spQuery = (function () {
         m.itemCall = typeof m.itemCall == "boolean" ? m.itemCall : false;
 
         var thisSelect = "$select=";
-        var thisLookupSelect = ''
+        var thisLookupSelect = '';
         var thisExpand = "&$expand=";
 
         var hasLookup = false;
@@ -172,29 +171,29 @@ $.fn.spQuery = (function () {
         var hasAttachments = false;
 
         //Load Columns
-        var columns = []
+        var columns = [];
         var loadedColumns = 0;
         if (_.find(m.tableStructure.d.results, function (obj) {
-                return excludeTheseTypes.indexOf(obj.TypeAsString) == -1
+                return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
             })) {
             var Lookups = _.filter(m.tableStructure.d.results, function (obj) {
-                return excludeTheseTypes.indexOf(obj.TypeAsString) == -1
+                return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
             });
 
             if (_.find(Lookups, function (o) {
-                    return o.InternalName == 'Attachments'
+                    return o.InternalName == 'Attachments';
                 })) {
-                hasAttachments = true,
-                    columns.push({
-                        type: "lookup",
-                        column: "AttachmentFiles",
-                        expand: "AttachmentFiles"
-                    });
+                hasAttachments = true;
+                columns.push({
+                    type: "lookup",
+                    column: "AttachmentFiles",
+                    expand: "AttachmentFiles"
+                });
             }
 
             for (var i = 0; i < Lookups.length; i++) {
                 var thisLookup = Lookups[i];
-                var prefix = loadedColumns == 0 && !hasAttachments ? '' : ','
+                var prefix = loadedColumns == 0 && !hasAttachments ? '' : ',';
 
                 if (thisLookup.spLoadObject) {
                     columns.push({
@@ -215,13 +214,10 @@ $.fn.spQuery = (function () {
             });
 
             var thisTemplateType = '100';
-            if(m.templateType && m.templateType == '101')
-            {
-                thisTemplateType = '101'
-            }
-            else if(m.tableStructure && m.tableStructure.baseTemplate && m.tableStructure.baseTemplate == '101')
-            {
-                thisTemplateType = '101'
+            if (m.templateType && m.templateType == '101') {
+                thisTemplateType = '101';
+            } else if (m.tableStructure && m.tableStructure.baseTemplate && m.tableStructure.baseTemplate == '101') {
+                thisTemplateType = '101';
             }
 
             if (thisTemplateType == '101') {
@@ -229,9 +225,8 @@ $.fn.spQuery = (function () {
                     type: "column",
                     column: "EncodedAbsUrl"
                 });
-                
-                if(!m.itemCall)
-                {
+
+                if (!m.itemCall) {
                     columns.push({
                         type: "filter",
                         condition: "FSObjType eq 0"
@@ -243,38 +238,38 @@ $.fn.spQuery = (function () {
 
         //Load Lookups
         if (_.find(m.tableStructure.d.results, function (obj) {
-                return excludeTheseTypes.indexOf(obj.TypeAsString) > -1
+                return excludeTheseTypes.indexOf(obj.TypeAsString) > -1;
             })) {
-            var Lookups = _.filter(m.tableStructure.d.results, function (obj) {
-                return excludeTheseTypes.indexOf(obj.TypeAsString) > -1
+            var Lookups2 = _.filter(m.tableStructure.d.results, function (obj) {
+                return excludeTheseTypes.indexOf(obj.TypeAsString) > -1;
             });
 
-            for (var i = 0; i < Lookups.length; i++) {
-                var thisLookup = Lookups[i];
+            for (var i2 = 0; i2 < Lookups2.length; i2++) {
+                var thisLookup2 = Lookups2[i2];
 
-                if (thisLookup.spLoadObject) {
-                    var userTypes = ["UserMulti", "User"]
+                if (thisLookup2.spLoadObject) {
+                    var userTypes = ["UserMulti", "User"];
 
-                    if (userTypes.indexOf(thisLookup.TypeAsString) > -1) {
-                        var lookupColumns = ["Id", "EMail", "FirstName", "LastName", "WorkPhone", "Office", "Department", "JobTitle", "Title", "SipAddress", "Name"]
+                    if (userTypes.indexOf(thisLookup2.TypeAsString) > -1) {
+                        var lookupColumns = ["Id", "EMail", "FirstName", "LastName", "WorkPhone", "Office", "Department", "JobTitle", "Title", "SipAddress", "Name"];
 
                         for (var cols = 0; cols < lookupColumns.length; cols++) {
                             columns.push({
                                 type: "lookup",
-                                column: thisLookup.EntityPropertyName + '/' + lookupColumns[cols],
-                                expand: thisLookup.EntityPropertyName
+                                column: thisLookup2.EntityPropertyName + '/' + lookupColumns[cols],
+                                expand: thisLookup2.EntityPropertyName
                             });
                         }
                     } else {
                         columns.push({
                             type: "lookup",
-                            column: thisLookup.EntityPropertyName + '/Id',
-                            expand: thisLookup.EntityPropertyName
+                            column: thisLookup2.EntityPropertyName + '/Id',
+                            expand: thisLookup2.EntityPropertyName
                         });
                         columns.push({
                             type: "lookup",
-                            column: thisLookup.EntityPropertyName + '/' + thisLookup.LookupField,
-                            expand: thisLookup.EntityPropertyName
+                            column: thisLookup2.EntityPropertyName + '/' + thisLookup2.LookupField,
+                            expand: thisLookup2.EntityPropertyName
                         });
                     }
                 }
@@ -291,9 +286,9 @@ $.fn.spQuery = (function () {
         if (m.orderStruct && m.orderStruct.thisOrder && m.orderStruct.theseColumns) {
             for (var c = 0; c < m.orderStruct.thisOrder.length; c++) {
                 var thisOrder = m.orderStruct.thisOrder[c];
-                var prefix = c == 0 ? '' : ','
+                var prefix = c == 0 ? '' : ',';
 
-                orderby += prefix + m.orderStruct.theseColumns[thisOrder.column].data + ' ' + thisOrder.dir
+                orderby += prefix + m.orderStruct.theseColumns[thisOrder.column].data + ' ' + thisOrder.dir;
             }
         } else {
             orderby = tableObjects[m.tableName].columns[0].data + ' asc';
@@ -318,7 +313,7 @@ $.fn.spQuery = (function () {
                     tables[m.tableName].originalCaller.list.d &&
                     m.data.start > 0 &&
                     tables[m.tableName].originalCaller.list.d.results.length >= m.data.start - 1) {
-                    skipID = tables[m.tableName].originalCaller.list.d.results[m.data.start - 1].ID
+                    skipID = tables[m.tableName].originalCaller.list.d.results[m.data.start - 1].ID;
                 }
 
                 //var rowFetch = (tables[m.tableName].originalCaller.list.d.results.length - m.data.start) < m.data.length ? (tables[m.tableName].originalCaller.list.d.results.length - m.data.start) : m.data.length;
@@ -343,7 +338,7 @@ $.fn.spQuery = (function () {
             thisTableMeta.orderStruct = {
                 thisOrder: thisOrder,
                 theseColumns: tableObjects[thisTable].columns
-            }
+            };
             thisTableMeta.data = data;
             thisTableMeta.search = $('#' + thisTable + '_filter input[type="search"]').val();
 
@@ -356,7 +351,7 @@ $.fn.spQuery = (function () {
             if (data.start == 0) {
                 tables[thisTable].ajax.url(newRestQ);
             } else {
-                tables[thisTable].ajax.url(getRestCount(thisTableMeta))
+                tables[thisTable].ajax.url(getRestCount(thisTableMeta));
             }
         }
 
@@ -389,7 +384,7 @@ $.fn.spQuery = (function () {
             json.recordsTotal = 0;
             json.recordsFiltered = 0;
 
-            return json
+            return json;
         }
 
         if (ServerCall) {
@@ -398,7 +393,7 @@ $.fn.spQuery = (function () {
             for (var d = 0; d < json.value.length; d++) {
                 var d2 = json.value[d];
 
-                for (o in d2) {
+                for (var o in d2) {
                     if (o.includes('@odata.navigationLinkUrl')) {
                         var scanThisName = o.replace('@odata.navigationLinkUrl', '');
                         if (d2[scanThisName] == undefined) {
@@ -413,9 +408,9 @@ $.fn.spQuery = (function () {
 
                             d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content.length + '" data-typeof="Array">' + JSON.stringify(d2[o]) + '</span><span class="lync-presence"></span>';
                         } else {
-                            var content = JSON.stringify(d2[o]);
+                            var content2 = JSON.stringify(d2[o]);
 
-                            d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content.length + '" data-typeof="Object">' + content + '</span><span class="lync-presence"></span>'
+                            d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content2.length + '" data-typeof="Object">' + content2 + '</span><span class="lync-presence"></span>';
                         }
                     } else if (d2[o] == undefined) {
                         d2[o] = '';
@@ -444,7 +439,7 @@ $.fn.spQuery = (function () {
             json.recordsTotal = json.value.length; // ListCount.d.ItemCount;
             json.recordsFiltered = json.value.length;
 
-            json.fullData = json.value
+            json.fullData = json.value;
             var tempData = returnPagedData({
                 meta: tables[thisTable].originalCaller.xhrReq,
                 data: json.fullData,
@@ -459,15 +454,15 @@ $.fn.spQuery = (function () {
             delete json.value;
         } else {
             json.fullData = mGlobal[xtra.path][xtra.tableName].currentJsonData.fullData;
-            var tempData = returnPagedData({
+            var tempData2 = returnPagedData({
                 meta: {},
                 data: mGlobal[xtra.path][xtra.tableName].currentJsonData.fullData,
                 start: tables[xtra.tableName].originalCaller.xhrReq.start,
                 length: tables[xtra.tableName].originalCaller.xhrReq.length
             });
-            json.data = tempData.data;
-            json.recordsTotal = tempData.recordsTotal;
-            json.recordsFiltered = tempData.recordsFiltered;
+            json.data = tempData2.data;
+            json.recordsTotal = tempData2.recordsTotal;
+            json.recordsFiltered = tempData2.recordsFiltered;
             json.spData = mGlobal[xtra.path][xtra.tableName].currentJsonData.spData;
         }
 
@@ -476,7 +471,7 @@ $.fn.spQuery = (function () {
 
         }
 
-        return json
+        return json;
     }
 
     function returnPagedData(m) {
@@ -485,7 +480,7 @@ $.fn.spQuery = (function () {
         var startRow = m.start > 0 ? m.start : 0;
         var endRow = startRow + m.length;
 
-        endRow = endRow > data.length ? data.length : endRow
+        endRow = endRow > data.length ? data.length : endRow;
 
         //pagedArray = data.splice(startRow, endRow);
         var recordsFiltered = data.length;
@@ -498,18 +493,18 @@ $.fn.spQuery = (function () {
             });
 
             var searchData = _.filter(searchStageData, function (o) {
-                return eval(conditionSyntax)
-            })
+                return eval(conditionSyntax);
+            });
 
-            var endRowLength = searchData.length <= endRow ? searchData.length : endRow
+            var endRowLength = searchData.length <= endRow ? searchData.length : endRow;
             for (var r = startRow; r < endRowLength; r++) {
                 pagedArray.push(searchData[r]);
             }
 
-            recordsFiltered = searchData.length
+            recordsFiltered = searchData.length;
         } else {
-            for (var r = startRow; r < endRow; r++) {
-                pagedArray.push(data[r]);
+            for (var r2 = startRow; r2 < endRow; r2++) {
+                pagedArray.push(data[r2]);
             }
         }
 
@@ -533,9 +528,9 @@ $.fn.spQuery = (function () {
 
         for (var thisRow = 0; thisRow < thisData.length; thisRow++) {
             $('#' + m.tableID + ' tbody tr:eq(' + thisRow + ')').attr({
-                'id': thisData[thisRow]['GUID'],
-                'p_id': thisData[thisRow]['ID']
-            })
+                'id': thisData[thisRow].GUID,
+                'p_id': thisData[thisRow].ID
+            });
         }
 
         if (tables[m.tableName] && tables[m.tableName].lastRow != undefined && tables[m.tableName].lastRow && tables[m.tableName].lastRow.id && $('#' + tables[m.tableName].lastRow.id + ':visible').length) {
@@ -553,8 +548,7 @@ $.fn.spQuery = (function () {
         }, 300);
 
         var rootObject = $.fn.spCRUD.data();
-        if(rootObject.lastSave && rootObject.lastSave.action == "save")
-        {
+        if (rootObject.lastSave && rootObject.lastSave.action == "save") {
             $.fn.spCRUD.reloadEditForm();
         }
     }
@@ -618,7 +612,6 @@ $.fn.spQuery = (function () {
                     "columns": ColumnsModel.Columns,
                     "columnDefs": ColumnsModel.ColumnDefs,
                     "searching": true,
-                    "processing": false,
                     "searchDelay": 2000,
                     "scroller": true,
                     "fnInitComplete": function () {
@@ -630,7 +623,7 @@ $.fn.spQuery = (function () {
                             _.debounce(function () {
                                 var thisObjectData = $(this).data();
                                 if (thisObjectData && thisObjectData.owner && tables && tables[thisObjectData.owner]) {
-                                    tables[m.tableName].search($(this).val()).draw()
+                                    tables[m.tableName].search($(this).val()).draw();
                                 }
                             }, 1000));
 
@@ -651,15 +644,15 @@ $.fn.spQuery = (function () {
                             $('#' + m.tableName + ' tbody tr').each(function (tr, trElement) {
                                 var columnName = thisElementData.name.replace(new RegExp(" ", "g"), "_");
 
-                                $(trElement).find('td:eq(' + th + ')').addClass('css_dt_' + m.tableName + ' css_' + columnName)
-                                for (prop in thisElementData) {
+                                $(trElement).find('td:eq(' + th + ')').addClass('css_dt_' + m.tableName + ' css_' + columnName);
+                                for (var prop in thisElementData) {
                                     $(trElement).find('td:eq(' + th + ')').attr('data-' + prop, thisElementData[prop]);
                                 }
                             });
                         });
 
                         if (m.tableStructure && m.tableStructure.table && m.tableStructure.table.css) {
-                            $('.css_dt_' + m.tableName).css(m.tableStructure.table.css)
+                            $('.css_dt_' + m.tableName).css(m.tableStructure.table.css);
                         }
 
                         if (m.tableStructure && m.tableStructure.table && m.tableStructure.table.columns && IsArray(m.tableStructure.table.columns)) {
@@ -679,7 +672,7 @@ $.fn.spQuery = (function () {
                         $('#' + m.tableName + ' .hide-json[data-type="JSON"][data-typeof="Object"]').each(function (objectIndex, objectElement) {
                             var thisJSONstring = $(objectElement).html();
 
-                            var thisJSON = JSON.parse(thisJSONstring)
+                            var thisJSON = JSON.parse(thisJSONstring);
                             if (thisJSON['odata.type']) {
                                 if (thisJSON['odata.type'] == "SP.Data.UserInfoItem") {
                                     if (thisJSON.SipAddress) {
@@ -733,7 +726,7 @@ $.fn.spQuery = (function () {
                                 if (thisJSONObject) {
                                     var excludeThese = ['odata.type', 'odata.id', 'Id'];
                                     var preferredObjectName = '';
-                                    for (iObject in thisJSONObject) {
+                                    for (var iObject in thisJSONObject) {
                                         if (excludeThese.indexOf(iObject) == -1) {
                                             preferredObjectName = iObject;
                                         }
@@ -778,7 +771,7 @@ $.fn.spQuery = (function () {
         }
     }
 
-    var temp = []
+    var temp = [];
 
     return {
         genTable: function (m) {
@@ -788,12 +781,12 @@ $.fn.spQuery = (function () {
             return tableObjects;
         },
         nav: function (m) {
-            nav = m
+            nav = m;
         },
         getItemQuery: function (m) {
             var struct = getSelectStruct(m);
 
             return getSelect(struct);
         }
-    }
+    };
 })();

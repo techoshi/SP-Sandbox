@@ -16,7 +16,7 @@ function getStatusData() {
                 "Status": "Denied",
             }
         ]
-    }
+    };
 }
 
 function getRoles() {
@@ -77,7 +77,7 @@ function getRoles() {
                 "RoleType": "BP Director",
             }
         ]
-    }
+    };
 }
 
 function getPriorities() {
@@ -98,7 +98,7 @@ function getPriorities() {
                 "Priority": "Low",
             }
         ]
-    }
+    };
 }
 
 function getSources() {
@@ -123,7 +123,7 @@ function getSources() {
                 "Source": "Other",
             }
         ]
-    }
+    };
 }
 
 function getMarkings() {
@@ -149,7 +149,7 @@ function getMarkings() {
                 "Marking": "Official - Transitory",
             }
         ]
-    }
+    };
 }
 
 function loadAppData()

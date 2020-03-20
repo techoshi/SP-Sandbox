@@ -8,10 +8,10 @@ $.fn.spCRUD = (function () {
 
     var thisApp = {
         objects: {},
-        lastSave : { 
-            mainSaveData : {},
-            action : "",
-            owner : "",
+        lastSave: {
+            mainSaveData: {},
+            action: "",
+            owner: "",
             templateType: 0
         }
     };
@@ -19,10 +19,10 @@ $.fn.spCRUD = (function () {
     var lookupDataPoints = {};
 
     var settings = {
-        hasConfig : false,
-        loadConfigs : false,
-        hashidden : false
-    }
+        hasConfig: false,
+        loadConfigs: false,
+        hashidden: false
+    };
 
     function loadConfigsLists() {
         settings.loadConfigs = true;
@@ -69,7 +69,7 @@ $.fn.spCRUD = (function () {
         $.fn.spCommon.getUserPermissions({
             urls: _.uniq(_.map(theseLists, 'path')),
             accountName: _spPageContextInfo.userLoginName
-        })
+        });
 
         var waitForPermissions = setInterval(function () {
             if (theseLists && spPermissions.loaded) {
@@ -119,7 +119,7 @@ $.fn.spCRUD = (function () {
             always: function (a) {
 
             }
-        }
+        };
 
         $.fn.spCommon.ajax(thisAjax);
     }
@@ -130,18 +130,20 @@ $.fn.spCRUD = (function () {
             source: m.thisVar,
             meta: m,
             afterCompletion: function () {
-                getListLookups(m)
+                getListLookups(m);
             }
-        })
+        });
     }
 
     function updateLookups(m) {
         if (lookupDataPoints) {
-            for (owner in lookupDataPoints) {
+            var filterThisCaller = function (r) {
+                return r.name.toLowerCase() == owner;
+            };
+
+            for (var owner in lookupDataPoints) {
                 var thisLookup = lookupDataPoints[owner];
-                var thisCaller = _.filter(theseLists, function (r) {
-                    return r.name.toLowerCase() == owner
-                });
+                var thisCaller = _.filter(theseLists, filterThisCaller);
                 var relationships = thisCaller[0].relationships;
 
 
@@ -154,7 +156,7 @@ $.fn.spCRUD = (function () {
                         if (relationships && thisField) {
                             lookupField = thisField.lookupField;
                         } else {
-                            lookupField = thisLookup[m.id].owner
+                            lookupField = thisLookup[m.id].owner;
                         }
 
                         /*lookupDataPoints[owner][m.id].response.d.results = mGlobal.page[m.owner].currentJsonData.fullData;		            		
@@ -173,7 +175,7 @@ $.fn.spCRUD = (function () {
 
     function getListLookups(m) {
         var thisSPListLookups = _.filter($.fn.spCRUD.data().objects[m.source].d.results, function (o) {
-            return o.TypeAsString == "Lookup"
+            return o.TypeAsString == "Lookup";
         });
 
         for (var iLookUp = 0; iLookUp < thisSPListLookups.length; iLookUp++) {
@@ -200,6 +202,31 @@ $.fn.spCRUD = (function () {
     function reloadLookupData(m) {
         var thisLookupContainer = lookupDataPoints[m.owner];
 
+        var reloadLookupDataDone = function (a) {
+
+            if (lookupDataPoints[m.owner] == undefined) {
+                lookupDataPoints[m.owner] = {
+                    lists: []
+                };
+            }
+
+            if (lookupDataPoints[m.owner] != undefined && lookupDataPoints[m.owner][m.listGuid] == undefined) {
+                lookupDataPoints[m.owner][element.guid].response = a;
+
+            }
+
+            loadTheLookupData({
+                m: {
+                    parentObject: m,
+                    listGuid: element.guid,
+                    object: {
+                        LookupField: element.owner
+                    }
+                },
+                a: a
+            });
+        };
+
         if (thisLookupContainer && thisLookupContainer.lists && thisLookupContainer.lists.length > 0) {
             for (var currentListIndex = 0; currentListIndex < thisLookupContainer.lists.length; currentListIndex++) {
                 var element = thisLookupContainer.lists[currentListIndex];
@@ -209,30 +236,7 @@ $.fn.spCRUD = (function () {
                     method: 'GET',
                     async: false,
                     url: m.path + "/_api/web/lists(guid'" + element.guid + "')/items",
-                    done: function (a) {
-
-                        if (lookupDataPoints[m.owner] == undefined) {
-                            lookupDataPoints[m.owner] = {
-                                lists: []
-                            };
-                        }
-
-                        if (lookupDataPoints[m.owner] != undefined && lookupDataPoints[m.owner][m.listGuid] == undefined) {
-                            lookupDataPoints[m.owner][element.guid].response = a
-
-                        }
-
-                        loadTheLookupData({
-                            m: {
-                                parentObject: m,
-                                listGuid: element.guid,
-                                object: {
-                                    LookupField: element.owner
-                                }
-                            },
-                            a: a
-                        });
-                    }
+                    done: reloadLookupDataDone
                 });
             }
         }
@@ -263,15 +267,15 @@ $.fn.spCRUD = (function () {
                         };
                     }
 
-                    var override = undefined;
+                    var override;
 
                     if (m.parentObject && m.parentObject.relationships) {
                         override = _.find(m.parentObject.relationships, function (o) {
-                            return o.child == m.object.Title
+                            return o.child == m.object.Title;
                         });
                     }
 
-                    var Title = override ? override.lookupField : m.object.Title
+                    var Title = override ? override.lookupField : m.object.Title;
 
                     if (lookupDataPoints[m.parentObject.owner] != undefined && lookupDataPoints[m.parentObject.owner][m.listGuid] == undefined) {
                         lookupDataPoints[m.parentObject.owner][m.listGuid] = {
@@ -283,7 +287,7 @@ $.fn.spCRUD = (function () {
                     }
 
                     if (_.filter(lookupDataPoints[m.parentObject.owner].lists, function (o) {
-                            return o == m.listGuid
+                            return o == m.listGuid;
                         }).length == 0) {
                         lookupDataPoints[m.parentObject.owner].lists.push({
                             guid: m.listGuid,
@@ -331,7 +335,7 @@ $.fn.spCRUD = (function () {
             }
 
             var thisTempFileObject = {};
-            for (ii in sfm.files[i]) {
+            for (var ii in sfm.files[i]) {
                 thisTempFileObject[ii] = sfm.files[i][ii];
             }
             thisTempFileObject[ii] = typeof sfm.files[i].ServerRelativeUrl == "boolean" ? sfm.files[i].ServerRelativeUrl : false;
@@ -377,7 +381,7 @@ $.fn.spCRUD = (function () {
             } else {
                 return true;
             }
-        }
+        };
 
         var checkFileSize = function (m) {
             if (m.sizeLimit > -1) {
@@ -393,7 +397,7 @@ $.fn.spCRUD = (function () {
             } else {
                 return true;
             }
-        }
+        };
 
         if (isAdvancedUpload) {
 
@@ -468,7 +472,7 @@ $.fn.spCRUD = (function () {
                     files: droppedFiles
                 });
             }
-        }
+        };
 
         //$form.each(function(i, element){ 
         //	$('#' + $form[i].id ).find('input[type="file"]') .on('change', fileObjectChanged)
@@ -493,9 +497,10 @@ $.fn.spCRUD = (function () {
         //Plug here
         $('#sp-app-contents').append(tabContent);
 
+        var thisDefaultLink = "javascript:void(0)";
         var actionItems = $.fn.spEnvironment.anchorList({
             actions: [{
-                    href: 'javascript:void(0);',
+                    href: thisDefaultLink,
                     id: 'create-item-' + m.source.toLowerCase(),
                     title: 'Create',
                     i: '<i class="fa fa-plus"></i>',
@@ -503,7 +508,7 @@ $.fn.spCRUD = (function () {
                     classes: 'launch-action'
                 },
                 {
-                    href: 'javascript:void(0);',
+                    href: thisDefaultLink,
                     id: 'view-item-' + m.source.toLowerCase(),
                     title: 'View',
                     i: '<i class="fa fa-file-text-o"></i>',
@@ -511,7 +516,7 @@ $.fn.spCRUD = (function () {
                     classes: 'launch-action'
                 },
                 {
-                    href: 'javascript:void(0);',
+                    href: thisDefaultLink,
                     id: 'edit-item-' + m.source.toLowerCase(),
                     title: 'Edit',
                     i: '<i class="fa fa-edit"></i>',
@@ -519,7 +524,7 @@ $.fn.spCRUD = (function () {
                     classes: 'launch-action'
                 },
                 {
-                    href: 'javascript:void(0);',
+                    href: thisDefaultLink,
                     id: 'delete-item-' + m.source.toLowerCase(),
                     title: 'Delete',
                     i: '<i class="fa fa-trash"></i>',
@@ -531,7 +536,7 @@ $.fn.spCRUD = (function () {
 
         var miscItems = $.fn.spEnvironment.anchorList({
             actions: [{
-                href: 'javascript:void(0);',
+                href: thisDefaultLink,
                 id: 'config-item-' + m.source.toLowerCase(),
                 title: 'Edit Lookup Values',
                 i: '<i class="fa fa-cog"></i>',
@@ -584,7 +589,7 @@ $.fn.spCRUD = (function () {
                 id: "load-grid "
             });
             if ($('#lf-grid-' + linkData.owner + ' .iframeContainer iframe').length == 0) {
-                var pathRoute = thisApp.objects[m.source.toLowerCase()].baseTemplate == '101' ? "/" + linkData.owner + "/Forms" : "/" + "Lists" + "/" + linkData.owner
+                var pathRoute = thisApp.objects[m.source.toLowerCase()].baseTemplate == '101' ? "/" + linkData.owner + "/Forms" : "/" + "Lists" + "/" + linkData.owner;
 
                 var thisListPath = thisApp.objects[m.source.toLowerCase()].path + pathRoute + "/" + linkData.owner + "PrimaryView.aspx";
                 $('#lf-grid-' + linkData.owner + ' .iframeContainer').append('<iframe id="lf-iframe-{{name}}" src="' + thisListPath + '" width="600" height="650" frameborder="0" style="border:0; border: 0px; width: 100%; min-width: 1500px; height: 600px;" allowfullscreen></iframe>');
@@ -595,7 +600,7 @@ $.fn.spCRUD = (function () {
                 $("iframe:visible").width(width);
                 theLoader.hide({
                     id: "load-grid "
-                })
+                });
             }, 1000);
 
         }
@@ -608,7 +613,7 @@ $.fn.spCRUD = (function () {
 
             setTimeout(function () {
                 var activeChild = $('.nav-link.datatable-link[data-owner="' + linkData.owner + '"].active');
-                if ($(activeChild).is(':visible')) {                    
+                if ($(activeChild).is(':visible')) {
                     $(activeChild).trigger('click');
                 }
             }, 100);
@@ -638,8 +643,8 @@ $.fn.spCRUD = (function () {
 
         //thisApp.objects[m.source.toLowerCase()].thisContent = $.fn.dosEnvironment.hbTemplates(thisApp.objects[m.source.toLowerCase()]);
 
-        $('#spTable-wrap-' + m.source.toLowerCase()).html($.fn.spEnvironment.spTableTemplate(m.meta))
-        $('#lf-tree-' + m.source.toLowerCase()).html($.fn.spEnvironment.spJsTreeTemplate(m.meta))
+        $('#spTable-wrap-' + m.source.toLowerCase()).html($.fn.spEnvironment.spTableTemplate(m.meta));
+        $('#lf-tree-' + m.source.toLowerCase()).html($.fn.spEnvironment.spJsTreeTemplate(m.meta));
 
         thisApp.objects[m.source.toLowerCase()].baseTemplate = baseTemplate;
         $('#nav-tab-' + m.source.toLowerCase()).data(thisApp.objects[m.source.toLowerCase()]);
@@ -676,16 +681,18 @@ $.fn.spCRUD = (function () {
         }
 
         var LookupColumns = _.filter(thisApp.objects[m.source].d.results, function (o) {
-            return o.TypeAsString == "Lookup"
+            return o.TypeAsString == "Lookup";
         });
+
+        var findLookup = function (o) {
+            return o.InternalName == thisLookup.InternalName;
+        };
 
         if (LookupColumns) {
             for (var lc = 0; lc < LookupColumns.length; lc++) {
                 var thisLookup = LookupColumns[lc];
 
-                var foundLookup = _.find(thisApp.objects[m.source].d.results, function (o) {
-                    return o.InternalName == thisLookup.InternalName
-                });
+                var foundLookup = _.find(thisApp.objects[m.source].d.results, findLookup);
 
                 if (foundLookup) {
                     foundLookup.LookupData = {};
@@ -706,24 +713,30 @@ $.fn.spCRUD = (function () {
 
 
         thisApp.objects[m.source.toLowerCase()].formType = m.action;
+        var mainFormContent;
         if (m.action != "delete") {
-            var mainFormContent = $.fn.spEnvironment.baseForm(thisApp.objects[m.source]);
+            mainFormContent = $.fn.spEnvironment.baseForm(thisApp.objects[m.source]);
             var thisChildObject;
-            var thisChildHtml = ""
+            var thisChildHtml = "";
             var hasChild = false;
-            if(thisApp.objects[m.source].children && m.action == "edit")
-            {
+            if (thisApp.objects[m.source].children && m.action == "edit") {
                 hasChild = true;
-                thisChildObject = JSON.parse(JSON.stringify(thisApp.objects[thisApp.objects[m.source].children.listName.toLowerCase()]));  
-                thisChildObject.d.results = _.filter(thisChildObject.d.results, function(o){ return o.StaticName != "Attachments" });
-                thisChildHtml = $.fn.spEnvironment.baseForm(thisChildObject);
-                
-                if(hasChild)
-                {
-                    thisApp.objects[m.source].childFormHTML = thisChildHtml;
-                    mainFormContent += thisChildHtml;
+
+                if (hasChild) {
+                    if (thisApp.objects[m.source].children.html == undefined) {
+                        thisChildObject = JSON.parse(JSON.stringify(thisApp.objects[thisApp.objects[m.source].children.listName.toLowerCase()]));
+                        thisApp.objects[m.source].children.d = {};
+                        thisApp.objects[m.source].children.d.results = _.filter(thisChildObject.d.results, function (o) {
+                            return o.StaticName != "Attachments";
+                        });
+                        thisApp.objects[m.source].children.d.results = _.filter(thisApp.objects[m.source].children.d.results, function (o) {
+                            return thisApp.objects[m.source].children.columns.hidden.indexOf(o.StaticName) == -1;
+                        });
+                        thisApp.objects[m.source].children.html = $.fn.spEnvironment.baseForm(thisApp.objects[m.source].children);
+                    }
+                    mainFormContent += '<div class="child-repeat-wrapper"><hr/>' + thisApp.objects[m.source].children.html + '</div>';
                 }
-            }            
+            }
 
             crudModal += $.fn.spEnvironment.baseModal({
                 id: m.action + '-' + m.source,
@@ -734,7 +747,7 @@ $.fn.spCRUD = (function () {
                 content: mainFormContent
             });
         } else {
-            var mainFormContent = $.fn.spEnvironment.deleteItem(thisApp.objects[m.source]);            
+            mainFormContent = $.fn.spEnvironment.deleteItem(thisApp.objects[m.source]);
 
             crudModal += $.fn.spEnvironment.baseModal({
                 id: m.action + '-' + m.source,
@@ -777,7 +790,7 @@ $.fn.spCRUD = (function () {
                     var thisData = theChildList.response.d.results;
 
                     var matchedOptions = _.filter(thisData, function (o) {
-                        return o[LookupData.name] == currentValue
+                        return o[LookupData.name] == currentValue;
                     });
 
                     for (var thisLookupData = 0; thisLookupData < matchedOptions.length; thisLookupData++) {
@@ -791,14 +804,14 @@ $.fn.spCRUD = (function () {
                         LookupData: LookupData
                     });
 
-                    $('[name="' + LookupData.owner + '.' + LookupData.child + '"]').html(optionsHtml)
+                    $('[name="' + LookupData.owner + '.' + LookupData.child + '"]').html(optionsHtml);
                     $('[name="' + LookupData.owner + '.' + LookupData.child + '"]').trigger('change');
                 }
             }
         }
 
 
-        loadFormData(m)
+        loadFormData(m);
 
         var thisMo = m.action;
         $('#modal-' + thisMo + '-' + m.source + ' .form-container button').prependTo('#modal-' + thisMo + '-' + m.source + ' .modal-footer');
@@ -843,13 +856,12 @@ $.fn.spCRUD = (function () {
         $('#modal-' + thisMo + '-' + m.source + ' [data-toggle="popover"]').popover();
     }
 
-    function modalLoader(m)
-    {
+    function modalLoader(m) {
         var action = m.action;
         var owner = m.owner.toLowerCase();
 
         var thisCaller = _.filter(theseLists, function (r) {
-            return r.name.toLowerCase() == owner
+            return r.name.toLowerCase() == owner;
         });
 
         if (thisCaller) {
@@ -864,12 +876,10 @@ $.fn.spCRUD = (function () {
 
             thisCaller[0].action = action;
             thisCaller[0].owner = owner;
-            if(typeof m.dataPresent == "boolean" && m.dataPresent){
+            if (typeof m.dataPresent == "boolean" && m.dataPresent) {
                 thisCaller[0].dataPresent = m.dataPresent;
                 thisCaller[0].actionData = m.actionData;
-            }
-            else
-            {
+            } else {
                 thisCaller[0].dataPresent = false;
             }
             reloadLookupData(thisCaller[0]);
@@ -879,35 +889,35 @@ $.fn.spCRUD = (function () {
 
     function modalBinds() {
         var thisData = $(this).data();
-        
+
         modalLoader(thisData);
     }
 
 
-    function reloadEditForm()
-    {
-        if($.fn.spCRUD.data().lastSave.action == "save")
-        {
+    function reloadEditForm() {
+        var foundRow = [];
+
+        if ($.fn.spCRUD.data().lastSave.action == "save") {
             var allAvailableData = mGlobal.page[$.fn.spCRUD.data().lastSave.owner].currentJsonData.fullData;
 
-            var foundRow = [];
-            if($.fn.spCRUD.data().lastSave.templateType == '100')
-            {
-                foundRow =  _.filter(allAvailableData, function(f){ return f.ID == $.fn.spCRUD.data().lastSave.mainSaveData.ID}); 
-            }
-            else if ($.fn.spCRUD.data().lastSave.templateType == '101')
-            {
-                foundRow =  _.filter(allAvailableData, function(f){ return f.FileLeafRef == $.fn.spCRUD.data().lastSave.mainSaveData.Name}); 
+
+            if ($.fn.spCRUD.data().lastSave.templateType == '100') {
+                foundRow = _.filter(allAvailableData, function (f) {
+                    return f.ID == $.fn.spCRUD.data().lastSave.mainSaveData.ID;
+                });
+            } else if ($.fn.spCRUD.data().lastSave.templateType == '101') {
+                foundRow = _.filter(allAvailableData, function (f) {
+                    return f.FileLeafRef == $.fn.spCRUD.data().lastSave.mainSaveData.Name;
+                });
             }
         }
 
         var thisData = {
-            owner : $.fn.spCRUD.data().lastSave.owner,
-            action : "edit"
+            owner: $.fn.spCRUD.data().lastSave.owner,
+            action: "edit"
         };
 
-        if(foundRow.length > 0)
-        {
+        if (foundRow.length > 0) {
             thisData.dataPresent = true;
             thisData.actionData = foundRow[0];
         }
@@ -920,12 +930,11 @@ $.fn.spCRUD = (function () {
 
         var selectedRow = $('#' + owner + ' tbody tr.selected').index();
 
-        var actionURL = '';
+        var actionURL = "";
         var actionData = {};
-        var itemURL = ''
+        var itemURL = "";
 
-        if(m.dataPresent == false)
-        {
+        if (m.dataPresent == false) {
             if (action != 'create' && (selectedRow == -1)) {
                 toastr.error('Please select a row to ' + action + '.', 'No row selected!');
                 return -1;
@@ -944,7 +953,7 @@ $.fn.spCRUD = (function () {
             case 'view':
             case 'edit':
 
-                actionData = m.dataPresent ? m.actionData :tables[owner].ajax.json().data[selectedRow];
+                actionData = m.dataPresent ? m.actionData : tables[owner].ajax.json().data[selectedRow];
                 itemURL = actionData['odata.editLink'];
 
                 actionURL = actionData['odata.editLink'];
@@ -957,7 +966,7 @@ $.fn.spCRUD = (function () {
                         tableStructure: thisApp.objects[owner],
                         templateType: templateType,
                         itemCall: true
-                    })
+                    });
                 } else {
                     actionURL += '?' + $.fn.spQuery.getItemQuery({
                         tableName: owner,
@@ -965,7 +974,7 @@ $.fn.spCRUD = (function () {
                         tableSelector: '#' + owner,
                         tableStructure: thisApp.objects[owner],
                         templateType: '100'
-                    })
+                    });
                 }
 
                 var getDataForType = ['view', 'edit'];
@@ -997,27 +1006,27 @@ $.fn.spCRUD = (function () {
                                                     var theData = $(dElement).data();
                                                     var whichWay = theData.selectname ? theData.selectname : theData.name;
                                                     if ($(dElement).hasClass('sp-lookup')) {
-                                                        var thisSelectData = returnedData[$(dElement).data('selectname')];
-                                                        if (thisSelectData) {
-                                                            $(dElement).val(thisSelectData.Id);
+                                                        var thisSelectData1 = returnedData[$(dElement).data('selectname')];
+                                                        if (thisSelectData1) {
+                                                            $(dElement).val(thisSelectData1.Id);
                                                         }
                                                     } else {
                                                         //Choice
-                                                        var thisSelectData = returnedData[$(dElement).data('entity')];
+                                                        var thisSelectData2 = returnedData[$(dElement).data('entity')];
 
-                                                        var tempChoiceVal = $(dElement).find('[value="' + thisSelectData + '"]');
+                                                        var tempChoiceVal = $(dElement).find('[value="' + thisSelectData2 + '"]');
 
                                                         if (tempChoiceVal.length > 0) {
-                                                            $(dElement).val(thisSelectData);
+                                                            $(dElement).val(thisSelectData2);
                                                         } else {
 
                                                             addValue2Select({
                                                                 value: {
-                                                                    id: thisSelectData,
-                                                                    text: thisSelectData
+                                                                    id: thisSelectData2,
+                                                                    text: thisSelectData2
                                                                 },
                                                                 selector: $(dElement)
-                                                            })
+                                                            });
                                                         }
                                                     }
 
@@ -1055,11 +1064,11 @@ $.fn.spCRUD = (function () {
                                                     var calendarDate = returnedData[$(dElement).data('entity')];
 
                                                     if (calendarDate) {
-                                                        calendarDate = moment(calendarDate).format('MM/DD/YYYY')
+                                                        calendarDate = moment(calendarDate).format('MM/DD/YYYY');
                                                     }
                                                     $(dElement).val(calendarDate);
                                                 } else if ($(dElement).data('entity') == "Attachments" || $(dElement).data('entity') == "FileLeafRef") {
-                                                    var attachValue = returnedData[$(dElement).data('entity')]
+                                                    var attachValue = returnedData[$(dElement).data('entity')];
 
                                                     if (attachValue == false) {
                                                         $(dElement).val('');
@@ -1072,7 +1081,7 @@ $.fn.spCRUD = (function () {
                                                 break;
                                         }
                                     } else {
-                                        $(dElement).data('prepopulate', returnedData[$(dElement).data('entity')])
+                                        $(dElement).data('prepopulate', returnedData[$(dElement).data('entity')]);
                                     }
                                 }
                             });
@@ -1105,13 +1114,13 @@ $.fn.spCRUD = (function () {
                                     files: attachments,
                                     parentObject: m
                                 });
-                                $('.Delete-Attachment-File').unbind('click', deleteItemAttachmentPrompt)
-                                $('.Delete-Attachment-File').bind('click', deleteItemAttachmentPrompt)
+                                $('.Delete-Attachment-File').unbind('click', deleteItemAttachmentPrompt);
+                                $('.Delete-Attachment-File').bind('click', deleteItemAttachmentPrompt);
                             } else {
                                 var relativeFilePath = $.fn.spCommon.getRelativeURL({
                                     url: returnedData.EncodedAbsUrl
                                 });
-                                var attachments = [{
+                                var attachments2 = [{
                                     FileName: returnedData.FileLeafRef,
                                     ServerRelativeUrl: relativeFilePath,
                                     parentObject: m
@@ -1119,7 +1128,7 @@ $.fn.spCRUD = (function () {
                                 $('#form-' + action + '-' + owner).data('FileLeafRef', relativeFilePath);
                                 showFiles({
                                     box: action + '-' + owner + '-' + 'attachments',
-                                    files: attachments,
+                                    files: attachments2,
                                     parentObject: m
                                 });
                             }
@@ -1141,7 +1150,7 @@ $.fn.spCRUD = (function () {
                 actionData = tables[owner].ajax.json().data[selectedRow];
                 actionURL = actionData['odata.editLink'];
 
-                $('#form-' + action + '-' + owner + '').find('[name="' + owner + '.ID"]').val(actionData.ID)
+                $('#form-' + action + '-' + owner + '').find('[name="' + owner + '.ID"]').val(actionData.ID);
 
                 theLoader.hide({
                     id: owner + '-item-load'
@@ -1161,14 +1170,14 @@ $.fn.spCRUD = (function () {
 
     function deleteItemAttachment(dm) {
         var parentObject = _.find(theseLists, function (o) {
-            return o.source == dm.owner
+            return o.source == dm.owner;
         });
 
         if (parentObject.path) {
             var deleteURL = parentObject.path + "/_api/" + dm.item + "/AttachmentFiles/getByFileName('" + dm.name + "')";
-            console.log(deleteURL)
+            console.log(deleteURL);
 
-            var crudRequest = {
+            var crudRequest2 = {
                 headers: deleteHeader({}),
                 method: 'POST',
                 source: dm.owner,
@@ -1185,16 +1194,16 @@ $.fn.spCRUD = (function () {
                 always: function (a) {
 
                 }
-            }
+            };
 
-            $.fn.spCommon.ajax(crudRequest);
+            $.fn.spCommon.ajax(crudRequest2);
         }
     }
 
     function deleteItemAttachmentPrompt() {
         var thisObject = $(this);
         var tableRow = $(thisObject).parents('tr').index();
-        var thisObjectData = $(thisObject).data()
+        var thisObjectData = $(thisObject).data();
         thisObjectData.tableRow = tableRow;
         promptDialog.prompt({
             promptID: 'Delete-Item-Attachement',
@@ -1218,7 +1227,7 @@ $.fn.spCRUD = (function () {
                     close: true,
                     click: function () {
                         //$(this).parents('.modal').modal('close');
-                        $($(this).parents('.modal')).modal('hide')
+                        $($(this).parents('.modal')).modal('hide');
                         deleteItemAttachment(thisObjectData);
 
                     }
@@ -1245,16 +1254,18 @@ $.fn.spCRUD = (function () {
 
                     thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
                         return _.extend({}, element, {
-                            hidden : false,
+                            hidden: false,
                             spLoadObject: false,
                             spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length
                         });
                     });
 
+                    var findThisObject = function (o) {
+                        return o.Title == m.meta.dtColumns[lc];
+                    };
+
                     for (var lc = 0; lc < m.meta.dtColumns.length; lc++) {
-                        var thisObject = _.find(thisApp.objects[m.source.toLowerCase()].d.results, function (o) {
-                            return o.Title == m.meta.dtColumns[lc]
-                        })
+                        var thisObject = _.find(thisApp.objects[m.source.toLowerCase()].d.results, findThisObject);
 
                         if (thisObject) {
                             thisObject.spLoadObject = true;
@@ -1273,21 +1284,23 @@ $.fn.spCRUD = (function () {
                     });
                 }
 
+                var findThisObject2 = function (o) {
+                    return o.Title == thisRelationship.parent;
+                };
+
                 if (m.meta.relationships && m.meta.relationships.length > 0) {
                     for (var rel = 0; rel < m.meta.relationships.length; rel++) {
                         var thisRelationship = m.meta.relationships[rel];
 
-                        var thisObject = _.find(thisApp.objects[m.source.toLowerCase()].d.results, function (o) {
-                            return o.Title == thisRelationship.parent
-                        });
+                        var thisObject2 = _.find(thisApp.objects[m.source.toLowerCase()].d.results, findThisObject2);
 
-                        if (thisObject) {
-                            thisObject.dropDownRelationship = thisObject.dropDownRelationship ? thisObject.dropDownRelationship : {};
-                            thisObject.hasDropDownRelationship = true;
-                            if (thisObject.dropDownRelationship) {
-                                thisObject.dropDownRelationship.child = thisRelationship.child;
-                                thisObject.dropDownRelationship.lookupField = thisRelationship.lookupField;
-                                thisObject.dropDownRelationship.childDD = thisRelationship.child + "Id";
+                        if (thisObject2) {
+                            thisObject2.dropDownRelationship = thisObject2.dropDownRelationship ? thisObject2.dropDownRelationship : {};
+                            thisObject2.hasDropDownRelationship = true;
+                            if (thisObject2.dropDownRelationship) {
+                                thisObject2.dropDownRelationship.child = thisRelationship.child;
+                                thisObject2.dropDownRelationship.lookupField = thisRelationship.lookupField;
+                                thisObject2.dropDownRelationship.childDD = thisRelationship.child + "Id";
                             }
                         }
                     }
@@ -1299,7 +1312,7 @@ $.fn.spCRUD = (function () {
             always: function (a) {
 
             }
-        }
+        };
     }
 
     var getFileBuffer = function (file) {
@@ -1309,10 +1322,10 @@ $.fn.spCRUD = (function () {
 
         reader.onload = function (e) {
             deferred.resolve(e.target.result);
-        }
+        };
         reader.onerror = function (e) {
             deferred.reject(e.target.error);
-        }
+        };
         reader.readAsArrayBuffer(file);
         return deferred.promise();
     };
@@ -1348,14 +1361,14 @@ $.fn.spCRUD = (function () {
         headers["IF-MATCH"] = "*"; //Overrite the changes in the sharepoint list item
         headers["X-HTTP-Method"] = "MERGE";
 
-        return headers
+        return headers;
     }
 
     function deleteHeader(headers) {
         headers["IF-MATCH"] = "*"; //Overrite the changes in the sharepoint list item
         headers["X-HTTP-Method"] = "DELETE";
 
-        return headers
+        return headers;
     }
 
     function saveForm(m) {
@@ -1365,12 +1378,17 @@ $.fn.spCRUD = (function () {
 
         var thisActionType = thisData.action;
         var parentObject = _.find(theseLists, function (o) {
-            return o.source == thisData.source
+            return o.source == thisData.source;
         });
 
+        var destinationURL = '';
+        var headers = {};
+        var formObjects = {};
+        var fileObjects = [];
+        var multiTypes = [];
+
         if (parentObject.path) {
-            var destinationURL = '';
-            var headers = {};
+
             switch (thisActionType.toLowerCase()) {
                 default:
                 case 'save':
@@ -1388,10 +1406,6 @@ $.fn.spCRUD = (function () {
 
             var theseFormObjects = $(caller).find('input, select, textarea, .people-picker');
 
-            var formObjects = {};
-            var fileObjects = [];
-
-            var multiTypes = [];
             $(theseFormObjects).each(function (i, element) {
 
                 var onlyAddValidObjects = $(element).parents('.sp-peoplepicker-topLevel').length == 0;
@@ -1409,58 +1423,56 @@ $.fn.spCRUD = (function () {
                             if ($(element).val()) {
                                 formObjects[thisCurrentObject] = moment($(element).val()).format();
                             }
-                            case "checkbox":
-                                formObjects[thisCurrentObject] = $(element).is(":checked");
-                                break;
-                            case "textarea":
-                            case "text":
-                                if ($(element).hasClass('sp-calendar')) {
-                                    var thisDate = moment($(element).val()).format();
-                                    formObjects[thisCurrentObject] = thisDate != undefined && thisDate.toLowerCase() != "invalid date" ? thisDate : null;
-                                } else {
-                                    var thisValue = $(element).val();
-                                    formObjects[thisCurrentObject] = thisValue ? thisValue : null;
-                                }
-                                break;
-                            case "radio":
-                                if ($(element).prop('checked')) {
-                                    formObjects[thisCurrentObject] = $(element).val() ? $(element).val() : null;
-                                }
-                                break;
-                            case "select-one":
-                                formObjects[thisCurrentObject] = $(element).find('option:selected').val() ? $(element).find('option:selected').val() : null;
-                                break;
-                            case "select-multiple":
-                                var multiValue = $(element).val();
-                                var finalValue = multiValue ? {
-                                    "__metadata": {
-                                        "type": "Collection(Edm.String)"
-                                    },
-                                    "results": multiValue
-                                } : {
-                                    "__metadata": {
-                                        "type": "Collection(Edm.String)"
-                                    },
-                                    "results": []
-                                };
-                                formObjects[thisCurrentObject] = finalValue;
-                                break;
-                            case "file":
-                                fileObjects = $(element).data().files;
-                                break;
+                            break;
+                        case "checkbox":
+                            formObjects[thisCurrentObject] = $(element).is(":checked");
+                            break;
+                        case "textarea":
+                        case "text":
+                            if ($(element).hasClass('sp-calendar')) {
+                                var thisDate = moment($(element).val()).format();
+                                formObjects[thisCurrentObject] = thisDate != undefined && thisDate.toLowerCase() != "invalid date" ? thisDate : null;
+                            } else {
+                                var thisValue = $(element).val();
+                                formObjects[thisCurrentObject] = thisValue ? thisValue : null;
+                            }
+                            break;
+                        case "radio":
+                            if ($(element).prop('checked')) {
+                                formObjects[thisCurrentObject] = $(element).val() ? $(element).val() : null;
+                            }
+                            break;
+                        case "select-one":
+                            formObjects[thisCurrentObject] = $(element).find('option:selected').val() ? $(element).find('option:selected').val() : null;
+                            break;
+                        case "select-multiple":
+                            var multiValue = $(element).val();
+                            var finalValue = multiValue ? {
+                                "__metadata": {
+                                    "type": "Collection(Edm.String)"
+                                },
+                                "results": multiValue
+                            } : {
+                                "__metadata": {
+                                    "type": "Collection(Edm.String)"
+                                },
+                                "results": []
+                            };
+                            formObjects[thisCurrentObject] = finalValue;
+                            break;
+                        case "file":
+                            fileObjects = $(element).data().files;
+                            break;
                     }
                 } else {
                     if ($(element).parents('.people-picker') && $(element).prop('id').indexOf('_TopSpan_HiddenInput') > -1) {
-                        var parentObject = $(element).parents('.people-picker')
+                        var parentObject = $(element).parents('.people-picker');
                         var parentID = $(parentObject).prop('id');
                         var parentData = $(parentObject).data();
-
-
-
                         var rootObject = $('input[name="' + parentData.name + '"]');
                         var rootObjectName = $(rootObject).data('name');
 
-                        var theseValues = SPClientPeoplePicker.SPClientPeoplePickerDict[parentID + "_TopSpan"].GetAllUserInfo()
+                        var theseValues = SPClientPeoplePicker.SPClientPeoplePickerDict[parentID + "_TopSpan"].GetAllUserInfo();
 
                         if (theseValues) {
                             var ids = [];
@@ -1468,7 +1480,7 @@ $.fn.spCRUD = (function () {
                             for (var u = 0; u < theseValues.length; u++) {
                                 switch (theseValues[u].EntityType) {
                                     case "SPGroup":
-                                        ids.push(theseValues[u].EntityData.SPGroupID)
+                                        ids.push(theseValues[u].EntityData.SPGroupID);
                                         break;
                                     case "User":
                                         var thisUser = $.fn.spCommon.ajax({
@@ -1508,17 +1520,13 @@ $.fn.spCRUD = (function () {
             });
         }
 
-        formObjects['__metadata'] = {
+        formObjects.__metadata = {
             'type': 'SP.Data.' + thisData.sptype.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
-        }
-
-        thisApp.lastSave.mainSaveData = {};
-        thisApp.lastSave.owner = "";
-        thisApp.lastSave.action = "";
+        };
 
         if (destinationURL && !inTestMode) {
             if (baseTemplate == '100') {
-                var crudRequest = {
+                var crudRequest2 = {
                     headers: headers,
                     method: 'POST',
                     url: destinationURL,
@@ -1529,9 +1537,9 @@ $.fn.spCRUD = (function () {
                     always: function (a) {
 
                     }
-                }
+                };
 
-                crudRequest.done = function (r) {
+                crudRequest2.done = function (r) {
 
                     switch (thisActionType.toLowerCase()) {
                         default:
@@ -1575,9 +1583,9 @@ $.fn.spCRUD = (function () {
                             }
                             break;
                     }
-                    var callerData = $(m.currentTarget).data()
+                    var callerData = $(m.currentTarget).data();
 
-                    var callerId = '#' + callerData.owner
+                    var callerId = '#' + callerData.owner;
                     $(callerId).parents('.modal').modal('hide');
 
                     setTimeout(function () {
@@ -1588,7 +1596,7 @@ $.fn.spCRUD = (function () {
                     }, 200);
                 };
 
-                crudRequest.fail = function (r) {
+                crudRequest2.fail = function (r) {
                     switch (thisActionType.toLowerCase()) {
                         default:
                         case 'save':
@@ -1612,9 +1620,9 @@ $.fn.spCRUD = (function () {
 
                             break;
                     }
-                    var callerData = $(m.currentTarget).data()
+                    var callerData = $(m.currentTarget).data();
 
-                    var callerId = '#' + callerData.owner
+                    var callerId = '#' + callerData.owner;
                     $(callerId).parents('.modal').modal('hide');
 
                     setTimeout(function () {
@@ -1623,9 +1631,9 @@ $.fn.spCRUD = (function () {
                         $('.fillin-modal').remove();
                         tables[thisowner].ajax.reload();
                     }, 200);
-                }
+                };
 
-                $.fn.spCommon.ajax(crudRequest);
+                $.fn.spCommon.ajax(crudRequest2);
             } else if (baseTemplate == '101') {
                 switch (thisActionType.toLowerCase()) {
                     default:
@@ -1657,11 +1665,11 @@ $.fn.spCRUD = (function () {
 
                                         headers = updateHeader(headers);
 
-                                        formObjects['__metadata'] = {
+                                        formObjects.__metadata = {
                                             'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
                                         };
 
-                                        var crudRequest = {
+                                        var crudRequest2 = {
                                             headers: headers,
                                             method: 'POST',
                                             url: r2.d.ListItemAllFields.__deferred.uri,
@@ -1676,7 +1684,7 @@ $.fn.spCRUD = (function () {
 
                                                 var callerData = $(m.currentTarget).data();
 
-                                                var callerId = '#' + callerData.owner
+                                                var callerId = '#' + callerData.owner;
                                                 $(callerId).parents('.modal').modal('hide');
 
                                                 setTimeout(function () {
@@ -1688,11 +1696,11 @@ $.fn.spCRUD = (function () {
 
                                                 toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                             }
-                                        }
+                                        };
 
 
 
-                                        $.fn.spCommon.ajax(crudRequest);
+                                        $.fn.spCommon.ajax(crudRequest2);
 
                                         //										console.log("_api/Web/GetFileByServerRelativePath(decodedurl='/sites/BP/BPi/Sandbox/SOP/Procedures/2018-2022%20FBS%20(1).pdf')/");
                                         break;
@@ -1732,11 +1740,11 @@ $.fn.spCRUD = (function () {
 
                                                 headers = updateHeader(headers);
 
-                                                formObjects['__metadata'] = {
+                                                formObjects.__metadata = {
                                                     'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
                                                 };
 
-                                                var crudRequest = {
+                                                var crudRequest2 = {
                                                     headers: headers,
                                                     method: 'POST',
                                                     url: r2.d.ListItemAllFields.__deferred.uri,
@@ -1751,7 +1759,7 @@ $.fn.spCRUD = (function () {
 
                                                         var callerData = $(m.currentTarget).data();
 
-                                                        var callerId = '#' + callerData.owner
+                                                        var callerId = '#' + callerData.owner;
                                                         $(callerId).parents('.modal').modal('hide');
 
                                                         setTimeout(function () {
@@ -1763,9 +1771,9 @@ $.fn.spCRUD = (function () {
 
                                                         toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                                     }
-                                                }
+                                                };
 
-                                                $.fn.spCommon.ajax(crudRequest);
+                                                $.fn.spCommon.ajax(crudRequest2);
 
                                                 break;
                                         }
@@ -1776,13 +1784,13 @@ $.fn.spCRUD = (function () {
                                 toastr.error('File name must be the same in order to update file.', 'Form Not Submitted!');
                             }
                         } else {
-                            formObjects['__metadata'] = {
+                            formObjects.__metadata = {
                                 'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
                             };
                             var updateFileLeafRef = $(caller).data().FileLeafRef;
-                            var url101Update = parentObject.path + "/_api/Web/GetFileByServerRelativePath(decodedurl='" + updateFileLeafRef + "')/ListItemAllFields"
+                            var url101Update = parentObject.path + "/_api/Web/GetFileByServerRelativePath(decodedurl='" + updateFileLeafRef + "')/ListItemAllFields";
 
-                            var crudRequest = {
+                            var crudRequest21 = {
                                 headers: headers,
                                 method: 'POST',
                                 url: url101Update,
@@ -1795,7 +1803,7 @@ $.fn.spCRUD = (function () {
                                 },
                                 done: function (a) {
                                     var callerData = $(m.currentTarget).data();
-                                    var callerId = '#' + callerData.owner
+                                    var callerId = '#' + callerData.owner;
                                     $(callerId).parents('.modal').modal('hide');
 
                                     setTimeout(function () {
@@ -1807,14 +1815,14 @@ $.fn.spCRUD = (function () {
 
                                     toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                 }
-                            }
+                            };
 
-                            $.fn.spCommon.ajax(crudRequest);
+                            $.fn.spCommon.ajax(crudRequest21);
                         }
 
                         break;
                     case 'delete':
-                        var crudRequest = {
+                        var crudRequest3 = {
                             headers: headers,
                             method: 'POST',
                             url: destinationURL,
@@ -1838,11 +1846,11 @@ $.fn.spCRUD = (function () {
                             always: function (a) {
 
                             }
-                        }
+                        };
 
-                        var callerData = $(m.currentTarget).data()
+                        var callerData = $(m.currentTarget).data();
 
-                        var callerId = '#' + callerData.owner
+                        var callerId = '#' + callerData.owner;
                         $(callerId).parents('.modal').modal('hide');
 
                         setTimeout(function () {
@@ -1853,7 +1861,7 @@ $.fn.spCRUD = (function () {
                         }, 200);
 
 
-                        $.fn.spCommon.ajax(crudRequest);
+                        $.fn.spCommon.ajax(crudRequest3);
 
                         break;
                 }
@@ -1883,22 +1891,20 @@ $.fn.spCRUD = (function () {
 
                 thesePendingFiles.push(itemForQueue);
             }
-        }
-        else
-        {
+        } else {
             toastr.info('Please load a file in the form.');
-        }  
-        
+        }
+
         function processQueue() {
             var tempList = _.filter(thesePendingFiles, function (o) {
                 return o.loaded == undefined || o.loaded == false;
             });
-    
+
             if (tempList.length > 0) {
                 tempList[0].theFile.then(function (buffer) {
                     tempList[0].xhrRequest.data = buffer;
                     tempList[0].xhrRequest.always = function (r) {
-    
+
                         if (_.find(thesePendingFiles, function (o) {
                                 return o.loaded == undefined || o.loaded == false;
                             })) {
@@ -1906,10 +1912,10 @@ $.fn.spCRUD = (function () {
                                 return o.loaded == undefined || o.loaded == false;
                             }).loaded = true;
                         }
-    
+
                         processQueue();
                     };
-    
+
                     $.fn.spCommon.ajax(tempList[0].xhrRequest);
                 });
             }
@@ -1941,12 +1947,12 @@ $.fn.spCRUD = (function () {
             var tempList = _.filter(thesePendingFiles, function (o) {
                 return o.loaded == undefined || o.loaded == false;
             });
-    
+
             if (tempList.length > 0) {
                 tempList[0].theFile.then(function (buffer) {
                     tempList[0].xhrRequest.data = buffer;
                     tempList[0].xhrRequest.always = function (r) {
-    
+
                         if (_.find(thesePendingFiles, function (o) {
                                 return o.loaded == undefined || o.loaded == false;
                             })) {
@@ -1954,10 +1960,10 @@ $.fn.spCRUD = (function () {
                                 return o.loaded == undefined || o.loaded == false;
                             }).loaded = true;
                         }
-    
+
                         processQueue();
                     };
-    
+
                     $.fn.spCommon.ajax(tempList[0].xhrRequest);
                 });
             }
@@ -2014,36 +2020,21 @@ $.fn.spCRUD = (function () {
 
 
                     } else {
-                        console.log(errorCode)
+                        console.log(errorCode);
                         //handle error
                     }
                 }
 
             },
-        }
+        };
 
         //$.fn.spCommon.ajax(uploadFileXHR);	        				
         //});
         return {
             xhrRequest: uploadFileXHR,
             theFile: loadedFile
-        }
+        };
     }
-
-    var getFileBuffer = function (file) {
-
-        var deferred = $.Deferred();
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            deferred.resolve(e.target.result);
-        }
-        reader.onerror = function (e) {
-            deferred.reject(e.target.error);
-        }
-        reader.readAsArrayBuffer(file);
-        return deferred.promise();
-    };
 
     // Render and initialize the client-side People Picker.
     function initializePeoplePicker(m) {
@@ -2051,17 +2042,17 @@ $.fn.spCRUD = (function () {
         // Create a schema to store picker properties, and set the properties.
         var schema = {};
         if (m.type == 'User') {
-            schema['PrincipalAccountType'] = 'User';
+            schema.PrincipalAccountType = 'User';
         } else {
-            schema['PrincipalAccountType'] = 'User,DL,SecGroup,SPGroup';
+            schema.PrincipalAccountType = 'User,DL,SecGroup,SPGroup';
 
         }
-        schema['SearchPrincipalSource'] = 15;
-        schema['ResolvePrincipalSource'] = 15;
-        schema['AllowMultipleValues'] = m.multi;
-        schema['MaximumEntitySuggestions'] = 50;
-        schema['SharePointGroupID'] = m.selectiongroup;
-        schema['Width'] = '100%';
+        schema.SearchPrincipalSource = 15;
+        schema.ResolvePrincipalSource = 15;
+        schema.AllowMultipleValues = m.multi;
+        schema.MaximumEntitySuggestions = 50;
+        schema.SharePointGroupID = m.selectiongroup;
+        schema.Width = '100%';
 
         var prepop = m.users ? m.users : null;
         // Render and initialize the picker. 
@@ -2099,7 +2090,7 @@ $.fn.spCRUD = (function () {
 
     function ensureUserSuccess() {
         //	createitem(this.user.get_id());
-        console.log(this.user.get_id())
+        console.log(this.user.get_id());
         //	$('#userId').html();
     }
 
@@ -2128,7 +2119,7 @@ $.fn.spCRUD = (function () {
             var parentName = $(element).data('name');
             if ($('[name="' + parentName + '"]').data('prepopulate')) {
                 var data = {};
-                var peoplePicker = SPClientPeoplePicker.SPClientPeoplePickerDict[$(element).prop('id') + "_TopSpan"]
+                var peoplePicker = SPClientPeoplePicker.SPClientPeoplePickerDict[$(element).prop('id') + "_TopSpan"];
                 data.users = [];
                 var prepop = $('[name="' + parentName + '"]').data('prepopulate');
                 if ($('[name="' + parentName + '"]').data('multi')) {
@@ -2137,7 +2128,7 @@ $.fn.spCRUD = (function () {
                     for (var ii = 0; ii < data.users.length; ii++) {
                         var usrObj = {
                             Key: data.users[ii].Name
-                        }
+                        };
                         peoplePicker.AddUnresolvedUser(usrObj, true);
                     }
 
@@ -2145,12 +2136,12 @@ $.fn.spCRUD = (function () {
                     if (prepop.Name) {
                         data.users.push(prepop);
 
-                        for (var ii = 0; ii < data.users.length; ii++) {
-                            var usrObj = {
-                                Key: data.users[ii].Name
-                            }
+                        for (var ii2 = 0; ii2 < data.users.length; ii2++) {
+                            var usrObj2 = {
+                                Key: data.users[ii2].Name
+                            };
 
-                            peoplePicker.AddUnresolvedUser(usrObj, true);
+                            peoplePicker.AddUnresolvedUser(usrObj2, true);
                         }
                     }
                 }
@@ -2159,7 +2150,7 @@ $.fn.spCRUD = (function () {
     }
 
     function clearPicker(m) {
-        var getIDPeoplePicker = m.selector
+        var getIDPeoplePicker = m.selector;
         var ppobject = SPClientPeoplePicker.SPClientPeoplePickerDict[getIDPeoplePicker];
         var usersobject = ppobject.GetAllUserInfo();
         usersobject.forEach(function (index) {
@@ -2180,10 +2171,10 @@ $.fn.spCRUD = (function () {
     }
 
     function loadFillinModal(e) {
-        var thisData = $(e).data()
+        var thisData = $(e).data();
 
         if (thisData.owner && thisData.source) {
-            $('#modal-fillin-' + thisData.source + '-' + thisData.owner).modal('show')
+            $('#modal-fillin-' + thisData.source + '-' + thisData.owner).modal('show');
         }
 
         $('.fill-in-btn').unbind('click', addFillinValue);
@@ -2231,9 +2222,9 @@ $.fn.spCRUD = (function () {
             var optionSyntax = '<div class="form-check">' +
                 '	<input class="form-check-input" for="' + m.uuid + '" type="radio" name="' + m.source + '.' + m.for+'" data-entity="' + m.entity + '" id="' + m.action + '.' + m.source + '.' + m.for+'' + nextNumber + '" data-name="' + m.for+'" value="' + m.value.id + '" >' +
                 '	<label class="form-check-label" for="">' + m.value.text + '</label>' +
-                '</div>'
+                '</div>';
 
-            var newOption = $(optionSyntax)
+            var newOption = $(optionSyntax);
 
             $(m.selector).append(newOption);
 
@@ -2255,16 +2246,16 @@ $.fn.spCRUD = (function () {
 
     return {
         initPeoplePickers: function (m) {
-            return initPeoplePickers()
+            return initPeoplePickers();
         },
         initializePeoplePicker: function (m) {
-            return initializePeoplePicker(m)
+            return initializePeoplePicker(m);
         },
         getUserInfo: function (m) {
-            return getUserInfo(m)
+            return getUserInfo(m);
         },
         getUserId: function (m) {
-            return getUserId(m)
+            return getUserId(m);
         },
         data: function (m) {
             return thisApp;
@@ -2276,14 +2267,14 @@ $.fn.spCRUD = (function () {
             if (!inEditMode) {
                 theLoader.show({
                     id: 'initiateApp'
-                })
+                });
                 theseLists = m.objects;
                 loadLists();
                 //$.fn.spCommon.theList(m);
                 setTimeout(function () {
                     theLoader.hide({
                         id: 'initiateApp'
-                    })
+                    });
                 }, 2000);
             }
         },
@@ -2304,7 +2295,7 @@ $.fn.spCRUD = (function () {
             return lookupDataPoints;
         },
         loadFillinModal: function () {
-            return loadFillinModal($(this))
+            return loadFillinModal($(this));
         },
         updateLookups: function (m) {
             updateLookups(m);
@@ -2312,8 +2303,8 @@ $.fn.spCRUD = (function () {
         currentRecord: function () {
             return currentRecord;
         },
-        reloadEditForm : function() {
+        reloadEditForm: function () {
             return reloadEditForm();
         }
-    }
+    };
 })();

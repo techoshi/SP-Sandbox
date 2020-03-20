@@ -19,19 +19,19 @@ $.fn.spAsyncQueue = (function () {
 
             if (PendingRequests.length > 0) {
                 theLoader.show({ id: 'async-loader' });
-                spRest(PendingRequests[0].call)
+                spRest(PendingRequests[0].call);
             }
             else {
                 theLoader.hide({ id: 'async-loader' });
                 waitingForRequest = true;
             }
         }
-    }, 50)
+    }, 50);
 
     function spRest(m) {
 
         var headers = m.headers != undefined ? m.headers : {};
-        headers["accept"] = "application/json;odata=verbose"; //It defines the Data format   
+        headers.Accept = "application/json;odata=verbose"; //It defines the Data format   
         headers["content-type"] = "application/json;odata=verbose"; //It defines the content type as JSON  
         headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
 
@@ -84,5 +84,5 @@ $.fn.spAsyncQueue = (function () {
         queue: function () {
             return PendingRequests;
         }
-    }
+    };
 })();	

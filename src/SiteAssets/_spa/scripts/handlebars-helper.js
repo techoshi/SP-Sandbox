@@ -41,15 +41,15 @@ function getFileExtension(fileNameOrURL, showUnixDotFiles) {
         if (fileName.startsWith(".")) {
             /* If so, we return a blank string to the function caller. Our job here, is done! */
             return "";
-        };
-    };
+        }
+    }
 
     /* Now, let's get everything after the period in the filename (i.e. the correct 'file extension'). */
     fileExt = fileName.substr(1 + fileName.lastIndexOf("."));
 
     /* Now that we've discovered the correct file extension, let's return it to the function caller. */
     return fileExt;
-};
+}
 
 function ifEven(conditional, options) {
     if ((conditional % 2) == 0) {
@@ -92,7 +92,7 @@ Handlebars.registerHelper('json', function (context) {
 });
 
 Handlebars.registerHelper('replace', function (find, regexMatch, replaceWith) {
-    var temp = find.replace(new RegExp(regexMatch, "g"), replaceWith)
+    var temp = find.replace(new RegExp(regexMatch, "g"), replaceWith);
     return temp;
 });
 

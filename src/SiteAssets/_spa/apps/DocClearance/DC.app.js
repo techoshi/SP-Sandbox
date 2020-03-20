@@ -11,8 +11,7 @@ $(document).ready(function () {
 				$.fn.spCRUD.clear({});
 
 				$.fn.spCRUD.getList({
-					objects: [
-						{
+					objects: [{
 							name: 'DCMain',
 							tabTitle: 'Document Clearance',
 							search: [''],
@@ -31,12 +30,15 @@ $(document).ready(function () {
 								}]
 							},
 							children: {
-								listName : 'WKFL',
-								sectionName : "Approval/Review Area",
-								condition : "DCMain eq {{ID}}",
-								repeatable : true,
-								wholeForm : false,
-								columns : ["RoleType","Participant","Status","DateApproved"],
+								listName: 'WKFL',
+								sectionName: "Approval/Review Area",
+								condition: "DCMain eq {{ID}}",
+								repeatable: true,
+								wholeForm: false,
+								columns: {
+									visible: ["RoleType", "Participant", "Status", "DateApproved"],
+									hidden: ["Title", "DCMain"]
+								},
 								availableParent: ["edit"]
 							}
 						},
@@ -45,7 +47,7 @@ $(document).ready(function () {
 							tabTitle: 'Document Clearance Flow',
 							search: [''],
 							singular: 'Document Clearance Flow',
-							hidden : true,
+							hidden: true,
 							table: {
 								css: {
 									'width': '200px',
@@ -59,55 +61,55 @@ $(document).ready(function () {
 									}
 								}]
 							},
-						},						
+						},
 						{
 							name: 'P11',
 							tabTitle: 'Clearance Priorities',
 							search: [''],
 							singular: 'Clearance Priority',
-							config : true
+							config: true
 						},
 						{
 							name: 'S11',
 							tabTitle: 'Clearance Sources',
 							search: [''],
 							singular: 'Clearance Source',
-							config : true
+							config: true
 						},
 						{
 							name: 'M11',
 							tabTitle: 'Markings',
 							search: [''],
 							singular: 'Marking',
-							config : true
+							config: true
 						},
 						{
 							name: 'PC11',
 							tabTitle: 'Portfolio Categories',
 							search: [''],
 							singular: 'Portfolio Category',
-							config : true
+							config: true
 						},
 						{
 							name: 'LP11',
 							tabTitle: 'Lead Portfolios',
 							search: [''],
 							singular: 'Lead Portfolio',
-							config : true
+							config: true
 						},
 						{
 							name: 'ST11',
 							tabTitle: 'Doc Status',
 							search: [''],
 							singular: 'Document Status',
-							config : true
+							config: true
 						},
 						{
 							name: 'UT11',
 							tabTitle: 'Role Types',
 							search: [''],
 							singular: 'Role Type',
-							config : true
+							config: true
 						}
 					]
 				});
