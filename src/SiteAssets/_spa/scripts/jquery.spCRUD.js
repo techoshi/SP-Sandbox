@@ -752,48 +752,50 @@ $.fn.spCRUD = (function () {
             
             if(Array.isArray(thisApp.objects[m.source].children))
             {
-                for (var index = 0; index < thisApp.objects[m.source].children.length; index++) {
-                    var currentChild = thisApp.objects[m.source].children[index];
-                    
-                    if (currentChild && actionsForChildren.indexOf(m.action) > -1) {
-                        hasChild = true;
-                        childObject = initObjectParams(currentChild);
-                        if (hasChild) {
-                            if (childObject.html == undefined) {
-                                childObjectRoot = JSON.parse(JSON.stringify(thisApp.objects[childObject.listName.toLowerCase()]));
-                                childObject.d = {};
-                                childObject.loadActionButtons = false;
-        
-                                childObject.d.results = _.filter(childObjectRoot.d.results, function (o) {
-                                    return o.StaticName != "Attachments";
-                                });
-        
-                                childObject.d.results = _.filter(childObject.d.results, function (o) {
-                                    return childObject.columns.hidden.indexOf(o.StaticName) == -1;
-                                });
-                            }
-        
-                            childObject.html = $.fn.spEnvironment.baseForm(childObject);
-        
-                            if (typeof childObject.repeatable == "boolean") {
-                                var buttonOwner = "form-" + m.action + "-" + m.source + "";
-        
-                                var addButton = '<button type="button" class="btn btn-primary add-child" data-ownersource="' + childObject.source + '" data-source="' + m.source + '" data-action="' + m.action + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add ' + currentChild.singular + '</button>';
-                                var addLink = m.action == "edit" ? addButton : "";
-                                
-                                currentChild.buttonOwner ="form-" + m.action + "-" + m.source + "";                                
-        
-                               // $(childrenContainer).append(addChildRow(currentChild));
-                                //mainFormContent += '<div class="child-wrapper" data-source="' + m.source + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '">' + addLink + '<ul style="">' +  + '</ul></div>';
-                            } else {
+                if(actionsForChildren.indexOf(m.action) > -1)
+                {
+                    for (var index = 0; index < thisApp.objects[m.source].children.length; index++) {
+                        var currentChild = thisApp.objects[m.source].children[index];
+                        
+                        if (currentChild) {
+                            hasChild = true;
+                            childObject = initObjectParams(currentChild);
+                            if (hasChild) {
+                                if (childObject.html == undefined) {
+                                    childObjectRoot = JSON.parse(JSON.stringify(thisApp.objects[childObject.listName.toLowerCase()]));
+                                    childObject.d = {};
+                                    childObject.loadActionButtons = false;
+            
+                                    childObject.d.results = _.filter(childObjectRoot.d.results, function (o) {
+                                        return o.StaticName != "Attachments";
+                                    });
+            
+                                    childObject.d.results = _.filter(childObject.d.results, function (o) {
+                                        return childObject.columns.hidden.indexOf(o.StaticName) == -1;
+                                    });
+                                }
+            
+                                childObject.html = $.fn.spEnvironment.baseForm(childObject);
+            
+                                if (typeof childObject.repeatable == "boolean") {
+                                    var buttonOwner = "form-" + m.action + "-" + m.source + "";
+            
+                                    var addButton = '<button type="button" class="btn btn-primary add-child" data-ownersource="' + childObject.source + '" data-source="' + m.source + '" data-action="' + m.action + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add ' + currentChild.singular + '</button>';
+                                    var addLink = m.action == "edit" ? addButton : "";
+                                    
+                                    currentChild.buttonOwner ="form-" + m.action + "-" + m.source + "";                                
+            
+                                // $(childrenContainer).append(addChildRow(currentChild));
+                                    //mainFormContent += '<div class="child-wrapper" data-source="' + m.source + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '">' + addLink + '<ul style="">' +  + '</ul></div>';
+                                } else {
 
-                                //mainFormContent += '<div class="child-wrapper"><hr/>' + childObject.html + '</div>';
+                                    //mainFormContent += '<div class="child-wrapper"><hr/>' + childObject.html + '</div>';
+                                }
                             }
                         }
                     }
-                }
-
-                mainFormContent += $.fn.spEnvironment.spaAccordion(m);
+                    mainFormContent += $.fn.spEnvironment.spaAccordion(m);
+                }                
             }
             
 

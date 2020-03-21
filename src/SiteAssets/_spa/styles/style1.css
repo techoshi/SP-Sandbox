@@ -1,10 +1,19 @@
 
 .card-header {
     padding: 0.25rem 0.25rem;
+    background-color: #eaeaea;
+    color: #000000;
+}
+
+.card-header button {
+    color: #000;
+    font-weight: 700;
 }
 
 .add-child {
     float: right;
+    background-color: #eaeaea;
+    color: #000000;
 }
 
 .child-wrapper hr {
