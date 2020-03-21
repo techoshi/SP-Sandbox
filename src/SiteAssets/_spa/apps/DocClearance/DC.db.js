@@ -85,15 +85,15 @@ var thisLists = [
 				AllowMultipleValues: false,
 				LookupFieldName: 'Priority'
 			},
-			{
-				type: 'FieldLookup',
-				Title: 'WorkflowType',
-				LookupListId: {
-					listName: "W11"
-				},
-				AllowMultipleValues: false,
-				LookupFieldName: 'WorkflowType'
-			},
+			// {
+			// 	type: 'FieldLookup',
+			// 	Title: 'WorkflowType',
+			// 	LookupListId: {
+			// 		listName: "W11"
+			// 	},
+			// 	AllowMultipleValues: false,
+			// 	LookupFieldName: 'WorkflowType'
+			// },
 			{
 				type: 'FieldLookup',
 				Title: 'Source',

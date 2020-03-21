@@ -12,9 +12,18 @@ $.fn.spCRUD = (function () {
             mainSaveData: {},
             action: "",
             owner: "",
-            templateType: 0
+            templateType: 0,            
         }
     };
+    
+    var clearLastSave = function()
+    {
+        for (var prop in thisApp.lastSave)
+        {
+            thisApp.lastSave[prop] = undefined;
+        }
+    };
+
     var theseLists = [];
     var lookupDataPoints = {};
 
@@ -719,7 +728,10 @@ $.fn.spCRUD = (function () {
             var thisChildObject;
             var thisChildHtml = "";
             var hasChild = false;
-            if (thisApp.objects[m.source].children && m.action == "edit") {
+
+            var actionsForChildren = ["edit", "view"]
+
+            if (thisApp.objects[m.source].children && actionsForChildren.indexOf(m.action) > -1) {
                 hasChild = true;
 
                 if (hasChild) {
@@ -734,7 +746,20 @@ $.fn.spCRUD = (function () {
                         });
                         thisApp.objects[m.source].children.html = $.fn.spEnvironment.baseForm(thisApp.objects[m.source].children);
                     }
-                    mainFormContent += '<div class="child-repeat-wrapper"><hr/>' + thisApp.objects[m.source].children.html + '</div>';
+                    
+                    if(typeof thisApp.objects[m.source].children.repeatable == "boolean")
+                    {
+                        var buttonOwner = "form-" + m.action + "-" + m.source + "";
+
+                        var addButton = '<button type="button" class="btn btn-primary" data-source="' + m.source + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add Participant</button>';
+                        var addLink = m.action == "edit" ? addButton : "";
+
+                        mainFormContent += '<div class="child-wrapper">' + addLink + '<ul style=""><li><hr/>' + thisApp.objects[m.source].children.html + '</li></ul></div>';
+                    }
+                    else
+                    {
+                        mainFormContent += '<div class="child-wrapper"><hr/>' + thisApp.objects[m.source].children.html + '</div>';
+                    }                   
                 }
             }
 
@@ -746,6 +771,8 @@ $.fn.spCRUD = (function () {
                 minWidth: "65%",
                 content: mainFormContent
             });
+
+            
         } else {
             mainFormContent = $.fn.spEnvironment.deleteItem(thisApp.objects[m.source]);
 
@@ -889,7 +916,7 @@ $.fn.spCRUD = (function () {
 
     function modalBinds() {
         var thisData = $(this).data();
-
+        clearLastSave();
         modalLoader(thisData);
     }
 
@@ -1564,9 +1591,7 @@ $.fn.spCRUD = (function () {
                             setTimeout(function () {
                                 triggerGenericListUploads({
                                     parentObject: parentObject,
-                                    returnedData: {
-                                        ID: $(caller).find('[data-name="ID"]').val()
-                                    },
+                                    returnedData: { ID: $(caller).find('[data-name="ID"]').val() },
                                     fileObjects: fileObjects,
                                     thisData: thisData
                                 });
@@ -1705,7 +1730,7 @@ $.fn.spCRUD = (function () {
                                         //										console.log("_api/Web/GetFileByServerRelativePath(decodedurl='/sites/BP/BPi/Sandbox/SOP/Procedures/2018-2022%20FBS%20(1).pdf')/");
                                         break;
                                     case 'update':
-
+                                        clearLastSave();
 
                                         break;
                                 }
@@ -1732,7 +1757,7 @@ $.fn.spCRUD = (function () {
                                         }
 
                                     },
-                                    done: function (r2) {
+                                    done: function (r2) {                                        
 
                                         switch (thisActionType.toLowerCase()) {
                                             default:
@@ -1753,7 +1778,7 @@ $.fn.spCRUD = (function () {
                                                         toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
                                                     },
                                                     always: function (a) {
-
+                                                        clearLastSave();
                                                     },
                                                     done: function (a) {
 
@@ -1828,9 +1853,13 @@ $.fn.spCRUD = (function () {
                             url: destinationURL,
                             data: undefined,
                             done: function (a) {
+
+
                                 toastr.success('File has been deleted successfully submitted.', 'File deleted!');
                             },
                             fail: function (r) {
+                                
+
                                 var matchedError = false;
 
                                 if (matchedError == false && r.responseJSON.error.message.value.indexOf('list is related to an item in the')) {
@@ -1844,7 +1873,7 @@ $.fn.spCRUD = (function () {
                                 }
                             },
                             always: function (a) {
-
+                                clearLastSave();
                             }
                         };
 

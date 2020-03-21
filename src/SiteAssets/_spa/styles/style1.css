@@ -1,3 +1,24 @@
+.child-wrapper hr {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
+    background-color: #eaeaea;
+    color: #000000;
+}
+
+/* .add-child-row {
+    position: fixed;
+    left: 20px;
+    padding-top: 30px;
+} */
+
+.child-wrapper ul {
+    padding-inline-start: 0;
+    list-style-type: none;
+}
+
 .form-container .form-group {
      margin-bottom: 0;
 }
