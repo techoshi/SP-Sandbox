@@ -56,6 +56,11 @@
     margin-bottom: 40px;
 }
 
+.box.has-advanced-upload .box__icon
+{
+  display: none;
+}
+
 .box__file_label {
     width: 100%;
     text-overflow: ellipsis;
@@ -65,3 +70,4 @@
     overflow: hidden;
     text-align: center;
 }
+

@@ -12,14 +12,12 @@ $.fn.spCRUD = (function () {
             mainSaveData: {},
             action: "",
             owner: "",
-            templateType: 0,            
+            templateType: 0,
         }
     };
-    
-    var clearLastSave = function()
-    {
-        for (var prop in thisApp.lastSave)
-        {
+
+    var clearLastSave = function () {
+        for (var prop in thisApp.lastSave) {
             thisApp.lastSave[prop] = undefined;
         }
     };
@@ -40,6 +38,14 @@ $.fn.spCRUD = (function () {
 
     var currentRecord = {};
 
+    function addUiGuidsToItem(m) {
+        if (Array.isArray(m)) {
+            for (var i = 0; i < m.length; i++) {
+                m[i].uiID = Math.uuidFast();
+            }
+        }
+    }
+
     function removeFile(e) {
         var thisRowIndex = $(this).parents('tr').index();
         var parent = $(this).parents('.file_inventory');
@@ -57,6 +63,16 @@ $.fn.spCRUD = (function () {
             box: thisOwner,
             files: FileArray
         });
+    }
+
+    function initObjectParams(e) {
+        e.thisVar = e.name;
+        e.name = e.name.toLowerCase();
+        e.thisObjectLower = e.name;
+        e.owner = e.name;
+        e.source = e.name;
+
+        return e;
     }
 
     function loadLists() {
@@ -87,12 +103,7 @@ $.fn.spCRUD = (function () {
                     if (theseLists[i].loaded != true) {
                         theseLists[i].loaded = false;
 
-                        var expectedObject = theseLists[i];
-                        expectedObject.thisVar = theseLists[i].name;
-                        expectedObject.thisObjectLower = theseLists[i].name.toLowerCase();
-                        expectedObject.owner = theseLists[i].name.toLowerCase();
-                        expectedObject.source = theseLists[i].name.toLowerCase();
-                        //expectedObject.path = expectedObject.path ? expectedObject.path : _spPageContextInfo.webAbsoluteUrl;
+                        var expectedObject = initObjectParams(theseLists[i]);
 
                         thisApp.objects[theseLists[i].source] = expectedObject;
                         if ($.fn.spCommon.checkUserPermission({
@@ -494,7 +505,7 @@ $.fn.spCRUD = (function () {
 
         thisApp.objects[m.source.toLowerCase()].title = m.thisVar;
         thisApp.objects[m.source.toLowerCase()].tabTitle = m.tabTitle ? m.tabTitle : m.thisVar;
-        thisApp.objects[m.source.toLowerCase()].name = m.source.toLowerCase();
+
         if ($('.spa-app-items li').length == 0) {
             thisApp.objects[m.source.toLowerCase()].active = true;
         }
@@ -685,11 +696,13 @@ $.fn.spCRUD = (function () {
         var crudModal = "";
 
         var thisCurrentObject = thisApp.objects[m.source].d.results;
-        for (var i = 0; i < thisCurrentObject.length; i++) {
-            thisCurrentObject[i].uiID = Math.uuidFast();
-        }
 
-        var LookupColumns = _.filter(thisApp.objects[m.source].d.results, function (o) {
+        addUiGuidsToItem(thisCurrentObject);
+        // for (var i = 0; i < thisCurrentObject.length; i++) {
+        //     thisCurrentObject[i].uiID = Math.uuidFast();
+        // }
+
+        var LookupColumns = _.filter(thisCurrentObject, function (o) {
             return o.TypeAsString == "Lookup";
         });
 
@@ -701,7 +714,7 @@ $.fn.spCRUD = (function () {
             for (var lc = 0; lc < LookupColumns.length; lc++) {
                 var thisLookup = LookupColumns[lc];
 
-                var foundLookup = _.find(thisApp.objects[m.source].d.results, findLookup);
+                var foundLookup = _.find(thisCurrentObject, findLookup);
 
                 if (foundLookup) {
                     foundLookup.LookupData = {};
@@ -720,48 +733,69 @@ $.fn.spCRUD = (function () {
             }
         }
 
+        var hasChild = false;
+        var addChildRow = function (a) {
+            
+            var html = $.fn.spEnvironment.baseForm(a);
+
+            return html;
+        };
+        var childObject;
+        var childObjectRoot;
 
         thisApp.objects[m.source.toLowerCase()].formType = m.action;
         var mainFormContent;
         if (m.action != "delete") {
             mainFormContent = $.fn.spEnvironment.baseForm(thisApp.objects[m.source]);
-            var thisChildObject;
-            var thisChildHtml = "";
-            var hasChild = false;
 
-            var actionsForChildren = ["edit", "view"]
-
-            if (thisApp.objects[m.source].children && actionsForChildren.indexOf(m.action) > -1) {
-                hasChild = true;
-
-                if (hasChild) {
-                    if (thisApp.objects[m.source].children.html == undefined) {
-                        thisChildObject = JSON.parse(JSON.stringify(thisApp.objects[thisApp.objects[m.source].children.listName.toLowerCase()]));
-                        thisApp.objects[m.source].children.d = {};
-                        thisApp.objects[m.source].children.d.results = _.filter(thisChildObject.d.results, function (o) {
-                            return o.StaticName != "Attachments";
-                        });
-                        thisApp.objects[m.source].children.d.results = _.filter(thisApp.objects[m.source].children.d.results, function (o) {
-                            return thisApp.objects[m.source].children.columns.hidden.indexOf(o.StaticName) == -1;
-                        });
-                        thisApp.objects[m.source].children.html = $.fn.spEnvironment.baseForm(thisApp.objects[m.source].children);
-                    }
+            var actionsForChildren = ["edit", "view"];
+            
+            if(Array.isArray(thisApp.objects[m.source].children))
+            {
+                for (var index = 0; index < thisApp.objects[m.source].children.length; index++) {
+                    var currentChild = thisApp.objects[m.source].children[index];
                     
-                    if(typeof thisApp.objects[m.source].children.repeatable == "boolean")
-                    {
-                        var buttonOwner = "form-" + m.action + "-" + m.source + "";
+                    if (currentChild && actionsForChildren.indexOf(m.action) > -1) {
+                        hasChild = true;
+                        childObject = initObjectParams(currentChild);
+                        if (hasChild) {
+                            if (childObject.html == undefined) {
+                                childObjectRoot = JSON.parse(JSON.stringify(thisApp.objects[childObject.listName.toLowerCase()]));
+                                childObject.d = {};
+                                childObject.loadActionButtons = false;
+        
+                                childObject.d.results = _.filter(childObjectRoot.d.results, function (o) {
+                                    return o.StaticName != "Attachments";
+                                });
+        
+                                childObject.d.results = _.filter(childObject.d.results, function (o) {
+                                    return childObject.columns.hidden.indexOf(o.StaticName) == -1;
+                                });
+                            }
+        
+                            childObject.html = $.fn.spEnvironment.baseForm(childObject);
+        
+                            if (typeof childObject.repeatable == "boolean") {
+                                var buttonOwner = "form-" + m.action + "-" + m.source + "";
+        
+                                var addButton = '<button type="button" class="btn btn-primary add-child" data-ownersource="' + childObject.source + '" data-source="' + m.source + '" data-action="' + m.action + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add ' + currentChild.singular + '</button>';
+                                var addLink = m.action == "edit" ? addButton : "";
+                                
+                                currentChild.buttonOwner ="form-" + m.action + "-" + m.source + "";                                
+        
+                               // $(childrenContainer).append(addChildRow(currentChild));
+                                //mainFormContent += '<div class="child-wrapper" data-source="' + m.source + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '">' + addLink + '<ul style="">' +  + '</ul></div>';
+                            } else {
 
-                        var addButton = '<button type="button" class="btn btn-primary" data-source="' + m.source + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add Participant</button>';
-                        var addLink = m.action == "edit" ? addButton : "";
-
-                        mainFormContent += '<div class="child-wrapper">' + addLink + '<ul style=""><li><hr/>' + thisApp.objects[m.source].children.html + '</li></ul></div>';
+                                //mainFormContent += '<div class="child-wrapper"><hr/>' + childObject.html + '</div>';
+                            }
+                        }
                     }
-                    else
-                    {
-                        mainFormContent += '<div class="child-wrapper"><hr/>' + thisApp.objects[m.source].children.html + '</div>';
-                    }                   
                 }
+
+                mainFormContent += $.fn.spEnvironment.spaAccordion(m);
             }
+            
 
             crudModal += $.fn.spEnvironment.baseModal({
                 id: m.action + '-' + m.source,
@@ -772,7 +806,7 @@ $.fn.spCRUD = (function () {
                 content: mainFormContent
             });
 
-            
+
         } else {
             mainFormContent = $.fn.spEnvironment.deleteItem(thisApp.objects[m.source]);
 
@@ -786,6 +820,34 @@ $.fn.spCRUD = (function () {
         }
 
         $('body').append(crudModal);
+
+        if (hasChild) {
+            var loadChildRow = function (e) {
+                var m = $(this).data();
+                //m.action = m.owneraction;
+                var thisParentObject = thisApp.objects[m.source];
+                
+                var currentChild = _.find(thisParentObject.children, { name : m.ownersource});
+
+                if(currentChild)
+                {
+                    if (currentChild.d && currentChild.d.results) {
+                        addUiGuidsToItem(currentChild.d.results);
+                    }
+
+                    currentChild.html = $.fn.spEnvironment.baseForm(currentChild);
+
+                    $('#' + m.container + ' ul').append("<li>" + addChildRow(currentChild) + "</li>");
+                    currentChild.action = m.action;
+                    initFormObject(thisApp.objects[m.source]);
+                }
+            };
+            for (var index2 = 0; index2 < thisApp.objects[m.source].children.length; index2++) {
+                var currentChild2 = thisApp.objects[m.source].children[index2];
+                $('.add-child[data-ownersource="' + currentChild2.source + '"]').unbind('click', loadChildRow);
+                $('.add-child[data-ownersource="' + currentChild2.source + '"]').bind('click', loadChildRow);
+            }
+        }
 
         var fillinObjects = _.filter($.fn.spCRUD.data().objects[m.source].d.results, {
             FillInChoice: true
@@ -852,7 +914,6 @@ $.fn.spCRUD = (function () {
             }
         });
 
-
         $('.btn.save-data').unbind('click', $.fn.spCRUD.saveData);
         $('.btn.save-data').bind('click', $.fn.spCRUD.saveData);
         $('.btn.clear-data').unbind('click', $.fn.spCRUD.clearData);
@@ -871,16 +932,20 @@ $.fn.spCRUD = (function () {
             }
         }
 
+        initFormObject(m);
+    }
+
+    function initFormObject(m) {
         initPeoplePickers();
 
         $('.sp-calendar').datepicker();
 
-        $('#modal-' + thisMo + '-' + m.source).find('.select2-js, .sp-lookup').select2({
-            dropdownParent: $('#modal-' + thisMo + '-' + m.source),
+        $('#modal-' + m.action + '-' + m.source).find('.select2-js, .sp-lookup').select2({
+            dropdownParent: $('#modal-' + m.action + '-' + m.source),
             width: '100%'
         });
 
-        $('#modal-' + thisMo + '-' + m.source + ' [data-toggle="popover"]').popover();
+        $('#modal-' + m.action + '-' + m.source + ' [data-toggle="popover"]').popover();
     }
 
     function modalLoader(m) {
@@ -1271,7 +1336,7 @@ $.fn.spCRUD = (function () {
             done: function (a) {
                 _.merge(thisApp.objects[m.source.toLowerCase()], a);
                 //thisApp.objects[m.source.toLowerCase()] = a;
-
+                thisApp.objects[m.source.toLowerCase()].loadActionButtons = true;
 
                 if (m.meta.dtColumns && m.meta.dtColumns.length > 0) {
                     if (!_.find(m.meta.dtColumns, "Attachments")) {
@@ -1281,8 +1346,8 @@ $.fn.spCRUD = (function () {
 
                     thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
                         return _.extend({}, element, {
-                            hidden: false,
                             spLoadObject: false,
+                            hidden: false,
                             spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length
                         });
                     });
@@ -1306,6 +1371,7 @@ $.fn.spCRUD = (function () {
                     thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
                         return _.extend({}, element, {
                             spLoadObject: true,
+                            hidden: false,
                             spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length
                         });
                     });
@@ -1591,7 +1657,9 @@ $.fn.spCRUD = (function () {
                             setTimeout(function () {
                                 triggerGenericListUploads({
                                     parentObject: parentObject,
-                                    returnedData: { ID: $(caller).find('[data-name="ID"]').val() },
+                                    returnedData: {
+                                        ID: $(caller).find('[data-name="ID"]').val()
+                                    },
                                     fileObjects: fileObjects,
                                     thisData: thisData
                                 });
@@ -1757,7 +1825,7 @@ $.fn.spCRUD = (function () {
                                         }
 
                                     },
-                                    done: function (r2) {                                        
+                                    done: function (r2) {
 
                                         switch (thisActionType.toLowerCase()) {
                                             default:
@@ -1858,7 +1926,7 @@ $.fn.spCRUD = (function () {
                                 toastr.success('File has been deleted successfully submitted.', 'File deleted!');
                             },
                             fail: function (r) {
-                                
+
 
                                 var matchedError = false;
 

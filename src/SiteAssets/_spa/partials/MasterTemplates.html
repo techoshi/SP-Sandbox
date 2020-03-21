@@ -289,6 +289,7 @@
 			</div>
 			{{/if}}
 		{{/d.results}}
+		{{#if loadActionButtons}}
 		{{#switch formType}}
 			{{#case "edit"}}
 				<button type="button" class="btn btn-primary save-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Update">Update Form</button>
@@ -299,6 +300,7 @@
 				<button type="button" class="btn btn-success clear-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Reset">Reset Form</button>
 			{{/default}}
 		{{/switch}}
+		{{/if}}
 
 		
 	</div>
@@ -495,4 +497,38 @@
 	<div class="alert alert-{{type}}" role="alert">
 {{content}}
 </div>
+</script>
+
+<script type="text/template" id="spa_accordion">
+	<div id="{{wrapper_id}}" class="child-wrapper" data-source="{{source}}" data-sptype="{{thisVar}}" data-owner="{{buttonOwner}}">		
+		{{#children}}	
+			{{> spaCard}}	
+		{{/children}}
+	 </div>
+</script>
+
+<script type="text/template" id="spa_accordion_card">
+	<div class="card">
+		<div class="card-header" id="child-card-{{name}}">
+			<div class="row">
+				<div class="col-md-4">
+					<h5 class="mb-0">
+						<button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+						{{sectionName}}
+						</button>
+					</h5>
+				</div>
+				<div class="col-md-8">
+					<button type="button" class="btn btn-primary add-child" data-ownersource="{{source}}" data-source="{{@root.source}}" data-action="{{@root.action}}" data-sptype="{{@root.thisVar}}" data-owner="{{buttonOwner}}" data-container="child-card-body-{{name}}"><i class="fa fa-plus"></i>Add {{singular}}</button>
+				</div>
+			</div>
+		</div>	  
+		<div id="collapseOne" class="collapse show" aria-labelledby="child-card-{{name}}" data-parent="#accordion">
+		  <div class="card-body" id="child-card-body-{{name}}">
+			<ul>
+				<li>{{{html}}}</li>
+			</ul>			
+		  </div>
+		</div>
+	  </div>
 </script>

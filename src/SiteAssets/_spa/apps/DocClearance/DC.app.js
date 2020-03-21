@@ -29,8 +29,9 @@ $(document).ready(function () {
 									}
 								}]
 							},
-							children: {
+							children: [{
 								listName: 'WKFL',
+								name: 'WKFL',
 								sectionName: "Approval/Review Area",
 								condition: "DCMain eq {{ID}}",
 								repeatable: true,
@@ -39,8 +40,9 @@ $(document).ready(function () {
 									visible: ["RoleType", "Participant", "Status", "DateApproved"],
 									hidden: ["Title", "DCMain"]
 								},
-								availableParent: ["edit"]
-							}
+								availableParent: ["edit"],
+								singular: 'Participant'
+							}]
 						},
 						{
 							name: 'WKFL',

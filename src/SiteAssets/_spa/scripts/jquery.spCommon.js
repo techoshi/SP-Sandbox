@@ -239,6 +239,7 @@ $.fn.spCommon.addHandlebarPartial({ name: 'jsTree', content: $('#sp_jstree_templ
 $.fn.spCommon.addHandlebarPartial({ name: 'listTabs', content: $('#list-family').html() });
 $.fn.spCommon.addHandlebarPartial({ name: 'spForm', content: $('#sp_forms_template').html() });
 $.fn.spCommon.addHandlebarPartial({ name: 'spTable', content: $('#sp_table_template').html() });
+$.fn.spCommon.addHandlebarPartial({ name: 'spaCard', content: $('#spa_accordion_card').html() });
 
 
 $.fn.spEnvironment.tabBody = $.fn.spCommon.addHandlebar($('#sp_tab_container').html());
@@ -257,6 +258,8 @@ $.fn.spEnvironment.fillinModal = $.fn.spCommon.addHandlebar($('#sp-modal-fillin-
 $.fn.spEnvironment.promptModal = $.fn.spCommon.addHandlebar($('#prompt-modal-template').html());
 $.fn.spEnvironment.spDropDownOptions = $.fn.spCommon.addHandlebar($('#sp-lookup-dropdown').html());
 $.fn.spEnvironment.bootstrapAlert = $.fn.spCommon.addHandlebar($('#bootstrap-alert').html());
+$.fn.spEnvironment.spaAccordion = $.fn.spCommon.addHandlebar($('#spa_accordion').html());
+$.fn.spEnvironment.spaAccordionCard = $.fn.spCommon.addHandlebar($('#spa_accordion_card').html());
 
 
 var thisNavLiTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-li').html());

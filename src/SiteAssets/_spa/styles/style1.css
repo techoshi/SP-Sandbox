@@ -1,3 +1,12 @@
+
+.card-header {
+    padding: 0.25rem 0.25rem;
+}
+
+.add-child {
+    float: right;
+}
+
 .child-wrapper hr {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
