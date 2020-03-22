@@ -765,9 +765,8 @@ $.fn.spCRUD = (function () {
                         if (currentChild) {
                             hasChild = true;
                             childObject = initObjectParams(currentChild);
-
                            
-//TODO: Verify if needed
+                            //TODO: Verify if needed
                             childObject.listData = thisApp.objects[childObject.source].listData;
                             if (hasChild) {
                                 if (childObject.html == undefined) {
@@ -782,7 +781,11 @@ $.fn.spCRUD = (function () {
                                     childObject.d.results = _.filter(childObject.d.results, function (o) {
                                         return childObject.columns.hidden.indexOf(o.StaticName) == -1;
                                     });
-                                }                                
+                                } 
+                                else
+                                {
+                                    childObject.html = undefined;
+                                }                              
 
                                 if (typeof childObject.repeatable == "boolean") {
                                     var buttonOwner = "form-" + m.action + "-" + m.source + "";
