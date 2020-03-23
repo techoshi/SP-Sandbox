@@ -28,7 +28,8 @@ $.fn.spDB = (function () {
                             },
                             'FieldTypeKind': 2,
                             'Title': m.Title,
-                            'MaxLength': isNaN(m.MaxLength) || (!isNaN(m.MaxLength) & m.MaxLength > 255) ? 255 : m.MaxLength
+                            'MaxLength': isNaN(m.MaxLength) || (!isNaN(m.MaxLength) & m.MaxLength > 255) ? 255 : m.MaxLength,
+                            'DefaultValue': m.DefaultValue
                         }
                 };
             case 'MultiLineText':

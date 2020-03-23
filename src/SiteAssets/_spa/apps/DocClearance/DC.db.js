@@ -153,6 +153,10 @@ var thisLists = [
 				LookupFieldName: 'Status'
 			},
 			{
+				type: 'Text',
+				Title: 'Order'
+			},
+			{
 				type: 'FieldDateTime',
 				Title: 'DateApproved'
 			}

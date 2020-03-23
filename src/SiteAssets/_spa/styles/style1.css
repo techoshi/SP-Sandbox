@@ -1,3 +1,29 @@
+.li-child-form
+{    
+    display: inline-block;
+    width: 100%;
+}
+
+.remove-a-child-form
+{
+    height: 43px;
+    float: left;
+    padding-top: 20px;
+    padding-right: 12px;
+}
+
+.reorder-a-child-form
+{
+    height: 43px;
+    float: left;
+    padding-top: 15px;
+}
+
+.a-child-form
+{
+    min-width: 90%;
+    float: left;
+}
 
 .card-header {
     padding: 0.25rem 0.25rem;

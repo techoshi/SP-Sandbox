@@ -34,14 +34,15 @@ $(document).ready(function () {
 								name: 'WKFL',
 								sectionName: "Approval/Review Area",
 								condition: "DCMain eq {{ID}}",
-								repeatable: true,
+								repeatable: { enable : true, hasReorder: true },
 								wholeForm: false,
 								columns: {
 									visible: ["RoleType", "Participant", "Status", "DateApproved"],
 									hidden: ["Title", "DCMain"]
 								},
 								availableParent: ["edit"],
-								singular: 'Participant'
+								singular: 'Participant',
+								
 							}]
 						},
 						{

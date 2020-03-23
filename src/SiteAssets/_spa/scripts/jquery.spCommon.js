@@ -260,7 +260,7 @@ $.fn.spEnvironment.spDropDownOptions = $.fn.spCommon.addHandlebar($('#sp-lookup-
 $.fn.spEnvironment.bootstrapAlert = $.fn.spCommon.addHandlebar($('#bootstrap-alert').html());
 $.fn.spEnvironment.spaAccordion = $.fn.spCommon.addHandlebar($('#spa_accordion').html());
 $.fn.spEnvironment.spaAccordionCard = $.fn.spCommon.addHandlebar($('#spa_accordion_card').html());
-
+$.fn.spEnvironment.spaChildFormRow = $.fn.spCommon.addHandlebar($('#spa-child-form-row').html());
 
 var thisNavLiTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-li').html());
 var thisNavDivTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-div').html());
