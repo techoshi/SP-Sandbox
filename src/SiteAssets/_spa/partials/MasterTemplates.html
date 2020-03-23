@@ -513,7 +513,9 @@
 			<div class="row">
 				<div class="col-md-4">
 					<h5 class="mb-0">
-						{{sectionName}}						
+						<button class="btn btn-link" data-toggle="collapse" data-target="#collapseChild-{{name}}" aria-expanded="true" aria-controls="collapseOne">
+							{{sectionName}}
+						</button>				
 					</h5>
 				</div>
 				<div class="col-md-8">
@@ -525,7 +527,7 @@
 				</div>
 			</div>
 		</div>	  
-		<div id="collapseOne" class="collapse show" aria-labelledby="child-card-{{name}}" data-parent="#accordion">
+		<div id="collapseChild-{{name}}" class="collapse show" aria-labelledby="child-card-{{name}}" data-parent="#accordion">
 		  <div class="card-body" id="child-card-body-{{name}}">
 			<ul>
 				{{{html}}}

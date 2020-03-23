@@ -1,3 +1,4 @@
+/*jshint scripturl:true*/
 $.fn.spCRUD = (function () {
     var modalTypes = ['create', 'view', 'edit', 'delete'];
 
@@ -205,8 +206,8 @@ $.fn.spCRUD = (function () {
     }
 
     function decideWhichLookupColumn(a, m) {
-        
-        var doesItHaveRows = _.filter(a.data, function(i) { return i[a.column]; });
+
+        var doesItHaveRows = _.filter(a.data, function (i) { return i[a.column]; });
         var usedLookup = doesItHaveRows && doesItHaveRows.length > 0 ? a.column : "Title";
 
         return usedLookup;
@@ -697,8 +698,7 @@ $.fn.spCRUD = (function () {
         $('#misc-tab-div-' + m.source.toLowerCase() + ' .launch-config').bind('click', loadConfigsLists);
     }
 
-    function updateLookupLists(m)
-    {
+    function updateLookupLists(m) {
         var LookupColumns = _.filter(m.data, function (o) {
             return o.TypeAsString == "Lookup";
         });
@@ -733,13 +733,12 @@ $.fn.spCRUD = (function () {
 
     var getWithOutHidden = function (childObject) {
 
-        if(childObject && childObject.columns && childObject.columns.hidden && childObject.d)
-        {
+        if (childObject && childObject.columns && childObject.columns.hidden && childObject.d) {
             childObject.d.results = _.filter(childObject.d.results, function (o) {
                 return childObject.columns.hidden.indexOf(o.StaticName) == -1;
             });
-        }   
-        
+        }
+
         return childObject;
     };
 
@@ -750,7 +749,7 @@ $.fn.spCRUD = (function () {
 
         addUiGuidsToItem(thisCurrentObject);
 
-        updateLookupLists({ data : thisCurrentObject, source : m.source });
+        updateLookupLists({ data: thisCurrentObject, source: m.source });
 
         var hasChild = false;
         var addChildRow = function (a) {
@@ -772,12 +771,12 @@ $.fn.spCRUD = (function () {
             if (Array.isArray(thisApp.objects[m.source].children)) {
                 if (actionsForChildren.indexOf(m.action) > -1) {
                     for (var index = 0; index < thisApp.objects[m.source].children.length; index++) {
-                        var currentChild = thisApp.objects[m.source].children[index];                        
+                        var currentChild = thisApp.objects[m.source].children[index];
 
                         if (currentChild) {
                             hasChild = true;
                             childObject = initObjectParams(currentChild);
-                           
+
                             //TODO: Verify if needed
                             childObject.listData = thisApp.objects[childObject.source].listData;
                             if (hasChild) {
@@ -789,18 +788,17 @@ $.fn.spCRUD = (function () {
                                     childObject.d.results = _.filter(childObjectRoot.d.results, function (o) {
                                         return o.StaticName != "Attachments";
                                     });
-   
-                                    childObject =  getWithOutHidden(childObject);
-                                } 
-                                else
-                                {
+
+                                    childObject = getWithOutHidden(childObject);
+                                }
+                                else {
                                     childObject.html = undefined;
-                                }                              
+                                }
 
                                 if (typeof childObject.repeatable == "boolean") {
-                                   // var buttonOwner = "form-" + m.action + "-" + m.source + "";
+                                    // var buttonOwner = "form-" + m.action + "-" + m.source + "";
 
-                                   // var addButton = '<button type="button" class="btn btn-primary add-child" data-ownersource="' + childObject.source + '" data-source="' + m.source + '" data-action="' + m.action + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add ' + currentChild.singular + '</button>';
+                                    // var addButton = '<button type="button" class="btn btn-primary add-child" data-ownersource="' + childObject.source + '" data-source="' + m.source + '" data-action="' + m.action + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add ' + currentChild.singular + '</button>';
                                     var addLink = m.action == "edit" ? addButton : "";
 
                                     //currentChild.buttonOwner = "form-" + m.action + "-" + m.source + "";
@@ -843,13 +841,13 @@ $.fn.spCRUD = (function () {
 
         $('body').append(crudModal);
 
-        $( "#modal-" + m.action + '-' + m.source).on("click", ".move-child-up", function() {
+        $("#modal-" + m.action + '-' + m.source).on("click", ".move-child-up", function () {
             var thisLi = $(this).parents('li');
-        
+
             $(thisLi).moveUp();
         });
 
-        $( "#modal-" + m.action + '-' + m.source).on("click", ".move-child-down", function() {
+        $("#modal-" + m.action + '-' + m.source).on("click", ".move-child-down", function () {
             var thisLi = $(this).parents('li');
             $(thisLi).moveDown();
         });
@@ -865,15 +863,15 @@ $.fn.spCRUD = (function () {
                 if (currentChild) {
                     if (currentChild.d && currentChild.d.results) {
                         addUiGuidsToItem(currentChild.d.results);
-                        updateLookupLists({ data : currentChild.d.results, source : currentChild.source });
+                        updateLookupLists({ data: currentChild.d.results, source: currentChild.source });
                     }
 
                     reloadLookupData(currentChild);
                     currentChild.html = $.fn.spEnvironment.baseForm(currentChild);
-                    
-                    var rowContent = $.fn.spEnvironment.spaChildFormRow({ content : addChildRow(currentChild)});
+
+                    var rowContent = $.fn.spEnvironment.spaChildFormRow({ content: addChildRow(currentChild) });
                     $('#' + m.container + ' ul').append(rowContent);
-                    
+
                     currentChild.action = m.action;
 
                     initFormObject(thisApp.objects[m.source]);
@@ -1504,41 +1502,11 @@ $.fn.spCRUD = (function () {
         return headers;
     }
 
-    function saveForm(m) {
-        var thisData = $(m.currentTarget).data();
-        var caller = '#' + thisData.owner;
-        var baseTemplate = $(caller).data().basetemplate;
-
-        var thisActionType = thisData.action;
-        var parentObject = _.find(theseLists, function (o) {
-            return o.source == thisData.source;
-        });
-
-        var destinationURL = '';
-        var headers = {};
-        var formObjects = {};
-        var fileObjects = [];
-        var multiTypes = [];
-
-        if (parentObject.path) {
-
-            switch (thisActionType.toLowerCase()) {
-                default:
-                case 'save':
-                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items";
-                    break;
-                case 'update':
-                    headers = updateHeader(headers);
-                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items(" + $(caller).find('[data-name="ID"]').val() + ")";
-                    break;
-                case 'delete':
-                    headers = deleteHeader(headers);
-                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items(" + $(caller).find('[data-name="ID"]').val() + ")";
-                    break;
-            }
-
-            var theseFormObjects = $(caller).find('input, select, textarea, .people-picker');
-
+    function getFormData(f) {
+        f.formObjects = typeof f.formObjects == "object" ? f.formObjects : {};
+        var formObjects = f.formObjects;
+        var theseFormObjects = $(f.caller).find('input, select, textarea, .people-picker');
+        if (f.caller) {
             $(theseFormObjects).each(function (i, element) {
 
                 var onlyAddValidObjects = $(element).parents('.sp-peoplepicker-topLevel').length == 0;
@@ -1580,17 +1548,9 @@ $.fn.spCRUD = (function () {
                             break;
                         case "select-multiple":
                             var multiValue = $(element).val();
-                            var finalValue = multiValue ? {
-                                "__metadata": {
-                                    "type": "Collection(Edm.String)"
-                                },
-                                "results": multiValue
-                            } : {
-                                    "__metadata": {
-                                        "type": "Collection(Edm.String)"
-                                    },
-                                    "results": []
-                                };
+                            var finalValue = { "__metadata": { "type": "Collection(Edm.String)" } };
+                            finalValue.results = multiValue ? multiValue : [];                            
+
                             formObjects[thisCurrentObject] = finalValue;
                             break;
                         case "file":
@@ -1617,7 +1577,7 @@ $.fn.spCRUD = (function () {
                                         break;
                                     case "User":
                                         var thisUser = $.fn.spCommon.ajax({
-                                            source: thisData.owner,
+                                            source: f.thisData.owner,
                                             method: 'GET',
                                             // headers: {
                                             //     "X-HTTP-Method": "PUT",
@@ -1649,6 +1609,60 @@ $.fn.spCRUD = (function () {
 
                         }
                     }
+                }
+            });
+        }
+
+        return formObjects;
+    }
+
+    function saveForm(m) {
+
+        var thisData = $(m.currentTarget).data();
+        var caller = '#' + thisData.owner;
+        var baseTemplate = $(caller).data().basetemplate;
+
+        var thisActionType = thisData.action;
+        var parentObject = _.find(theseLists, function (o) { return o.source == thisData.source; });
+
+        var destinationURL = '';
+        var headers = {};
+        var formObjects = {};
+        var fileObjects = [];
+        var multiTypes = [];
+
+        if (parentObject.path) {
+
+            switch (thisActionType.toLowerCase()) {
+                default:
+                case 'save':
+                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items";
+                    break;
+                case 'update':
+                    headers = updateHeader(headers);
+                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items(" + $(caller).find('[data-name="ID"]').val() + ")";
+                    break;
+                case 'delete':
+                    headers = deleteHeader(headers);
+                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items(" + $(caller).find('[data-name="ID"]').val() + ")";
+                    break;
+            }
+
+            formObjects = getFormData({ caller: caller, formObjects: formObjects, thisData : thisData });
+
+            var childForms = [];
+
+            $('.child-wrapper .card').each(function (c, childElement) {
+                var thisChildBody = $(childElement).find('.card-body ul li');
+
+                if (thisChildBody) {
+                    $(thisChildBody).each(function (cli, liElement) {
+                        var thisForm = $(liElement).find('.form-container');
+
+                        var thisFormData = getFormData({ caller: thisForm, formObjects: {}, thisData : thisData });
+
+                        childForms.push(thisFormData);
+                    });
                 }
             });
         }
@@ -2005,8 +2019,6 @@ $.fn.spCRUD = (function () {
             }
         }
     }
-
-
 
     function triggerDocumentLibraryUpload(m) {
         var overWriteFile = typeof m.overwrite == 'boolean' ? m.overwrite : false;
