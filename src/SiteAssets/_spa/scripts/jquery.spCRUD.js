@@ -843,6 +843,17 @@ $.fn.spCRUD = (function () {
 
         $('body').append(crudModal);
 
+        $( "#modal-" + m.action + '-' + m.source).on("click", ".move-child-up", function() {
+            var thisLi = $(this).parents('li');
+        
+            $(thisLi).moveUp();
+        });
+
+        $( "#modal-" + m.action + '-' + m.source).on("click", ".move-child-down", function() {
+            var thisLi = $(this).parents('li');
+            $(thisLi).moveDown();
+        });
+
         if (hasChild) {
             var loadChildRow = function (e) {
                 var m = $(this).data();
