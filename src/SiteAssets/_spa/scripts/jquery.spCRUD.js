@@ -599,10 +599,12 @@ $.fn.spCRUD = (function () {
 
         function datatableLink(e) {
             var linkData = $(this).data();
-
-            if (tables[linkData.owner] && tables[linkData.owner].ajax) {
-                tables[linkData.owner].ajax.reload();
-            }
+            
+            setTimeout(function () {
+                if (tables[linkData.owner] && tables[linkData.owner].ajax) {
+                    tables[linkData.owner].ajax.reload();
+                }
+            }, 300);
         }
 
         $('.nav-link.datatable-link[data-owner="' + m.source + '"]').unbind('click', datatableLink);
@@ -641,7 +643,7 @@ $.fn.spCRUD = (function () {
                 if ($(activeChild).is(':visible')) {
                     $(activeChild).trigger('click');
                 }
-            }, 100);
+            }, 300);
         }
 
         $('.spa-app-items .nav-link[data-owner="' + m.source + '"]').unbind('click', reloadChildren);
