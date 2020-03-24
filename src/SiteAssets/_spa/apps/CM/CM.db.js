@@ -4,7 +4,7 @@ var thisLists =[{
 	type : "Generic List",
 	Description: 'Contract Management App',
 	Columns: [{
-			type: 'Text',
+			type: 'FieldText',
 			Title: 'ContractCN',
 			MaxLength: 100
 		},
@@ -76,7 +76,7 @@ var thisLists =[{
 		}
 	]
 }
-]
+];
 
 $(document).ready(function () {
 

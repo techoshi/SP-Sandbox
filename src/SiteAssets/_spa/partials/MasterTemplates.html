@@ -151,7 +151,13 @@
 		{{/if}}
 		{{#d.results}}
 			{{#if spLoadObject}}
-			<div class="form-group {{#switch TypeAsString}}{{#case "Attachments" "File" }}col-md-12{{/case}}{{#default}}col-md-4 col-sm-12 col-lg-3{{/default}}{{/switch}}">
+			<div class="form-group 
+			{{#switch TypeAsString}}
+			{{#case "Attachments" "File" }}col-md-12{{/case}}
+			{{#default}} 
+			{{#if hasBootstrapGridOverride}}{{bootstrapGridOverride}}{{else}}col-md-4 col-sm-12 col-lg-3{{/if}}
+			{{/default}}
+			{{/switch}}">
 				{{#switch TypeAsString}}
 					{{#case "Text" "Choice" "MultiChoice" "Lookup" "Note" "UserMulti" "Attachments" "File" "User" "DateTime" "Number" "Currency"}}
 						<label for="{{Title}}" style="{{#ifCondition Title '== "Title"'}}{{#ifCondition formType '== "create"'}}Display:none;{{/ifCondition}}{{/ifCondition}} width: 100%;">{{{replace Title '_' ' '}}}{{#if Required}}<span style="color:red;">*</span>{{/if}}</label>
@@ -250,7 +256,7 @@
 						<div class="picker-meta-data" data-name="{{@root.formType}}.{{@root.name}}.{{Title}}"></div>
 					{{/case}}
 					{{#case "Note"}}
-						<textarea id="{{uiID}}" type="text" class="form-control" name="{{@root.name}}.{{Title}}" data-entity="{{EntityPropertyName}}" data-name="{{Title}}" aria-describedby="{{Title}}Help" placeholder="Enter {{{replace Title '_' ' '}}}" value="{{DefaultValue}}" {{#if Required}}required{{/if}}/>
+						<textarea id="{{uiID}}" type="text" class="form-control spa-textarea" name="{{@root.name}}.{{Title}}" data-entity="{{EntityPropertyName}}" data-name="{{Title}}" aria-describedby="{{Title}}Help" placeholder="Enter {{{replace Title '_' ' '}}}" value="{{DefaultValue}}" {{#if Required}}required{{/if}}/>
 					{{/case}}
 					{{#case "DateTime"}}
 						<input type="text" id="{{uiID}}" class="form-control sp-calendar" style="" name="{{@root.name}}.{{Title}}" data-entity="{{EntityPropertyName}}" data-name="{{Title}}" aria-describedby="{{Title}}Help" placeholder="Enter {{{replace Title '_' ' '}}}" data-defaultvalue="{{DefaultValue}}" value="{{DefaultValue}}" {{#if Required}}required{{/if}}/>

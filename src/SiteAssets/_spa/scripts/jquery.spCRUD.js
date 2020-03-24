@@ -73,7 +73,7 @@ $.fn.spCRUD = (function () {
         e.owner = e.name;
         e.source = e.name;
         e.path = e.path ? e.path : _spPageContextInfo.webAbsoluteUrl;
-
+        e.loaded = typeof e.loaded == "boolean" && e.loaded == true ? true : false;
         return e;
     }
 
@@ -81,8 +81,7 @@ $.fn.spCRUD = (function () {
 
         //var tempList = _.filter(theseLists, function (o) { return o.loaded == undefined || o.loaded == false; });
         for (var i = 0; i < theseLists.length; i++) {
-            initObjectParams(theseLists[i]);
-            theseLists[i].loaded = theseLists[i].loaded == true ? true : false;
+            initObjectParams(theseLists[i]);                        
         }
 
         settings.hasConfig = _.filter(theseLists, { config: true }).length > 0 ? true : false;
@@ -1375,7 +1374,8 @@ $.fn.spCRUD = (function () {
                 _.merge(thisApp.objects[m.source.toLowerCase()], a);
                 //thisApp.objects[m.source.toLowerCase()] = a;
                 thisApp.objects[m.source.toLowerCase()].loadActionButtons = true;
-
+                var hasBootstrapGridOverride = false;
+                var bootstrapGridOverride;
                 if (m.meta.dtColumns && m.meta.dtColumns.length > 0) {
                     if (!_.find(m.meta.dtColumns, "Attachments")) {
                         m.meta.dtColumns.push("Attachments");
@@ -1383,10 +1383,28 @@ $.fn.spCRUD = (function () {
                     }
 
                     thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
+
+                        var thisObject = thisApp.objects[m.source.toLowerCase()];
+                        var formOverride;
+                      
+                        
+                        if(thisObject.form && thisObject.form.columns)
+                        {
+                            var thisMatchedObject =_.find(thisObject.form.columns, { name : element.StaticName });
+                            
+                            if(thisMatchedObject && thisMatchedObject.bootstrapGridOverride && thisMatchedObject.bootstrapGridOverride.class)
+                            {
+                                bootstrapGridOverride = thisMatchedObject.bootstrapGridOverride.class;
+                            }
+                            hasBootstrapGridOverride = bootstrapGridOverride ? true : false;                            
+                        }
+
                         return _.extend({}, element, {
                             spLoadObject: false,
                             hidden: false,
-                            spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length
+                            spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length,
+                            bootstrapGridOverride : bootstrapGridOverride,
+                            hasBootstrapGridOverride : hasBootstrapGridOverride
                         });
                     });
 
@@ -1407,10 +1425,26 @@ $.fn.spCRUD = (function () {
                     }
                 } else {
                     thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
+
+                        var thisObject = thisApp.objects[m.source.toLowerCase()];                   
+                        
+                        if(thisObject.form && thisObject.form.columns)
+                        {
+                            var thisMatchedObject =_.find(thisObject.form.columns, { name : element.StaticName });
+                            
+                            if(thisMatchedObject && thisMatchedObject.bootstrapGridOverride && thisMatchedObject.bootstrapGridOverride.class)
+                            {
+                                bootstrapGridOverride = thisMatchedObject.bootstrapGridOverride.class;
+                            }
+                            hasBootstrapGridOverride = bootstrapGridOverride ? true : false;                            
+                        }
+
                         return _.extend({}, element, {
                             spLoadObject: true,
                             hidden: false,
-                            spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length
+                            spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length,
+                            bootstrapGridOverride : bootstrapGridOverride,
+                            hasBootstrapGridOverride : hasBootstrapGridOverride
                         });
                     });
                 }
@@ -1504,7 +1538,9 @@ $.fn.spCRUD = (function () {
 
     function getFormData(f) {
         f.formObjects = typeof f.formObjects == "object" ? f.formObjects : {};
+        f.fileObjects = typeof f.fileObjects == "object" && Array.isArray(f.fileObjects) ? f.fileObjects : [];
         var formObjects = f.formObjects;
+        var fileObjects = f.fileObjects;
         var theseFormObjects = $(f.caller).find('input, select, textarea, .people-picker');
         if (f.caller) {
             $(theseFormObjects).each(function (i, element) {
@@ -1606,14 +1642,17 @@ $.fn.spCRUD = (function () {
                                 formObjects[$(rootObject).data('name').replace(/-/g, '_x002d_') + "Id"] = ids.length > 0 ? ids[0] : null;
 
                             }
-
                         }
                     }
                 }
             });
         }
 
-        return formObjects;
+        formObjects.__metadata = {
+            'type': 'SP.Data.' + f.thisData.sptype.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
+        };
+
+        return { formObjects : formObjects, fileObjects : fileObjects};
     }
 
     function saveForm(m) {
@@ -1648,7 +1687,9 @@ $.fn.spCRUD = (function () {
                     break;
             }
 
-            formObjects = getFormData({ caller: caller, formObjects: formObjects, thisData : thisData });
+            var processedFormData = getFormData({ caller: caller, formObjects: formObjects, thisData : thisData });
+            formObjects = processedFormData.formObjects;
+            fileObjects = processedFormData.fileObjects;
 
             var childForms = [];
 
@@ -1667,9 +1708,7 @@ $.fn.spCRUD = (function () {
             });
         }
 
-        formObjects.__metadata = {
-            'type': 'SP.Data.' + thisData.sptype.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
-        };
+        
 
         if (destinationURL && !inTestMode) {
             if (baseTemplate == '100') {
@@ -2417,7 +2456,23 @@ $.fn.spCRUD = (function () {
                 theLoader.show({
                     id: 'initiateApp'
                 });
-                theseLists = m.objects;
+                var newObjectOrder = [];
+
+                for (var index = 0; index < m.objects.length; index++) {
+                    var element = m.objects[index];
+                    newObjectOrder.push(element);
+                    
+                    if(element.children)
+                    {
+                        for (var index2 = 0; index2 < element.children.length; index2++) {
+                            var childElement = element.children[index2];
+
+                            newObjectOrder.push(childElement);
+                        }                        
+                    }
+                }
+
+                theseLists = newObjectOrder;
                 loadLists();
                 //$.fn.spCommon.theList(m);
                 setTimeout(function () {

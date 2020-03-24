@@ -5,7 +5,7 @@ var thisLists = [
 		type: "Generic List",
 		Description: 'Document Clearance Status',
 		Columns: [{
-				type: 'Text',
+				type: 'FieldText',
 				Title: 'Status',
 				MaxLength: 100
 			}
@@ -16,7 +16,7 @@ var thisLists = [
 		type: "Generic List",
 		Description: 'Document Clearance User Types',
 		Columns: [{
-				type: 'Text',
+				type: 'FieldText',
 				Title: 'RoleType',
 				MaxLength: 100
 			},
@@ -33,7 +33,7 @@ var thisLists = [
 		type: "Generic List",
 		Description: 'Document Clearance Workflow',
 		Columns: [{
-			type: 'Text',
+			type: 'FieldText',
 			Title: 'WorkflowType',
 			MaxLength: 100
 		}, ]
@@ -44,7 +44,7 @@ var thisLists = [
 		type: "Generic List",
 		Description: 'Document Clearance Priorities',
 		Columns: [{
-			type: 'Text',
+			type: 'FieldText',
 			Title: 'Priority',
 			MaxLength: 100
 		}, ]
@@ -55,7 +55,7 @@ var thisLists = [
 		type: "Generic List",
 		Description: 'Document Clearance Sources',
 		Columns: [{
-			type: 'Text',
+			type: 'FieldText',
 			Title: 'Source',
 			MaxLength: 100
 		}]
@@ -66,7 +66,7 @@ var thisLists = [
 		type: "Generic List",
 		Description: 'Document Markings',
 		Columns: [{
-			type: 'Text',
+			type: 'FieldText',
 			Title: 'Marking',
 			MaxLength: 100
 		}]
@@ -116,7 +116,7 @@ var thisLists = [
 	},
 	{
 		url: _spPageContextInfo.webAbsoluteUrl,
-		Title: 'WKFL',
+		Title: 'WORK',
 		type: "Generic List",
 		Description: 'Document Clearance WorkFlow',
 		Columns: [
@@ -153,13 +153,42 @@ var thisLists = [
 				LookupFieldName: 'Status'
 			},
 			{
-				type: 'Text',
-				Title: 'Order'
+				type: 'FieldText',
+				Title: 'Sequence'
 			},
 			{
 				type: 'FieldDateTime',
-				Title: 'DateApproved'
+				Title: 'DateOfDecision'
 			}
+		]
+	},	
+	{
+		url: _spPageContextInfo.webAbsoluteUrl,
+		Title: 'Note',
+		type: "Generic List",
+		Description: 'Document Clearance WorkFlow',
+		Columns: [
+			{
+				type: 'FieldLookup',
+				Title: 'DCMain',
+				LookupListId: {
+					listName: "DCMain"
+				},
+				AllowMultipleValues: false,
+				LookupFieldName: 'Title'
+			},			
+			{
+				type: 'FieldText',
+				Title: 'Sequence'
+			},			
+			{
+				type: 'FieldText',
+				Title: 'CurrentStatus'
+			},
+			{
+				type: 'FieldMultiLineText',
+				Title: 'NoteEntry'
+			},
 		]
 	}
 ];
@@ -181,7 +210,7 @@ $(document).ready(function () {
 	// 	type: "Generic List",
 	// 	Description: 'Document Portfiolio Category',
 	// 	Columns: [{
-	// 		type: 'Text',
+	// 		type: 'FieldText',
 	// 		Title: 'PortfiolioCategory',
 	// 		MaxLength: 100
 	// 	}]
@@ -192,7 +221,7 @@ $(document).ready(function () {
 	// 	type: "Generic List",
 	// 	Description: 'Document Lead Portfolios',
 	// 	Columns: [{
-	// 		type: 'Text',
+	// 		type: 'FieldText',
 	// 		Title: 'LeadPortfolio',
 	// 		MaxLength: 100
 	// 	}]

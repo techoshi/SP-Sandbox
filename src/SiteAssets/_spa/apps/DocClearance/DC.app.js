@@ -12,44 +12,37 @@ $(document).ready(function () {
 
 				$.fn.spCRUD.getList({
 					objects: [{
-							name: 'DCMain',
-							tabTitle: 'Document Clearance',
-							search: [''],
-							singular: 'Document Clearance',
-							table: {
-								css: {
-									'width': '200px',
-									'min-width': '200px'
-								},
-								columns: [{
-									name: 'Title',
-									css: {
-										'width': '300px',
-										'min-width': '300px'
-									}
-								}]
+						name: 'DCMain',
+						tabTitle: 'Document Clearance',
+						search: [''],
+						singular: 'Document Clearance',
+						table: {
+							css: {
+								'width': '200px',
+								'min-width': '200px'
 							},
-							children: [{
-								listName: 'WKFL',
-								name: 'WKFL',
-								sectionName: "Approval/Review Area",
-								condition: "DCMain eq {{ID}}",
-								repeatable: { enable : true, hasReorder: true },
-								wholeForm: false,
-								columns: {
-									visible: ["RoleType", "Participant", "Status", "DateApproved"],
-									hidden: ["Title", "DCMain"]
-								},
-								availableParent: ["edit"],
-								singular: 'Participant',
-								
+							columns: [{
+								name: 'Title',
+								css: {
+									'width': '300px',
+									'min-width': '300px'
+								}
 							}]
 						},
-						{
-							name: 'WKFL',
+						children: [{
+							listName: 'WORK',
+							name: 'WORK',
 							tabTitle: 'Document Clearance Flow',
-							search: [''],
-							singular: 'Document Clearance Flow',
+							sectionName: "Approval/Review Area",
+							condition: "DCMain eq {{ID}}",
+							repeatable: { enable: true, hasSequence: true },
+							wholeForm: false,
+							columns: {
+								visible: ["RoleType", "Participant", "Status", "DateOfDecision"],
+								hidden: ["Title", "DCMain", "Sequence"]
+							},
+							availableParent: ["edit"],
+							singular: 'Participant',
 							hidden: true,
 							table: {
 								css: {
@@ -64,56 +57,95 @@ $(document).ready(function () {
 									}
 								}]
 							},
-						},
-						{
-							name: 'P11',
-							tabTitle: 'Clearance Priorities',
-							search: [''],
-							singular: 'Clearance Priority',
-							config: true
-						},
-						{
-							name: 'S11',
-							tabTitle: 'Clearance Sources',
-							search: [''],
-							singular: 'Clearance Source',
-							config: true
-						},
-						{
-							name: 'M11',
-							tabTitle: 'Markings',
-							search: [''],
-							singular: 'Marking',
-							config: true
-						},
-						{
-							name: 'PC11',
-							tabTitle: 'Portfolio Categories',
-							search: [''],
-							singular: 'Portfolio Category',
-							config: true
-						},
-						{
-							name: 'LP11',
-							tabTitle: 'Lead Portfolios',
-							search: [''],
-							singular: 'Lead Portfolio',
-							config: true
-						},
-						{
-							name: 'ST11',
-							tabTitle: 'Doc Status',
-							search: [''],
-							singular: 'Document Status',
-							config: true
-						},
-						{
-							name: 'UT11',
-							tabTitle: 'Role Types',
-							search: [''],
-							singular: 'Role Type',
-							config: true
-						}
+							search: ['']
+						}, {
+							hidden: true,
+							listName: "Note",
+							name: "Note",
+							sectionName: "Notes",
+							singular: "Note Entry",
+							condition: "DCMain eq {{ID}}",
+							repeatable: { enable: true, hasSequence: true, },
+							wholeForm: false,
+							availableParent: ["edit"],
+							columns: {
+								visible: ["NoteEntry"],
+								hidden: ["Title", "DCMain", "Sequence", "CurrentStatus"]
+							},		
+							form : {
+								columns : [{
+									name: 'NoteEntry',
+									bootstrapGridOverride : {
+										class : "col-md-12"
+									},
+									css: { }
+								}]
+							},																			
+							table: {
+								css: {
+									"width": "200px",
+									"min-width": "200px"
+								},
+								columns: [{
+									name: "Title",
+									css: {
+										"width": "300px",
+										"min-width": "300px"
+									}									
+								}]
+							},
+							search: [""]
+						}]
+					},
+					{
+						name: 'P11',
+						tabTitle: 'Clearance Priorities',
+						search: [''],
+						singular: 'Clearance Priority',
+						config: true
+					},
+					{
+						name: 'S11',
+						tabTitle: 'Clearance Sources',
+						search: [''],
+						singular: 'Clearance Source',
+						config: true
+					},
+					{
+						name: 'M11',
+						tabTitle: 'Markings',
+						search: [''],
+						singular: 'Marking',
+						config: true
+					},
+					{
+						name: 'PC11',
+						tabTitle: 'Portfolio Categories',
+						search: [''],
+						singular: 'Portfolio Category',
+						config: true
+					},
+					{
+						name: 'LP11',
+						tabTitle: 'Lead Portfolios',
+						search: [''],
+						singular: 'Lead Portfolio',
+						config: true
+					},
+					{
+						name: 'ST11',
+						tabTitle: 'Doc Status',
+						search: [''],
+						singular: 'Document Status',
+						config: true
+					},
+					{
+						name: 'UT11',
+						tabTitle: 'Role Types',
+						search: [''],
+						singular: 'Role Type',
+						config: true
+					}
 					]
 				});
 			}
