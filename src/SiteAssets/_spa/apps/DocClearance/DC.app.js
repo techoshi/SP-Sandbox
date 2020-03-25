@@ -16,6 +16,10 @@ $(document).ready(function () {
 						tabTitle: 'Document Clearance',
 						search: [''],
 						singular: 'Document Clearance',
+						columns: {
+							visible: [],
+							hidden: ["Title"]
+						},
 						table: {
 							css: {
 								'width': '200px',
@@ -65,7 +69,7 @@ $(document).ready(function () {
 							sectionName: "Notes",
 							singular: "Note Entry",
 							condition: "DCMain eq {{ID}}",
-							repeatable: { enable: true, hasSequence: true, },
+							repeatable: { enable: true, hasSequence: false },
 							wholeForm: false,
 							availableParent: ["edit"],
 							columns: {

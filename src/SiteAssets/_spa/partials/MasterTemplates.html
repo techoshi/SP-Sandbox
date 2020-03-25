@@ -549,13 +549,15 @@
 			<a href="javascript:void(0)" style="width: 20px; float: left; padding:5px;" ><i class="fa fa-minus-circle"></i></a>
 		</div>
 		<div class="a-child-form">
-			{{{content}}}
+			{{{html}}}
 		</div>
+		{{#if repeatable.hasSequence}}
 		<div class="reorder-a-child-form">
 			<div style="width: 20px; float: left;">
 				<a href="javascript:void(0)"><i class="fa fa-caret-up move-child-up"></i></a>
 				<a href="javascript:void(0)"><i class="fa fa-caret-down move-child-down"></i></a>
 			</div>
 		</div>
+		{{/if}}
 	</li>
 </script>

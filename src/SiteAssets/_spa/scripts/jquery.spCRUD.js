@@ -868,9 +868,9 @@ $.fn.spCRUD = (function () {
                     }
 
                     reloadLookupData(currentChild);
-                    currentChild.html = $.fn.spEnvironment.baseForm(currentChild);
+                    currentChild.html = addChildRow(currentChild);
 
-                    var rowContent = $.fn.spEnvironment.spaChildFormRow({ content: addChildRow(currentChild) });
+                    var rowContent = $.fn.spEnvironment.spaChildFormRow(currentChild);
                     $('#' + m.container + ' ul').append(rowContent);
 
                     currentChild.action = m.action;

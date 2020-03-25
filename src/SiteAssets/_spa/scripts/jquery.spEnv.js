@@ -18,32 +18,34 @@ var spPermissions = {
 	site : []
 };
 
-$.fn.moveUp = function() {
-    before = $(this).prev();
-    $(this).insertBefore(before);
-};
+$.fn.extend({
+	moveUp: function () {
+		var before = $(this).prev();
+		$(this).insertBefore(before);
+	},
+	moveDown: function () {
+		var after = $(this).next();
+		$(this).insertAfter(after);
+	},
+	getType : function () { 
+		return this[0].tagName == "INPUT" ? this[0].type.toLowerCase() : this[0].tagName.toLowerCase(); 
+	}
+});
 
-$.fn.moveDown = function() {
-    after = $(this).next();
-    $(this).insertAfter(after);
-};
+$.fn.extend({
+	spEnvironment: {
+		updatePermission: function (m) {
+			if (!spPermissions.loaded) {
+				Object.defineProperty(spPermissions, "privileges", {
+					value: m,
+					writable: false,
+					enumerable: true,
+					configurable: true
+				});
 
-$.fn.spEnvironment = {
-	updatePermission : function(m) {
-		if(!spPermissions.loaded)
-		{
-			Object.defineProperty(spPermissions, "privileges", {
-			  value: m,
-			  writable: false,
-			  enumerable: true,
-			  configurable: true
-			});	
-			
-			spPermissions.loaded = true;
-			Object.freeze(spPermissions);						
-		}		
- 	}	
-};
-
-
-$.fn.getType = function () { return this[0].tagName == "INPUT" ? this[0].type.toLowerCase() : this[0].tagName.toLowerCase(); };
+				spPermissions.loaded = true;
+				Object.freeze(spPermissions);
+			}
+		}
+	}
+});
