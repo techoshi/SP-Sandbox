@@ -1,0 +1,9 @@
+{
+    "undef": true,
+    "unused": true,
+    "globals": {
+      "MY_GLOBAL": true,
+      "no-global-strict" : 0
+    },
+    "no-global-strict" : 0    
+}

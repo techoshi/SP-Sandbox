@@ -1,4 +1,0 @@
-/*jshint scripturl:true*/
-{
-    
-}

@@ -1,0 +1,19 @@
+tsc --build ts.config.json
+tsc --version
+
+npm install -g jshint
+npm install -g typescript
+npm install -g webpack
+npm install jquery --save
+npm install @types/jquery@3.3.33
+npm install -g ts-loader
+npm install -g handlebars
+npm install gulp
+npm install gulp-cli
+
+
+npm i
+
+webpack -v
+
+jshint --config  extensions/jsHint.config.json
