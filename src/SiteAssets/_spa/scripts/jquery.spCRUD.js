@@ -74,6 +74,11 @@ $.fn.spCRUD = (function () {
         e.source = e.name;
         e.path = e.path ? e.path : _spPageContextInfo.webAbsoluteUrl;
         e.loaded = typeof e.loaded == "boolean" && e.loaded == true ? true : false;
+        e.title = e.thisVar;
+        e.tabTitle = e.tabTitle ? e.tabTitle : e.thisVar;
+        e.sectionName = e.sectionName ? e.sectionName : e.tabTitle;
+        e.spType = e.spType ? e.spType : e.title;
+
         return e;
     }
 
@@ -506,10 +511,7 @@ $.fn.spCRUD = (function () {
         $input.on('change', fileObjectChanged);
     }
 
-    function loadTabStructure(m) {
-
-        thisApp.objects[m.source.toLowerCase()].title = m.thisVar;
-        thisApp.objects[m.source.toLowerCase()].tabTitle = m.tabTitle ? m.tabTitle : m.thisVar;
+    function loadTabStructure(m) {        
 
         if ($('.spa-app-items li').length == 0) {
             thisApp.objects[m.source.toLowerCase()].active = true;
@@ -792,28 +794,18 @@ $.fn.spCRUD = (function () {
                                     childObject.loadActionButtons = false;
 
                                     childObject.d.results = _.filter(childObject.d.results, function (o) {
-                                        return o.StaticName != "Attachments";
-                                    });
+                                        if(o.StaticName == "Attachments")
+                                        {
+                                            o.hidden = true;
+                                        }
+
+                                        return true;
+                                    });                                                                   
 
                                     childObject = markHiddenObjects(childObject);
                                 }
                                 else {
                                     childObject.html = undefined;
-                                }
-
-                                if (typeof childObject.repeatable == "boolean") {
-                                    // var buttonOwner = "form-" + m.action + "-" + m.source + "";
-
-                                    // var addButton = '<button type="button" class="btn btn-primary add-child" data-ownersource="' + childObject.source + '" data-source="' + m.source + '" data-action="' + m.action + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '" data-action="Add-Child"><i class="fa fa-plus"></i>Add ' + currentChild.singular + '</button>';
-                                    var addLink = m.action == "edit" ? addButton : "";
-
-                                    //currentChild.buttonOwner = "form-" + m.action + "-" + m.source + "";
-
-                                    // $(childrenContainer).append(addChildRow(currentChild));
-                                    //mainFormContent += '<div class="child-wrapper" data-source="' + m.source + '" data-sptype="' + m.thisVar + '" data-owner="' + buttonOwner + '">' + addLink + '<ul style="">' +  + '</ul></div>';
-                                } else {
-
-                                    //mainFormContent += '<div class="child-wrapper"><hr/>' + childObject.html + '</div>';
                                 }
                             }
                         }
@@ -873,8 +865,16 @@ $.fn.spCRUD = (function () {
                     }
 
                     reloadLookupData(currentChild);
-                    currentChild.html = addChildRow(currentChild);
+                    
 
+                    var thisChildParentRef =_.find(currentChild.d.results, { EntityPropertyName : thisParentObject.thisVar });
+
+                    if(thisChildParentRef && thisParentObject.lastSelectedRecord && thisParentObject.lastSelectedRecord.d)
+                    {
+                        thisChildParentRef.currentParentID = thisParentObject.lastSelectedRecord.d.ID;
+                    }
+
+                    currentChild.html = addChildRow(currentChild);
                     var rowContent = $.fn.spEnvironment.spaChildFormRow(currentChild);
                     $('#' + m.container + ' ul').append(rowContent);
 
@@ -1123,6 +1123,9 @@ $.fn.spCRUD = (function () {
                         done: function (a) {
                             var returnedData = a.d;
                             currentRecord = returnedData;
+
+                            m.lastSelectedRecord = a;
+
                             if (templateType == '101') {
                                 returnedData.FileLeafRef = actionData.FileLeafRef;
                             }
@@ -1241,7 +1244,11 @@ $.fn.spCRUD = (function () {
                             });
 
                             if (templateType != '101') {
-                                var attachments = returnedData.AttachmentFiles.results;
+                                var attachments = [];
+                                if(returnedData.AttachmentFiles && returnedData.AttachmentFiles.results)
+                                {
+                                    attachments = returnedData.AttachmentFiles.results;
+                                }                                
 
                                 //								var thisFile = [{ FileName : returnedData.FileLeafRef }]
                                 showFiles({
@@ -1342,8 +1349,8 @@ $.fn.spCRUD = (function () {
         var thisObjectData = $(thisObject).data();
         thisObjectData.tableRow = tableRow;
         promptDialog.prompt({
-            promptID: 'Delete-Item-Attachement',
-            body: 'Are you sure you want to delete this attachement?',
+            promptID: 'Delete-Item-Attachment',
+            body: 'Are you sure you want to delete this attachment?',
             header: 'Delete File',
             closeOnEscape: true,
             open: function (event, ui) {
@@ -1562,6 +1569,14 @@ $.fn.spCRUD = (function () {
                             if ($(element).hasClass('people-picker-data')) {
                                 formObjects[thisCurrentObject] = $('.people-picker[name="' + $(element).prop('name') + '"] ').find('[id$="_TopSpan_HiddenInput"]').val();
                             }
+                            else{
+                                var thisHiddenData = $(element).data();
+
+                                if(thisHiddenData.owner == f.thisObject.owner)
+                                {
+                                    formObjects[thisCurrentObject] = $(element).val();
+                                }
+                            }
                             break;
                         case "date":
                             if ($(element).val()) {
@@ -1654,13 +1669,35 @@ $.fn.spCRUD = (function () {
         }
 
         formObjects.__metadata = {
-            'type': 'SP.Data.' + f.thisData.sptype.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
+            'type': 'SP.Data.' + f.thisObject.spType.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
         };
 
         f.formObjects = formObjects;
         f.fileObjects = fileObjects;
 
         return f;
+    }
+
+    function getDestionationUrl(z)
+    {
+        var thisUrl;
+
+        switch (z.action.toLowerCase()) {
+            default:
+            case 'save':
+                thisUrl = z.path + "/_api/web/lists/GetByTitle('" + z.spType + "')/items";
+                break;
+            case 'update':
+                z.headers = updateHeader(z.headers);
+                thisUrl = z.path + "/_api/web/lists/GetByTitle('" + z.spType + "')/items(" + $(z.caller).find('[data-name="ID"]').val() + ")";
+                break;
+            case 'delete':
+                z.headers = deleteHeader(z.headers);
+                thisUrl = z.path + "/_api/web/lists/GetByTitle('" + z.spType + "')/items(" + $(z.caller).find('[data-name="ID"]').val() + ")";
+                break;
+        }
+
+        return { url : thisUrl, headers : z.headers };
     }
 
     function saveForm(m) {
@@ -1678,24 +1715,20 @@ $.fn.spCRUD = (function () {
         var fileObjects = [];
         var multiTypes = [];
 
-        if (parentObject.path) {
+        if (parentObject.path) {            
 
-            switch (thisActionType.toLowerCase()) {
-                default:
-                case 'save':
-                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items";
-                    break;
-                case 'update':
-                    headers = updateHeader(headers);
-                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items(" + $(caller).find('[data-name="ID"]').val() + ")";
-                    break;
-                case 'delete':
-                    headers = deleteHeader(headers);
-                    destinationURL = parentObject.path + "/_api/web/lists/GetByTitle('" + thisData.sptype + "')/items(" + $(caller).find('[data-name="ID"]').val() + ")";
-                    break;
-            }
+            var postStruct = getDestionationUrl({
+                action : thisActionType.toLowerCase(),
+                path : parentObject.path,
+                spType : parentObject.spType,
+                caller : caller,
+                headers : headers
+            });
+            
+            destinationURL = postStruct.url;
+            headers = postStruct.headers;
 
-            var processedFormData = getFormData({ formSelector: caller, formObjects: formObjects, thisData : thisData });
+            var processedFormData = getFormData({ formSelector: caller, formObjects: formObjects, thisData : thisData, thisObject : thisApp.objects[thisData.source] });
             formObjects = processedFormData.formObjects;
             fileObjects = processedFormData.fileObjects;
 
@@ -1707,9 +1740,10 @@ $.fn.spCRUD = (function () {
                 if (thisChildBody) {
                     $(thisChildBody).each(function (cli, liElement) {
                         var thisForm = $(liElement).find('.form-container');
-
-                        var thisFormData = getFormData({ formSelector: thisForm, formObjects: {}, thisData : thisData });
-
+                        var thisChildData = $(thisForm).data();
+                        var thisFormData = getFormData({ formSelector: thisForm, formObjects: {}, thisData : thisData, thisObject : thisApp.objects[thisChildData.source] });
+                        thisFormData.thisActionType = "save";
+                        thisFormData.caller = $(thisForm)[0].id;
                         childForms.push(thisFormData);
                     });
                 }
@@ -1755,6 +1789,7 @@ $.fn.spCRUD = (function () {
                             toastr.success('Data has been successfully submitted.', 'Form Submitted!');
                             break;
                         case 'update':
+                            
                             setTimeout(function () {
                                 triggerGenericListUploads({
                                     parentObject: parentObject,
@@ -1993,7 +2028,32 @@ $.fn.spCRUD = (function () {
                                     toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
                                 },
                                 always: function (a) {
-
+                                    for (var index = 0; index < childForms.length; index++) {
+                                        var childObject = childForms[index];
+                                        
+                                        var childPostStruct = getDestionationUrl({
+                                            action : "save",
+                                            path : childObject.thisObject.path,
+                                            spType : childObject.thisObject.spType,
+                                            caller : childObject.thisObject.caller,
+                                            headers : {}
+                                        });                                        
+        
+                                        var crudChildRequest = {
+                                            headers: childPostStruct.headers,
+                                            method: 'POST',
+                                            url: childPostStruct.url,
+                                            data: childObject.thisActionType.toLowerCase() == 'delete' ? undefined : JSON.stringify(childObject.formObjects),
+                                            fail: function (a1) {
+                                                toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                                            },
+                                            always: function (a) {
+                        
+                                            }
+                                        };
+        
+                                        $.fn.spCommon.ajax(crudChildRequest);
+                                    }
                                 },
                                 done: function (a) {
                                     var callerData = $(m.currentTarget).data();
@@ -2078,7 +2138,7 @@ $.fn.spCRUD = (function () {
                     fileObjects: m.fileObjects,
                     thisFile: thisFile,
                     thisData: m.thisData,
-                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.thisData.sptype + "')/RootFolder/Files/add(overwrite=" + overWriteFile + ", url='" + m.fileObjects[thisFile].name + "')",
+                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.parentObject.spType + "')/RootFolder/Files/add(overwrite=" + overWriteFile + ", url='" + m.fileObjects[thisFile].name + "')",
                     done: m.done,
                     fail: m.fail
                 });
@@ -2130,7 +2190,7 @@ $.fn.spCRUD = (function () {
                     thisFile: thisFile,
                     thisData: m.thisData,
                     returnedData: m.returnedData,
-                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.thisData.sptype + "')/items(" + m.returnedData.ID + ")/AttachmentFiles/add(FileName='" + m.fileObjects[thisFile].name + "')"
+                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.parentObject.spType + "')/items(" + m.returnedData.ID + ")/AttachmentFiles/add(FileName='" + m.fileObjects[thisFile].name + "')"
                 });
 
                 itemForQueue.loaded = false;

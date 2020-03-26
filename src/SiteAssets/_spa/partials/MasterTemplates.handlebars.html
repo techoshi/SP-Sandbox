@@ -152,7 +152,29 @@
         {{#d.results}} 
             {{#if spLoadObject}} 
             {{#if hidden}}
-                <input type="hidden" id="{{uiID}}" name="{{@root.name}}.{{Title}}" data-entity="{{EntityPropertyName}}" data-name="{{Title}}" /> 
+                {{#switch TypeAsString}} 
+                    {{#case "Lookup"}}
+                        <input type="hidden" id="{{uiID}}"  
+                            name="{{@root.name}}.{{Title}}"  
+                            data-entity="{{EntityPropertyName}}Id"  
+                            data-name="{{Title}}Id" 
+                            data-owner="{{@root.name}}" 
+                            data-spType="{{TypeAsString}}" value="{{currentParentID}}" 
+                        /> 
+                    {{/case}} 
+                    {{#case "Attachments"}}
+                        {{! Do not display Attachments as hidden}}
+                    {{/case}}
+                    {{#default}}
+                        <input type="hidden" id="{{uiID}}" 
+                            name="{{@root.name}}.{{Title}}"  
+                            data-entity="{{EntityPropertyName}}" 
+                            data-name="{{Title}}"
+                            data-owner="{{@root.name}}"
+                            data-spType="{{TypeAsString}}" value="{{currentParentID}}" 
+                        /> 
+                    {{/default}} 
+                {{/switch}}                
             {{else}}
 
                 <div class="form-group 
@@ -388,9 +410,7 @@
                                 aria-describedby="{{Title}}Help"
                                 placeholder="Enter {{Title}}" 
                                 data-defaultvalue="{{DefaultValue}}" 
-                                {{#if Required}}
-                                    required
-                                {/if}} 
+                                {{#if Required}} required {{/if}} 
                                 {{#if hasDropDownRelationship}}
                                     data-child="{{dropDownRelationship.child}}" 
                                     data-lookupfield="{{dropDownRelationship.lookupField}}" 
@@ -486,13 +506,13 @@
         {{#if loadActionButtons}}
             {{#switch formType}}
                 {{#case "edit"}}
-                    <button type="button" class="btn btn-primary save-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Update">Update Form</button> 
+                    <button type="button" class="btn btn-primary save-data" data-source="{{name}}" data-sptype="{{spType}}" data-owner="form-{{formType}}-{{name}}" data-action="Update">Update Form</button> 
                 {{/case}} 
                 {{#case "view"}}
                 {{/case}} 
                 {{#default}}{{setVar "formType" "create"}}
-                    <button type="button" class="btn btn-primary save-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Save">Save Form</button>
-                    <button type="button" class="btn btn-success clear-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Reset">Reset Form</button> 
+                    <button type="button" class="btn btn-primary save-data" data-source="{{name}}" data-sptype="{{spType}}" data-owner="form-{{formType}}-{{name}}" data-action="Save">Save Form</button>
+                    <button type="button" class="btn btn-success clear-data" data-source="{{name}}" data-sptype="{{spType}}" data-owner="form-{{formType}}-{{name}}" data-action="Reset">Reset Form</button> 
                 {{/default}} 
             {{/switch}} 
         {{/if}}
@@ -645,8 +665,17 @@
 
 <script type="text/x-handlebars-template" id="sp-modal-fillin-template">
     {{#d.results}}
-        <div class="modal fade fillin-modal" id="modal-fillin-{{@root.name}}-{{Title}}" data-choicetype="{{EditFormat}}" data-action="{{@root.action}}" data-source="{{@root.name}}" data-entity="{{EntityPropertyName}}" data-for="{{Title}}" data-uiid="{{uiID}}"
-            data-c data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
+        <div class="modal fade fillin-modal" 
+            id="modal-fillin-{{@root.name}}-{{Title}}" 
+            data-choicetype="{{EditFormat}}" 
+            data-action="{{@root.action}}" 
+            data-source="{{@root.name}}" 
+            data-entity="{{EntityPropertyName}}" 
+            data-for="{{Title}}" 
+            data-uiid="{{uiID}}"
+            data-c="" data-backdrop="static" 
+            tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true"
+        >
             <!-- Modal -->
             <div class="modal-dialog modal-dialog-centered" role="fill-in-modal" style="min-width: 600px;">
                 <div class="modal-content">
