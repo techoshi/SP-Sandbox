@@ -1592,8 +1592,7 @@ $.fn.spCRUD = (function () {
                         case "select-multiple":
                             var multiValue = $(element).val();
                             var finalValue = { "__metadata": { "type": "Collection(Edm.String)" } };
-                            finalValue.results = multiValue ? multiValue : [];                            
-
+                            finalValue.results = multiValue ? multiValue : [];
                             formObjects[thisCurrentObject] = finalValue;
                             break;
                         case "file":

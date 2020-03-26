@@ -37,7 +37,8 @@ $.fn.spCommon = (function () {
 
     setInterval(function () {
         if (continueToUpdateContext) {
-            updateDigest(_spPageContextInfo.webServerRelativeUrl, _spFormDigestRefreshInterval);
+            /*_spPageContextInfo.webServerRelativeUrl, _spFormDigestRefreshInterval*/
+            updateDigest();
         }
     }, 1 * 15000);
 
