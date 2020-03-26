@@ -261,9 +261,8 @@ $.fn.spEnvironment.bootstrapAlert = $.fn.spCommon.addHandlebar($('#bootstrap-ale
 $.fn.spEnvironment.spaAccordion = $.fn.spCommon.addHandlebar($('#spa_accordion').html());
 $.fn.spEnvironment.spaAccordionCard = $.fn.spCommon.addHandlebar($('#spa_accordion_card').html());
 $.fn.spEnvironment.spaChildFormRow = $.fn.spCommon.addHandlebar($('#spa-child-form-row').html());
-
-var thisNavLiTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-li').html());
-var thisNavDivTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-div').html());
+$.fn.spEnvironment.thisNavLiTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-li').html());
+$.fn.spEnvironment.thisNavDivTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-div').html());
 
 $('#DeltaPlaceHolderMain').append($.fn.spEnvironment.tabBody());
 $('.container').on('click', 'tbody tr', function () {

@@ -515,9 +515,9 @@ $.fn.spCRUD = (function () {
             thisApp.objects[m.source.toLowerCase()].active = true;
         }
 
-        $('.spa-app-items').append(thisNavLiTemplate(thisApp.objects[m.source.toLowerCase()]));
+        $('.spa-app-items').append($.fn.spEnvironment.thisNavLiTemplate(thisApp.objects[m.source.toLowerCase()]));
 
-        var tabContent = thisNavDivTemplate(thisApp.objects[m.source.toLowerCase()]);
+        var tabContent = $.fn.spEnvironment.thisNavDivTemplate(thisApp.objects[m.source.toLowerCase()]);
 
         //Plug here
         $('#sp-app-contents').append(tabContent);
