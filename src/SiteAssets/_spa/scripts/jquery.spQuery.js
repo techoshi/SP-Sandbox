@@ -64,7 +64,9 @@ $.fn.spQuery = (function () {
                             if (hideTheseColumns.indexOf(thisRow.EntityPropertyName) == -1) {
                                 var orderable = true;
 
-                                if (thisRow.TypeAsString == "MultiChoice") {
+                                var excludeFromOrder = ["MultiChoice", "Note"];
+                                
+                                if (excludeFromOrder.indexOf(thisRow.TypeAsString) > -1) {
                                     orderable = false;
                                 }
 
