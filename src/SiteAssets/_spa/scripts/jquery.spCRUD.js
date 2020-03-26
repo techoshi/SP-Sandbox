@@ -732,11 +732,18 @@ $.fn.spCRUD = (function () {
         }
     }
 
-    var getWithOutHidden = function (childObject) {
+    var markHiddenObjects = function (childObject) {
 
         if (childObject && childObject.columns && childObject.columns.hidden && childObject.d) {
             childObject.d.results = _.filter(childObject.d.results, function (o) {
-                return childObject.columns.hidden.indexOf(o.StaticName) == -1;
+                
+                var notHidden = childObject.columns.hidden.indexOf(o.StaticName) == -1;
+                if(!notHidden)
+                {
+                    o.hidden = true;
+                }                
+
+                return true;
             });
         }
 
@@ -776,21 +783,19 @@ $.fn.spCRUD = (function () {
 
                         if (currentChild) {
                             hasChild = true;
-                            childObject = initObjectParams(currentChild);
+                            childObject = currentChild;
 
-                            //TODO: Verify if needed
-                            childObject.listData = thisApp.objects[childObject.source].listData;
                             if (hasChild) {
                                 if (childObject.html == undefined) {
-                                    childObjectRoot = JSON.parse(JSON.stringify(thisApp.objects[childObject.listName.toLowerCase()]));
-                                    childObject.d = {};
+                                    //childObjectRoot = JSON.parse(JSON.stringify(thisApp.objects[childObject.listName.toLowerCase()]));
+                                    //childObject.d = {};
                                     childObject.loadActionButtons = false;
 
-                                    childObject.d.results = _.filter(childObjectRoot.d.results, function (o) {
+                                    childObject.d.results = _.filter(childObject.d.results, function (o) {
                                         return o.StaticName != "Attachments";
                                     });
 
-                                    childObject = getWithOutHidden(childObject);
+                                    childObject = markHiddenObjects(childObject);
                                 }
                                 else {
                                     childObject.html = undefined;
@@ -1654,7 +1659,10 @@ $.fn.spCRUD = (function () {
             'type': 'SP.Data.' + f.thisData.sptype.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
         };
 
-        return { formObjects : formObjects, fileObjects : fileObjects};
+        f.formObjects = formObjects;
+        f.fileObjects = fileObjects;
+
+        return f;
     }
 
     function saveForm(m) {

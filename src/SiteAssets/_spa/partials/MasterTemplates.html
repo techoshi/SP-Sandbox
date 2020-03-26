@@ -150,12 +150,17 @@
 			<input type="hidden" name="{{@root.name}}.ID" data-name="ID" data-entity="ID"/>
 		{{/if}}
 		{{#d.results}}
-			{{#if spLoadObject}}
+		{{#if spLoadObject}}
+
+			{{#if hidden}}
+			<input type="hidden" id="{{uiID}}" name="{{@root.name}}.{{Title}}" data-entity="{{EntityPropertyName}}" data-name="{{Title}}"/>
+			{{else}}
+			
 			<div class="form-group 
 			{{#switch TypeAsString}}
 			{{#case "Attachments" "File" }}col-md-12{{/case}}
 			{{#default}} 
-			{{#if hasBootstrapGridOverride}}{{bootstrapGridOverride}}{{else}}col-md-4 col-sm-12 col-lg-3{{/if}}
+			{{#if hasBootstrapGridOverride}} {{bootstrapGridOverride}} {{else}} col-md-4 col-sm-12 col-lg-3 {{/if}}
 			{{/default}}
 			{{/switch}}">
 				{{#switch TypeAsString}}
@@ -294,6 +299,7 @@
 				<small id="{{@root.name}}.{{Title}}.Help" class="form-text text-muted"></small>			
 			</div>
 			{{/if}}
+		{{/if}}
 		{{/d.results}}
 		{{#if loadActionButtons}}
 		{{#switch formType}}
@@ -306,6 +312,7 @@
 				<button type="button" class="btn btn-success clear-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Reset">Reset Form</button>
 			{{/default}}
 		{{/switch}}
+		
 		{{/if}}
 
 		

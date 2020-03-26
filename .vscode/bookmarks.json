@@ -3,6 +3,11 @@
 		"path": "$ROOTPATH$\\src\\SiteAssets\\_spa\\scripts\\jquery.spCRUD.js",
 		"bookmarks": [
 			{
+				"line": 79,
+				"column": 14,
+				"label": "loadLists()"
+			},
+			{
 				"line": 578,
 				"column": 67,
 				"label": ""
@@ -16,6 +21,11 @@
 				"line": 1367,
 				"column": 6,
 				"label": ""
+			},
+			{
+				"line": 1545,
+				"column": 17,
+				"label": "getFormData()"
 			},
 			{
 				"line": 1562,
