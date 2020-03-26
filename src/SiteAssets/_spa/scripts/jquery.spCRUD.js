@@ -1506,10 +1506,10 @@ $.fn.spCRUD = (function () {
         m = typeof m == 'object' && m != undefined ? m : {};
 
         var thisData = $(m.currentTarget).data();
-        var caller = '#' + thisData.owner;
-        $(caller).data('FileLeafRef', '');
+        var formSelector = '#' + thisData.owner;
+        $(formSelector).data('FileLeafRef', '');
 
-        var theseFormObjects = $(caller).find('input, select, textarea');
+        var theseFormObjects = $(formSelector).find('input, select, textarea');
 
         $(theseFormObjects).each(function (i, element) {
             switch ($(element).prop('type')) {
@@ -1548,8 +1548,8 @@ $.fn.spCRUD = (function () {
         f.fileObjects = typeof f.fileObjects == "object" && Array.isArray(f.fileObjects) ? f.fileObjects : [];
         var formObjects = f.formObjects;
         var fileObjects = f.fileObjects;
-        var theseFormObjects = $(f.caller).find('input, select, textarea, .people-picker');
-        if (f.caller) {
+        var theseFormObjects = $(f.formSelector).find('input, select, textarea, .people-picker');
+        if (f.formSelector) {
             $(theseFormObjects).each(function (i, element) {
 
                 var onlyAddValidObjects = $(element).parents('.sp-peoplepicker-topLevel').length == 0;
@@ -1647,7 +1647,6 @@ $.fn.spCRUD = (function () {
                                 };
                             } else {
                                 formObjects[$(rootObject).data('name').replace(/-/g, '_x002d_') + "Id"] = ids.length > 0 ? ids[0] : null;
-
                             }
                         }
                     }
@@ -1697,7 +1696,7 @@ $.fn.spCRUD = (function () {
                     break;
             }
 
-            var processedFormData = getFormData({ caller: caller, formObjects: formObjects, thisData : thisData });
+            var processedFormData = getFormData({ formSelector: caller, formObjects: formObjects, thisData : thisData });
             formObjects = processedFormData.formObjects;
             fileObjects = processedFormData.fileObjects;
 
@@ -1710,7 +1709,7 @@ $.fn.spCRUD = (function () {
                     $(thisChildBody).each(function (cli, liElement) {
                         var thisForm = $(liElement).find('.form-container');
 
-                        var thisFormData = getFormData({ caller: thisForm, formObjects: {}, thisData : thisData });
+                        var thisFormData = getFormData({ formSelector: thisForm, formObjects: {}, thisData : thisData });
 
                         childForms.push(thisFormData);
                     });
