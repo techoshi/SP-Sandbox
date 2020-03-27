@@ -198,7 +198,7 @@
                             >
                             {{{replace Title '_' ' '}}}
                             {{#if Required}}
-                            <span style="color:red;">*</span>
+                            <span class="red-text">*</span>
                             {{/if}}
                             </label>            
                         {{/case}} 
@@ -658,10 +658,9 @@
 
 <script type="text/x-handlebars-template" id="sp-search-condition">
     {{#columns}}
-        o["{{name}}"].toString().toLowerCase().indexOf("{{toLowerCase ../search.value}}") > -1 {{#if @last}}{{else }} || {{/if}}
+        {{@root.objectName}}["{{name}}"].toString().toLowerCase().indexOf("{{toLowerCase ../search.value}}") > -1 {{#if @last}}{{else }} || {{/if}}
     {{/columns}}
 </script>
-
 
 <script type="text/x-handlebars-template" id="sp-modal-fillin-template">
     {{#d.results}}

@@ -490,11 +490,12 @@ $.fn.spQuery = (function () {
             var searchStageData = data;
 
             var conditionSyntax = $.fn.spEnvironment.spSearchCondition({
+                objectName : "o",
                 columns: m.meta.columns,
                 search: m.meta.search
             });
 
-            var searchData = _.filter(searchStageData, function (o) {
+            var searchData = _.filter(searchStageData, function (o) {                
                 return eval(conditionSyntax);
             });
 

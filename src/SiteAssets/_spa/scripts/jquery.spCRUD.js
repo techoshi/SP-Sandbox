@@ -67,7 +67,7 @@ $.fn.spCRUD = (function () {
     }
 
     function initObjectParams(e) {
-        e.thisVar = e.name;
+        e.thisVar = e.thisVar ? e.thisVar : e.name;
         e.name = e.name.toLowerCase();
         e.thisObjectLower = e.name;
         e.owner = e.name;
@@ -86,12 +86,12 @@ $.fn.spCRUD = (function () {
 
         //var tempList = _.filter(theseLists, function (o) { return o.loaded == undefined || o.loaded == false; });
         for (var i = 0; i < theseLists.length; i++) {
-            initObjectParams(theseLists[i]);                        
+            initObjectParams(theseLists[i]);               
         }
 
-        settings.hasConfig = _.filter(theseLists, { config: true }).length > 0 ? true : false;
+        settings.hasConfig = _.filter(theseLists, { loaded : false, config: true }).length > 0 ? true : false;
 
-        settings.hashidden = _.filter(theseLists, { hidden: true }).length > 0 ? true : false;
+        settings.hashidden = _.filter(theseLists, { loaded : false, hidden: true }).length > 0 ? true : false;
 
         $.fn.spCommon.getUserPermissions({
             urls: _.uniq(_.map(theseLists, 'path')),
@@ -866,7 +866,6 @@ $.fn.spCRUD = (function () {
 
                     reloadLookupData(currentChild);
                     
-
                     var thisChildParentRef =_.find(currentChild.d.results, { EntityPropertyName : thisParentObject.thisVar });
 
                     if(thisChildParentRef && thisParentObject.lastSelectedRecord && thisParentObject.lastSelectedRecord.d)
@@ -944,7 +943,7 @@ $.fn.spCRUD = (function () {
         }
 
 
-        loadFormData(m);
+        loadFormDataForSelectRow(m);
 
         var thisMo = m.action;
         $('#modal-' + thisMo + '-' + m.source + ' .form-container button').prependTo('#modal-' + thisMo + '-' + m.source + ' .modal-footer');
@@ -1060,24 +1059,81 @@ $.fn.spCRUD = (function () {
         modalLoader(thisData);
     }
 
-    function loadFormData(m) {
-        var action = m.action;
-        var owner = m.owner;
-
-        var selectedRow = $('#' + owner + ' tbody tr.selected').index();
-
-        var actionURL = "";
-        var actionData = {};
-        var itemURL = "";
-
+    function loadFormDataForSelectRow(m)
+    {
+        m.formSelector = $('#form-' + m.action + '-' + m.owner + '');
+        m.selectedRow = $('#' + m.owner + ' tbody tr.selected').index();
+                
         if (m.dataPresent == false) {
-            if (action != 'create' && (selectedRow == -1)) {
-                toastr.error('Please select a row to ' + action + '.', 'No row selected!');
+
+            if(m.selectedRow && m.selectedRow > -1)
+            {                
+                m.actionData = m.selectedRow > -1 ?  tables[m.owner].ajax.json().data[m.selectedRow] : m.actionData;
+                m.dataPresent = true;
+            }
+
+            if (m.action != 'create' && (m.selectedRow == -1)) {
+                toastr.error('Please select a row to ' + m.action + '.', 'No row selected!');
                 return -1;
             }
         }
 
-        var templateType = $('#form-' + action + '-' + owner + '').data('basetemplate');
+        loadFormData(m);
+
+        if(m.children)
+        {
+            for (var index = 0; index < m.children.length; index++) {
+                var element = m.children[index];
+                console.log(element);
+            }
+        }
+    }
+
+    function hideLoaderShowModal(m)
+    {
+        theLoader.hide({
+            id: m.owner + '-item-load'
+        });
+        $('#modal-' + m.action + '-' + m.owner + '').modal('show');
+    }
+
+    function getQueryForObject(s)
+    {
+        var actionURL = "";
+        if (s.baseTemplate == '101') {
+            //actionURL += '?$select=Title,ID,EncodedAbsUrl,*'
+            actionURL += "?" + $.fn.spQuery.getItemQuery({
+                tableName: s.owner,
+                tableID: s.owner,
+                tableSelector: '#' + s.owner,
+                tableStructure: s,
+                templateType: s.baseTemplate,
+                itemCall: true
+            });
+        } else {
+            actionURL += "?" + $.fn.spQuery.getItemQuery({
+                tableName: s.owner,
+                tableID: s.owner,
+                tableSelector: '#' + s.owner,
+                tableStructure: s,
+                templateType: s.baseTemplate
+            });
+        }
+
+        return actionURL;
+    }
+
+    function loadFormData(m) {
+        var action = m.action;
+        var owner = m.owner;
+
+        var selectedRow = m.selectedRow;
+
+        var actionURL = "";
+        var actionData = m.actionData ? m.actionData : {};
+        var itemURL = "";
+        
+        var templateType = m.baseTemplate;
 
         theLoader.show({
             id: owner + '-item-load'
@@ -1088,34 +1144,16 @@ $.fn.spCRUD = (function () {
         switch (action) {
             case 'view':
             case 'edit':
-
-                actionData = m.dataPresent ? m.actionData : tables[owner].ajax.json().data[selectedRow];
+                
                 itemURL = actionData['odata.editLink'];
 
-                actionURL = actionData['odata.editLink'];
-                if (templateType == '101') {
-                    //actionURL += '?$select=Title,ID,EncodedAbsUrl,*'
-                    actionURL += '?' + $.fn.spQuery.getItemQuery({
-                        tableName: owner,
-                        tableID: owner,
-                        tableSelector: '#' + owner,
-                        tableStructure: thisApp.objects[owner],
-                        templateType: templateType,
-                        itemCall: true
-                    });
-                } else {
-                    actionURL += '?' + $.fn.spQuery.getItemQuery({
-                        tableName: owner,
-                        tableID: owner,
-                        tableSelector: '#' + owner,
-                        tableStructure: thisApp.objects[owner],
-                        templateType: '100'
-                    });
-                }
+                actionURL = actionData['odata.editLink'];            
+
+                actionURL += getQueryForObject(m);
 
                 var getDataForType = ['view', 'edit'];
 
-                if (getDataForType.indexOf(action) > -1 && (selectedRow > -1 || m.dataPresent)) {
+                if (getDataForType.indexOf(action) > -1 && m.dataPresent) {
                     $.fn.spCommon.ajax({
                         source: m.owner,
                         method: 'GET',
@@ -1130,7 +1168,7 @@ $.fn.spCRUD = (function () {
                                 returnedData.FileLeafRef = actionData.FileLeafRef;
                             }
 
-                            $('#form-' + action + '-' + owner + '').find('input, select, textarea, .people-picker-data').each(function (dIndex, dElement) {
+                            $(m.formSelector).find('input, select, textarea, .people-picker-data').each(function (dIndex, dElement) {
                                 if ($(dElement).data('name')) {
                                     if (!$(dElement).hasClass('people-picker-data')) {
                                         switch ($(dElement).getType()) {
@@ -1168,7 +1206,6 @@ $.fn.spCRUD = (function () {
                                                             });
                                                         }
                                                     }
-
                                                 }
 
                                                 break;
@@ -1226,21 +1263,21 @@ $.fn.spCRUD = (function () {
                             });
 
                             if (action == 'view') {
-                                $('#form-' + action + '-' + owner + '').find('input, select, textarea').prop('readonly', true).prop('disabled', true).addClass('no-select object-disabled');
+                                $(m.formSelector).find('input, select, textarea').prop('readonly', true).prop('disabled', true).addClass('no-select object-disabled');
                             }
 
-                            for (var mo = 0; mo < modalTypes.length; mo++) {
-                                var thisMo = modalTypes[mo];
-                                $('#modal-' + action + '-' + owner).find('.select2-js, .sp-lookup').select2({
-                                    dropdownParent: $('#modal-' + action + '-' + owner),
+                            //for (var mo = 0; mo < modalTypes.length; mo++) {
+                            //    var thisMo = modalTypes[mo];
+                                $(m.formSelector).find('.select2-js, .sp-lookup').select2({
+                                    dropdownParent: $(m.formSelector),
                                     width: '100%'
                                 });
-                            }
+                            //}
 
                             //initPeoplePickers();
                             //Loads any people selectors
                             loadPickersWithData({
-                                objectParent: $('#modal-' + action + '-' + owner)
+                                objectParent: $(m.formSelector)
                             });
 
                             if (templateType != '101') {
@@ -1268,7 +1305,7 @@ $.fn.spCRUD = (function () {
                                     ServerRelativeUrl: relativeFilePath,
                                     parentObject: m
                                 }];
-                                $('#form-' + action + '-' + owner).data('FileLeafRef', relativeFilePath);
+                                $(m.formSelector).data('FileLeafRef', relativeFilePath);
                                 showFiles({
                                     box: action + '-' + owner + '-' + 'attachments',
                                     files: attachments2,
@@ -1276,37 +1313,25 @@ $.fn.spCRUD = (function () {
                                 });
                             }
 
-                            theLoader.hide({
-                                id: owner + '-item-load'
-                            });
-                            $('#modal-' + action + '-' + owner + '').modal('show');
+                            hideLoaderShowModal(m);
                         }
                     });
                 } else {
-                    theLoader.hide({
-                        id: owner + '-item-load'
-                    });
-                    $('#modal-' + action + '-' + owner + '').modal('show');
+                    hideLoaderShowModal(m);                    
                 }
                 break;
             case 'delete':
-                actionData = tables[owner].ajax.json().data[selectedRow];
+                
                 actionURL = actionData['odata.editLink'];
+         
+                $(m.formSelector).find('[name="' + owner + '.ID"]').val(actionData.ID);
 
-                $('#form-' + action + '-' + owner + '').find('[name="' + owner + '.ID"]').val(actionData.ID);
-
-                theLoader.hide({
-                    id: owner + '-item-load'
-                });
-                $('#modal-' + action + '-' + owner + '').modal('show');
+                hideLoaderShowModal(m);
 
                 break;
             case 'create':
             default:
-                theLoader.hide({
-                    id: owner + '-item-load'
-                });
-                $('#modal-' + action + '-' + owner + '').modal('show');
+                hideLoaderShowModal(m);
                 break;
         }
     }
@@ -2028,6 +2053,12 @@ $.fn.spCRUD = (function () {
                                     toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
                                 },
                                 always: function (a) {
+
+                                    var childRequestFail = function(a1)
+                                    {
+                                        toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                                    };
+
                                     for (var index = 0; index < childForms.length; index++) {
                                         var childObject = childForms[index];
                                         
@@ -2044,9 +2075,7 @@ $.fn.spCRUD = (function () {
                                             method: 'POST',
                                             url: childPostStruct.url,
                                             data: childObject.thisActionType.toLowerCase() == 'delete' ? undefined : JSON.stringify(childObject.formObjects),
-                                            fail: function (a1) {
-                                                toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                                            },
+                                            fail: childRequestFail,
                                             always: function (a) {
                         
                                             }
