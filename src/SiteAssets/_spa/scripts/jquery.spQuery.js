@@ -114,20 +114,21 @@ $.fn.spQuery = (function () {
     }
 
     function getSelect(m) {
+
         var selectQ = "";
         var expandQ = "";
 
-        var theRequired = _.filter(m, {
+        var theRequired = _.filter(m.columns, {
             type: "required"
         });
-        var theColumns = _.filter(m, {
+        var theColumns = _.filter(m.columns, {
             type: "column"
         });
-        var theLookups = _.filter(m, {
+        var theLookups = _.filter(m.columns, {
             type: "lookup"
         });
 
-        var theFilters = _.filter(m, {
+        var theFilters = _.filter(m.filters, {
             type: "filter"
         });
 
@@ -152,14 +153,30 @@ $.fn.spQuery = (function () {
         }
 
         if (theFilters.length > 0) {
-            selectQ += "&$filter=" + theFilters[0].condition;
-        }
+            var filterConcat = "";
+            for (var index = 0; index < theFilters.length; index++) {
+                var element = theFilters[index];
+                filterConcat += index == 0 ? "(" : "";
 
+                filterConcat += element.filter + (index == (theFilters.length -1) ? "" : " and ");
+
+                filterConcat += index == (theFilters.length -1) ? ")" : "";
+            }
+
+            selectQ += "&$filter=" + filterConcat;
+        }
 
         return selectQ;
     }
 
     function getSelectStruct(m) {
+
+        var selectStruct = {
+            columns : [],
+            filters : [],
+            expands : []
+        };
+
         m.itemCall = typeof m.itemCall == "boolean" ? m.itemCall : false;
 
         var thisSelect = "$select=";
@@ -175,6 +192,20 @@ $.fn.spQuery = (function () {
         //Load Columns
         var columns = [];
         var loadedColumns = 0;
+
+        //Load passed in filters
+        if(typeof m.queryFilter == "string")
+        {
+            selectStruct.filters.push({ type : "filter", filter : m.queryFilter });
+        }
+        else if(typeof m.queryFilter == "object" && Array.isArray(m.queryFilter))
+        {
+            for (var index = 0; index < m.queryFilter.length; index++) {
+                var element = m.queryFilter[index];
+                selectStruct.filters.push({ type : "filter", filter : element.queryFilter });
+            }            
+        }
+        
         if (_.find(m.tableStructure.d.results, function (obj) {
                 return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
             })) {
@@ -186,11 +217,7 @@ $.fn.spQuery = (function () {
                     return o.InternalName == 'Attachments';
                 })) {
                 hasAttachments = true;
-                columns.push({
-                    type: "lookup",
-                    column: "AttachmentFiles",
-                    expand: "AttachmentFiles"
-                });
+                selectStruct.columns.push({ type: "lookup", column: "AttachmentFiles", expand: "AttachmentFiles" });
             }
 
             for (var i = 0; i < Lookups.length; i++) {
@@ -198,7 +225,7 @@ $.fn.spQuery = (function () {
                 var prefix = loadedColumns == 0 && !hasAttachments ? '' : ',';
 
                 if (thisLookup.spLoadObject) {
-                    columns.push({
+                    selectStruct.columns.push({
                         type: "column",
                         column: thisLookup.InternalName
                     });
@@ -206,11 +233,11 @@ $.fn.spQuery = (function () {
                 }
             }
 
-            columns.push({
+            selectStruct.columns.push({
                 type: "required",
                 column: "GUID"
             });
-            columns.push({
+            selectStruct.columns.push({
                 type: "required",
                 column: "ID"
             });
@@ -223,15 +250,15 @@ $.fn.spQuery = (function () {
             }
 
             if (thisTemplateType == '101') {
-                columns.push({
+                selectStruct.columns.push({
                     type: "column",
                     column: "EncodedAbsUrl"
                 });
 
-                if (!m.itemCall) {
-                    columns.push({
+                if (!m.itemCall) {                    
+                    selectStruct.filters.push({
                         type: "filter",
-                        condition: "FSObjType eq 0"
+                        filter: "FSObjType eq 0"
                         //condition: "startswith(ContentTypeId, '0x0101')",
                     });
                 }
@@ -256,19 +283,19 @@ $.fn.spQuery = (function () {
                         var lookupColumns = ["Id", "EMail", "FirstName", "LastName", "WorkPhone", "Office", "Department", "JobTitle", "Title", "SipAddress", "Name"];
 
                         for (var cols = 0; cols < lookupColumns.length; cols++) {
-                            columns.push({
+                            selectStruct.columns.push({
                                 type: "lookup",
                                 column: thisLookup2.EntityPropertyName + '/' + lookupColumns[cols],
                                 expand: thisLookup2.EntityPropertyName
                             });
                         }
                     } else {
-                        columns.push({
+                        selectStruct.columns.push({
                             type: "lookup",
                             column: thisLookup2.EntityPropertyName + '/Id',
                             expand: thisLookup2.EntityPropertyName
                         });
-                        columns.push({
+                        selectStruct.columns.push({
                             type: "lookup",
                             column: thisLookup2.EntityPropertyName + '/' + thisLookup2.LookupField,
                             expand: thisLookup2.EntityPropertyName
@@ -278,7 +305,7 @@ $.fn.spQuery = (function () {
             }
         }
 
-        return columns;
+        return selectStruct;
     }
 
     function getOrderBy(m) {
@@ -788,8 +815,8 @@ $.fn.spQuery = (function () {
         },
         getItemQuery: function (m) {
             var struct = getSelectStruct(m);
-
-            return getSelect(struct);
+            var stringQuery = getSelect(struct);
+            return stringQuery;
         }
     };
 })();
