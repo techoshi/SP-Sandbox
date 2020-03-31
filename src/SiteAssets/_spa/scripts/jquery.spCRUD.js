@@ -970,40 +970,71 @@ $.fn.spCRUD = (function () {
     };
 
     var loadChildRow = function (e) {
-        var m = e;
-        //m.action = m.owneraction;
-        var thisParentObject = thisApp.objects[m.source];
 
-        var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
+        var myChildren = [];
+        if (Array.isArray(e)) {
+            myChildren = e;
+        }
+        else {
+            myChildren.push(e);
+        }
 
-        if (currentChild) {
+        if (myChildren.length > 0) {
 
-            if (currentChild.d && currentChild.d.results) {
-                addUiGuidsToItem(currentChild.d.results);
+            var htmlLiString = "";
+            for (var index = 0; index < myChildren.length; index++) {
+                var m = myChildren[index];
+
+                var thisParentObject = thisApp.objects[m.source];
+
+                var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
+
+                if (currentChild) {
+
+                    if (currentChild.d && currentChild.d.results) {
+                        addUiGuidsToItem(currentChild.d.results);
+                    }
+
+                    var thisChildParentRef = _.find(currentChild.d.results, { EntityPropertyName: thisParentObject.thisVar });
+
+                    if (thisChildParentRef && thisParentObject.lastSelectedRecord && thisParentObject.lastSelectedRecord.d) {
+                        thisChildParentRef.currentParentID = thisParentObject.lastSelectedRecord.d.ID;
+                    }
+
+                    currentChild.html = addChildRow(currentChild);
+                    var rowContent = $.fn.spEnvironment.spaChildFormRow(currentChild);
+
+                    htmlLiString += rowContent;
+                }
             }
 
-            var thisChildParentRef = _.find(currentChild.d.results, { EntityPropertyName: thisParentObject.thisVar });
+            var firstChild = _.find(myChildren, {});
 
-            if (thisChildParentRef && thisParentObject.lastSelectedRecord && thisParentObject.lastSelectedRecord.d) {
-                thisChildParentRef.currentParentID = thisParentObject.lastSelectedRecord.d.ID;
-            }
+            $('#' + firstChild.container + ' ul').append(htmlLiString);
 
-            currentChild.html = addChildRow(currentChild);
-            var rowContent = $.fn.spEnvironment.spaChildFormRow(currentChild);
-            $('#' + m.container + ' ul').append(rowContent);
+            thisApp.objects[firstChild.source].action = firstChild.action;
 
-            currentChild.action = m.action;
+            initFormObject(thisApp.objects[firstChild.source]);
 
-            initFormObject(thisApp.objects[m.source]);
+            var allForms = $('#' + firstChild.container + ' ul li .form-container');
 
-            if (e.rowData) {
-                var latestEntryContainer = $('#' + m.container + ' ul li:last .form-container');
+            if ($(allForms).length == myChildren.length) {
+                $(allForms).each(function (formIndex, formElement) {
 
-                currentChild.dataPresent = true;
-                currentChild.formSelector = latestEntryContainer;
-                currentChild.actionData = e.rowData;
-                loadDataToDom(currentChild, e.rowData);
-                //loadFormData(currentChild);
+                    var thisParentObject = thisApp.objects[myChildren[formIndex].source];
+
+                    var currentChild = _.find(thisParentObject.children, { name: myChildren[formIndex].ownersource });
+
+                    if (e[formIndex].rowData) {
+                        var latestEntryContainer = $(formElement);
+
+                        currentChild.dataPresent = true;
+                        currentChild.formSelector = latestEntryContainer;
+                        currentChild.actionData = e[formIndex].rowData;
+                        loadDataToDom(currentChild, e[formIndex].rowData);
+                        //loadFormData(currentChild);
+                    }
+                });
             }
         }
     };
@@ -1330,6 +1361,9 @@ $.fn.spCRUD = (function () {
                             var loadChildObject = function (a) {
 
                                 if (a && a.d && a.d.results && Array.isArray(a.d.results)) {
+
+                                    var childRowsQueue = [];
+
                                     for (var index = 0; index < a.d.results.length; index++) {
                                         var thisObjectEntry = a.d.results[index];
 
@@ -1339,12 +1373,8 @@ $.fn.spCRUD = (function () {
                                         if (typeof thisObjectEntry[m.spType] == "object" && thisObjectEntry[m.spType].Id) {
                                             thisObjectEntry[m.spType + "Id"] = thisObjectEntry[m.spType].Id;
                                         }
-                                        // if (thisChildParentRef && m.lastSelectedRecord && m.lastSelectedRecord.d) {
-                                        //     thisChildParentRef.currentParentID = m.lastSelectedRecord.d.ID;
-                                        // }
-                                        //thisObjectEntry[]
-                                        //$('.add-child[data-ownersource="' + cm.thisChild.source + '"]').trigger('click');
-                                        loadChildRow({
+
+                                        childRowsQueue.push({
                                             ownersource: cm.thisChild.source,
                                             source: cm.m.source,
                                             action: "edit",
@@ -1354,6 +1384,8 @@ $.fn.spCRUD = (function () {
                                             rowData: thisObjectEntry
                                         });
                                     }
+
+                                    loadChildRow(childRowsQueue);
                                 }
                             };
 
@@ -2461,12 +2493,15 @@ $.fn.spCRUD = (function () {
             });
 
             var parentName = $(element).data('name');
-            if ($('[name="' + parentName + '"]').data('prepopulate')) {
+
+            var thisPickerPrePopulateObject = $(m.objectParent).find('[name="' + parentName + '"]');
+
+            if ($(thisPickerPrePopulateObject).data('prepopulate')) {
                 var data = {};
                 var peoplePicker = SPClientPeoplePicker.SPClientPeoplePickerDict[$(element).prop('id') + "_TopSpan"];
                 data.users = [];
-                var prepop = $('[name="' + parentName + '"]').data('prepopulate');
-                if ($('[name="' + parentName + '"]').data('multi')) {
+                var prepop = $(thisPickerPrePopulateObject).data('prepopulate');
+                if ($(thisPickerPrePopulateObject).data('multi')) {
                     data.users = prepop != undefined && prepop.results != undefined ? prepop.results : [];
 
                     for (var ii = 0; ii < data.users.length; ii++) {
@@ -2591,6 +2626,9 @@ $.fn.spCRUD = (function () {
     }
 
     return {
+        loadPickersWithData: function (m) {
+            return loadPickersWithData(m);
+        },
         initPeoplePickers: function (m) {
             return initPeoplePickers();
         },
