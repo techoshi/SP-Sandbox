@@ -77,7 +77,8 @@ $.fn.spCRUD = (function () {
         e.title = e.thisVar;
         e.tabTitle = e.tabTitle ? e.tabTitle : e.thisVar;
         e.sectionName = e.sectionName ? e.sectionName : e.tabTitle;
-        e.spType = e.spType ? e.spType : e.title;
+        e.spType = e.spType ? e.spType : e.title;            
+        e.loadActionButtons = true;
 
         return e;
     }
@@ -1498,46 +1499,55 @@ $.fn.spCRUD = (function () {
             method: 'GET',
             url: m.path + "/_api/web/lists/getbytitle('" + m.source + "')/fields?$filter=Hidden eq false and ReadOnlyField eq false",
             done: function (a) {
+
                 _.merge(thisApp.objects[m.source.toLowerCase()], a);
-                //thisApp.objects[m.source.toLowerCase()] = a;
-                thisApp.objects[m.source.toLowerCase()].loadActionButtons = true;
+
                 var hasBootstrapGridOverride = false;
                 var bootstrapGridOverride;
+
+                var bsGridOverrideMethod = function(thisObject, element)
+                {
+                    if (thisObject.form && thisObject.form.columns) {
+                        var thisMatchedObject = _.find(thisObject.form.columns, { name: element.StaticName });
+
+                        if (thisMatchedObject && thisMatchedObject.bootstrapGridOverride && thisMatchedObject.bootstrapGridOverride.class) {
+                            bootstrapGridOverride = thisMatchedObject.bootstrapGridOverride.class;
+                        }
+                        hasBootstrapGridOverride = bootstrapGridOverride ? true : false;
+                    }
+                };                
+                
+                //Extend Objects                 
+                thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
+
+                    var thisObject = thisApp.objects[m.source.toLowerCase()];
+
+                    bsGridOverrideMethod(thisObject, element);                        
+
+                    return _.extend({}, element, {
+                         //Mark all List Objects Hidden before Displaying if has m.meta.dtColumns
+                        spLoadObject: (m.meta.dtColumns && m.meta.dtColumns.length) > 0 ? false : true,
+                        hidden: false,
+                        spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length,
+                        bootstrapGridOverride: bootstrapGridOverride,
+                        hasBootstrapGridOverride: hasBootstrapGridOverride
+                    });
+                });
+                
+
+                //Extend Objects with Injected Columns
                 if (m.meta.dtColumns && m.meta.dtColumns.length > 0) {
                     if (!_.find(m.meta.dtColumns, "Attachments")) {
                         m.meta.dtColumns.push("Attachments");
                         //m.meta.dtColumns.push("Content Type");
-                    }
+                    }                                    
 
-                    thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
-
-                        var thisObject = thisApp.objects[m.source.toLowerCase()];
-                        var formOverride;
-
-                        if (thisObject.form && thisObject.form.columns) {
-                            var thisMatchedObject = _.find(thisObject.form.columns, { name: element.StaticName });
-
-                            if (thisMatchedObject && thisMatchedObject.bootstrapGridOverride && thisMatchedObject.bootstrapGridOverride.class) {
-                                bootstrapGridOverride = thisMatchedObject.bootstrapGridOverride.class;
-                            }
-                            hasBootstrapGridOverride = bootstrapGridOverride ? true : false;
-                        }
-
-                        return _.extend({}, element, {
-                            spLoadObject: false,
-                            hidden: false,
-                            spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length,
-                            bootstrapGridOverride: bootstrapGridOverride,
-                            hasBootstrapGridOverride: hasBootstrapGridOverride
-                        });
-                    });
-
-                    var findThisObject = function (o) {
+                    var findThisObjectIntheInjectedColumns = function (o) {
                         return o.Title == m.meta.dtColumns[lc];
                     };
 
                     for (var lc = 0; lc < m.meta.dtColumns.length; lc++) {
-                        var thisObject = _.find(thisApp.objects[m.source.toLowerCase()].d.results, findThisObject);
+                        var thisObject = _.find(thisApp.objects[m.source.toLowerCase()].d.results, findThisObjectIntheInjectedColumns);
 
                         if (thisObject) {
                             thisObject.spLoadObject = true;
@@ -1547,31 +1557,9 @@ $.fn.spCRUD = (function () {
                         // Use Lodash to sort array by 'spObjectOrder'
                         thisApp.objects[m.source.toLowerCase()].d.results = _.orderBy(thisApp.objects[m.source.toLowerCase()].d.results, ['spObjectOrder'], ['asc']);
                     }
-                } else {
-                    thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
+                } 
 
-                        var thisObject = thisApp.objects[m.source.toLowerCase()];
-
-                        if (thisObject.form && thisObject.form.columns) {
-                            var thisMatchedObject = _.find(thisObject.form.columns, { name: element.StaticName });
-
-                            if (thisMatchedObject && thisMatchedObject.bootstrapGridOverride && thisMatchedObject.bootstrapGridOverride.class) {
-                                bootstrapGridOverride = thisMatchedObject.bootstrapGridOverride.class;
-                            }
-                            hasBootstrapGridOverride = bootstrapGridOverride ? true : false;
-                        }
-
-                        return _.extend({}, element, {
-                            spLoadObject: true,
-                            hidden: false,
-                            spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length,
-                            bootstrapGridOverride: bootstrapGridOverride,
-                            hasBootstrapGridOverride: hasBootstrapGridOverride
-                        });
-                    });
-                }
-
-                var findThisObject2 = function (o) {
+                var findThisObjectThatsParentRelationship = function (o) {
                     return o.Title == thisRelationship.parent;
                 };
 
@@ -1579,7 +1567,7 @@ $.fn.spCRUD = (function () {
                     for (var rel = 0; rel < m.meta.relationships.length; rel++) {
                         var thisRelationship = m.meta.relationships[rel];
 
-                        var thisObject2 = _.find(thisApp.objects[m.source.toLowerCase()].d.results, findThisObject2);
+                        var thisObject2 = _.find(thisApp.objects[m.source.toLowerCase()].d.results, findThisObjectThatsParentRelationship);
 
                         if (thisObject2) {
                             thisObject2.dropDownRelationship = thisObject2.dropDownRelationship ? thisObject2.dropDownRelationship : {};
