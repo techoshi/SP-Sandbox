@@ -77,7 +77,7 @@ $.fn.spCRUD = (function () {
         e.title = e.thisVar;
         e.tabTitle = e.tabTitle ? e.tabTitle : e.thisVar;
         e.sectionName = e.sectionName ? e.sectionName : e.tabTitle;
-        e.spType = e.spType ? e.spType : e.title;            
+        e.spType = e.spType ? e.spType : e.title;
         e.loadActionButtons = true;
 
         return e;
@@ -239,7 +239,7 @@ $.fn.spCRUD = (function () {
                 lookupDataPoints[m.owner] = {
                     lists: []
                 };
-            }            
+            }
 
             lookupDataPoints[m.owner].lastupdate = Date.now();
 
@@ -263,11 +263,10 @@ $.fn.spCRUD = (function () {
         if (thisLookupContainer && thisLookupContainer.lists && thisLookupContainer.lists.length > 0) {
             for (var currentListIndex = 0; currentListIndex < thisLookupContainer.lists.length; currentListIndex++) {
                 var element = thisLookupContainer.lists[currentListIndex];
-                if(thisLookupContainer.lastupdate && thisLookupContainer.lastupdate > Date.now() - (15 * 1000))
-                {
+                if (thisLookupContainer.lastupdate && thisLookupContainer.lastupdate > Date.now() - (15 * 1000)) {
                     return false;
                 }
-                
+
 
                 $.fn.spCommon.ajax({
                     source: m.source,
@@ -771,7 +770,7 @@ $.fn.spCRUD = (function () {
         updateLookupLists({ data: thisCurrentObject, source: m.source });
 
         var hasChild = false;
-        
+
         var childObject;
         var childObjectRoot;
 
@@ -800,13 +799,13 @@ $.fn.spCRUD = (function () {
                                     childObject.d.results = _.filter(childObject.d.results, function (o) {
                                         if (o.StaticName == "Attachments") {
                                             o.hidden = true;
-                                        }                                    
+                                        }
 
                                         if (currentChild.d && currentChild.d.results) {
                                             addUiGuidsToItem(currentChild.d.results);
                                             updateLookupLists({ data: currentChild.d.results, source: currentChild.source });
                                         }
-                    
+
                                         reloadLookupData(currentChild);
 
                                         return true;
@@ -861,7 +860,7 @@ $.fn.spCRUD = (function () {
         });
 
         if (hasChild) {
-            
+
             var triggerloadChildRow = function (e) {
                 var m = $(this).data();
                 loadChildRow(m);
@@ -977,7 +976,7 @@ $.fn.spCRUD = (function () {
 
         var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
 
-        if (currentChild) {                    
+        if (currentChild) {
 
             if (currentChild.d && currentChild.d.results) {
                 addUiGuidsToItem(currentChild.d.results);
@@ -997,10 +996,9 @@ $.fn.spCRUD = (function () {
 
             initFormObject(thisApp.objects[m.source]);
 
-            if(e.rowData)
-            {
+            if (e.rowData) {
                 var latestEntryContainer = $('#' + m.container + ' ul li:last .form-container');
-                
+
                 currentChild.dataPresent = true;
                 currentChild.formSelector = latestEntryContainer;
                 currentChild.actionData = e.rowData;
@@ -1139,10 +1137,9 @@ $.fn.spCRUD = (function () {
         return actionURL;
     }
 
-    function loadDataToDom(m, returnedData)
-    {
+    function loadDataToDom(m, returnedData) {
         var actionData = m.actionData ? m.actionData : {};
-        
+
         if (m.baseTemplate == '101') {
             returnedData.FileLeafRef = actionData.FileLeafRef;
         }
@@ -1292,10 +1289,10 @@ $.fn.spCRUD = (function () {
                     var returnedData = a.d;
                     currentRecord = returnedData;
 
-                    m.lastSelectedRecord = a;                    
+                    m.lastSelectedRecord = a;
 
                     loadDataToDom(m, returnedData);
-                
+
                     if (m.baseTemplate != '101') {
                         var attachments = [];
                         if (returnedData.AttachmentFiles && returnedData.AttachmentFiles.results) {
@@ -1330,34 +1327,32 @@ $.fn.spCRUD = (function () {
 
                     if (m.children) {
                         var callChildAjax = function (cm) {
-                            var loadChildObject = function (a) {                            
+                            var loadChildObject = function (a) {
 
-                                if(a && a.d && a.d.results && Array.isArray(a.d.results))
-                                {
+                                if (a && a.d && a.d.results && Array.isArray(a.d.results)) {
                                     for (var index = 0; index < a.d.results.length; index++) {
                                         var thisObjectEntry = a.d.results[index];
 
                                         var thisChildParentRef = _.find(thisObjectEntry, { EntityPropertyName: m.thisVar });
-                                        
+
                                         //Load Parent ID into Child Record
-                                        if(typeof thisObjectEntry[m.spType] == "object" && thisObjectEntry[m.spType].Id)
-                                        {
-                                            thisObjectEntry[m.spType + "Id" ] = thisObjectEntry[m.spType].Id;
+                                        if (typeof thisObjectEntry[m.spType] == "object" && thisObjectEntry[m.spType].Id) {
+                                            thisObjectEntry[m.spType + "Id"] = thisObjectEntry[m.spType].Id;
                                         }
                                         // if (thisChildParentRef && m.lastSelectedRecord && m.lastSelectedRecord.d) {
                                         //     thisChildParentRef.currentParentID = m.lastSelectedRecord.d.ID;
                                         // }
                                         //thisObjectEntry[]
                                         //$('.add-child[data-ownersource="' + cm.thisChild.source + '"]').trigger('click');
-                                        loadChildRow({ 
-                                            ownersource : cm.thisChild.source,
+                                        loadChildRow({
+                                            ownersource: cm.thisChild.source,
                                             source: cm.m.source,
-                                             action:"edit", 
-                                             sptype: cm.m.spType,
-                                             owner:"",
-                                             container: "child-card-body-" + cm.thisChild.source,
-                                             rowData : thisObjectEntry
-                                        });                                        
+                                            action: "edit",
+                                            sptype: cm.m.spType,
+                                            owner: "",
+                                            container: "child-card-body-" + cm.thisChild.source,
+                                            rowData: thisObjectEntry
+                                        });
                                     }
                                 }
                             };
@@ -1505,8 +1500,7 @@ $.fn.spCRUD = (function () {
                 var hasBootstrapGridOverride = false;
                 var bootstrapGridOverride;
 
-                var bsGridOverrideMethod = function(thisObject, element)
-                {
+                var bsGridOverrideMethod = function (thisObject, element) {
                     if (thisObject.form && thisObject.form.columns) {
                         var thisMatchedObject = _.find(thisObject.form.columns, { name: element.StaticName });
 
@@ -1515,17 +1509,17 @@ $.fn.spCRUD = (function () {
                         }
                         hasBootstrapGridOverride = bootstrapGridOverride ? true : false;
                     }
-                };                
-                
+                };
+
                 //Extend Objects                 
                 thisApp.objects[m.source.toLowerCase()].d.results = _.map(thisApp.objects[m.source.toLowerCase()].d.results, function (element) {
 
                     var thisObject = thisApp.objects[m.source.toLowerCase()];
 
-                    bsGridOverrideMethod(thisObject, element);                        
+                    bsGridOverrideMethod(thisObject, element);
 
                     return _.extend({}, element, {
-                         //Mark all List Objects Hidden before Displaying if has m.meta.dtColumns
+                        //Mark all List Objects Hidden before Displaying if has m.meta.dtColumns
                         spLoadObject: (m.meta.dtColumns && m.meta.dtColumns.length) > 0 ? false : true,
                         hidden: false,
                         spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length,
@@ -1533,14 +1527,13 @@ $.fn.spCRUD = (function () {
                         hasBootstrapGridOverride: hasBootstrapGridOverride
                     });
                 });
-                
 
                 //Extend Objects with Injected Columns
                 if (m.meta.dtColumns && m.meta.dtColumns.length > 0) {
                     if (!_.find(m.meta.dtColumns, "Attachments")) {
                         m.meta.dtColumns.push("Attachments");
                         //m.meta.dtColumns.push("Content Type");
-                    }                                    
+                    }
 
                     var findThisObjectIntheInjectedColumns = function (o) {
                         return o.Title == m.meta.dtColumns[lc];
@@ -1557,7 +1550,7 @@ $.fn.spCRUD = (function () {
                         // Use Lodash to sort array by 'spObjectOrder'
                         thisApp.objects[m.source.toLowerCase()].d.results = _.orderBy(thisApp.objects[m.source.toLowerCase()].d.results, ['spObjectOrder'], ['asc']);
                     }
-                } 
+                }
 
                 var findThisObjectThatsParentRelationship = function (o) {
                     return o.Title == thisRelationship.parent;
@@ -2492,8 +2485,7 @@ $.fn.spCRUD = (function () {
                                 Key: data.users[ii2].Name
                             };
 
-                            if(peoplePicker && data && data.users && data.users[ii2].Name)
-                            { 
+                            if (peoplePicker && data && data.users && data.users[ii2].Name) {
                                 peoplePicker.AddUnresolvedUser(usrObj2, true);
                             }
                         }
