@@ -147,7 +147,7 @@
         style="margin-right: 0;"
     >
         {{#if hasID}}
-            <input type="hidden" name="{{@root.name}}.ID" data-name="ID" data-entity="ID" /> 
+            <input type="hidden" name="{{@root.name}}.ID" data-name="ID" data-entity="ID" data-owner="{{@root.name}}" /> 
         {{/if}} 
         {{#d.results}} 
             {{#if spLoadObject}} 

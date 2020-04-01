@@ -443,43 +443,40 @@ $.fn.spCRUD = (function () {
             $form.on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-            })
-                .on('dragover dragenter', function () {
-                    $form.addClass('is-dragover');
-                })
-                .on('dragleave dragend drop', function () {
-                    $form.removeClass('is-dragover');
-                })
-                .on('drop', function (e) {
-                    if (e.originalEvent.dataTransfer.files) {
-                        if ($(this).find('input').prop('multiple') == false) {
-                            $(this).find('input').data('files', []);
-                        }
-
-                        var droppedFiles = $(this).find('input').data('files') == undefined ? [] : $(this).find('input').data('files');
-
-                        for (var thisFile = 0; thisFile < e.originalEvent.dataTransfer.files.length; thisFile++) {
-                            if (checkExtension({
-                                allowedExtensions: allowedExtensions,
-                                file: e.originalEvent.dataTransfer.files[thisFile]
-                            }) &&
-                                checkFileSize({
-                                    sizeLimit: sizeLimit,
-                                    file: e.originalEvent.dataTransfer.files[thisFile]
-                                })
-                            ) {
-                                droppedFiles.push(e.originalEvent.dataTransfer.files[thisFile]);
-                            }
-                        }
-
-                        $(this).find('input').data('files', droppedFiles);
-
-                        showFiles({
-                            box: $(this).prop('id'),
-                            files: droppedFiles
-                        });
+            }).on('dragover dragenter', function () {
+                $form.addClass('is-dragover');
+            }).on('dragleave dragend drop', function () {
+                $form.removeClass('is-dragover');
+            }).on('drop', function (e) {
+                if (e.originalEvent.dataTransfer.files) {
+                    if ($(this).find('input').prop('multiple') == false) {
+                        $(this).find('input').data('files', []);
                     }
-                });
+
+                    var droppedFiles = $(this).find('input').data('files') == undefined ? [] : $(this).find('input').data('files');
+
+                    for (var thisFile = 0; thisFile < e.originalEvent.dataTransfer.files.length; thisFile++) {
+                        if (checkExtension({
+                            allowedExtensions: allowedExtensions,
+                            file: e.originalEvent.dataTransfer.files[thisFile]
+                        }) &&
+                            checkFileSize({
+                                sizeLimit: sizeLimit,
+                                file: e.originalEvent.dataTransfer.files[thisFile]
+                            })
+                        ) {
+                            droppedFiles.push(e.originalEvent.dataTransfer.files[thisFile]);
+                        }
+                    }
+
+                    $(this).find('input').data('files', droppedFiles);
+
+                    showFiles({
+                        box: $(this).prop('id'),
+                        files: droppedFiles
+                    });
+                }
+            });
         }
 
         var fileObjectChanged = function (e) {
@@ -783,6 +780,23 @@ $.fn.spCRUD = (function () {
 
             if (Array.isArray(thisApp.objects[m.source].children)) {
                 if (actionsForChildren.indexOf(m.action) > -1) {
+
+
+                    var updateChildResultsMethod = function (o) {
+                        if (o.StaticName == "Attachments") {
+                            o.hidden = true;
+                        }
+
+                        if (currentChild.d && currentChild.d.results) {
+                            addUiGuidsToItem(currentChild.d.results);
+                            updateLookupLists({ data: currentChild.d.results, source: currentChild.source });
+                        }
+
+                        reloadLookupData(currentChild);
+
+                        return true;
+                    };
+
                     for (var index = 0; index < thisApp.objects[m.source].children.length; index++) {
                         var currentChild = thisApp.objects[m.source].children[index];
 
@@ -796,20 +810,7 @@ $.fn.spCRUD = (function () {
                                     //childObject.d = {};
                                     childObject.loadActionButtons = false;
 
-                                    childObject.d.results = _.filter(childObject.d.results, function (o) {
-                                        if (o.StaticName == "Attachments") {
-                                            o.hidden = true;
-                                        }
-
-                                        if (currentChild.d && currentChild.d.results) {
-                                            addUiGuidsToItem(currentChild.d.results);
-                                            updateLookupLists({ data: currentChild.d.results, source: currentChild.source });
-                                        }
-
-                                        reloadLookupData(currentChild);
-
-                                        return true;
-                                    });
+                                    childObject.d.results = _.filter(childObject.d.results, updateChildResultsMethod);
 
                                     childObject = markHiddenObjects(childObject);
                                 }
@@ -863,6 +864,7 @@ $.fn.spCRUD = (function () {
 
             var triggerloadChildRow = function (e) {
                 var m = $(this).data();
+                m.fromButton = "add";
                 loadChildRow(m);
             };
 
@@ -988,6 +990,7 @@ $.fn.spCRUD = (function () {
                 var thisParentObject = thisApp.objects[m.source];
 
                 var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
+                
 
                 if (currentChild) {
 
@@ -1001,6 +1004,11 @@ $.fn.spCRUD = (function () {
                         thisChildParentRef.currentParentID = thisParentObject.lastSelectedRecord.d.ID;
                     }
 
+                    if(m.fromButton == "add")
+                    {
+                        currentChild.formType = "create";
+                    }
+                    
                     currentChild.html = addChildRow(currentChild);
                     var rowContent = $.fn.spEnvironment.spaChildFormRow(currentChild);
 
@@ -1024,15 +1032,26 @@ $.fn.spCRUD = (function () {
                     var thisParentObject = thisApp.objects[myChildren[formIndex].source];
 
                     var currentChild = _.find(thisParentObject.children, { name: myChildren[formIndex].ownersource });
+                    
+                    if(e.fromButton == "add")
+                    {
+                        currentChild.formType = "create";
+                    }
+                    else
+                    {
+                        currentChild.formType = "edit";
+                    }
 
-                    if (e[formIndex].rowData) {
+                    if (e[formIndex] && e[formIndex].rowData) {
                         var latestEntryContainer = $(formElement);
 
                         currentChild.dataPresent = true;
                         currentChild.formSelector = latestEntryContainer;
                         currentChild.actionData = e[formIndex].rowData;
+                        currentChild.disableClear = true;
                         loadDataToDom(currentChild, e[formIndex].rowData);
                         //loadFormData(currentChild);
+                        
                     }
                 });
             }
@@ -1088,7 +1107,6 @@ $.fn.spCRUD = (function () {
         clearLastSave();
         modalLoader(thisData);
     }
-
 
     function reloadEditForm() {
         var foundRow = [];
@@ -1284,6 +1302,7 @@ $.fn.spCRUD = (function () {
         //initPeoplePickers();
         //Loads any people selectors
         loadPickersWithData({
+            disableClear : m.disableClear,
             objectParent: $(m.formSelector)
         });
     }
@@ -1409,10 +1428,7 @@ $.fn.spCRUD = (function () {
                                 var thisChildPath = thisChild.path + "/_api/web/lists/getbytitle('" + thisChild.spType + "')/items";
 
                                 callChildAjax({ m: m, url: thisChildPath + thisQuery, thisChild: thisChild });
-
-
-                                //console.log(thisChild);
-                                console.log(thisQuery);
+                                //console.log(thisQuery);
                             }
                             else {
                                 getQueryForObject(thisChild);
@@ -1694,7 +1710,14 @@ $.fn.spCRUD = (function () {
                                 var thisHiddenData = $(element).data();
 
                                 if (thisHiddenData.owner == f.thisObject.owner) {
-                                    formObjects[thisCurrentObject] = $(element).val();
+                                    if(thisCurrentObject == "ID")
+                                    {
+                                        formObjects[thisCurrentObject] = $(element).val() ? $(element).val() : null;
+                                    }
+                                    else
+                                    {
+                                        formObjects[thisCurrentObject] = $(element).val() ? $(element).val() : "";
+                                    }
                                 }
                             }
                             break;
@@ -1709,7 +1732,17 @@ $.fn.spCRUD = (function () {
                         case "textarea":
                         case "text":
                             if ($(element).hasClass('sp-calendar')) {
-                                var thisDate = moment($(element).val()).format();
+                                var thisDate;
+                                var tempDate = $(element).val();
+                                if(tempDate)
+                                {
+                                    thisDate = moment(tempDate, ["MM-DD-YYYY"]).format();
+                                }
+                                else
+                                {
+                                    thisDate = null;
+                                }
+                                
                                 formObjects[thisCurrentObject] = thisDate != undefined && thisDate.toLowerCase() != "invalid date" ? thisDate : null;
                             } else {
                                 var thisValue = $(element).val();
@@ -1801,6 +1834,16 @@ $.fn.spCRUD = (function () {
     function getDestionationUrl(z) {
         var thisUrl;
 
+        var thisValue;
+        if(z.formObjects && z.formObjects.ID)
+        {
+            thisValue = z.formObjects.ID;
+        }
+        else
+        {
+            thisValue = z.caller ? $(z.caller).find('[data-name="ID"]').val() : undefined;
+        }
+
         switch (z.action.toLowerCase()) {
             default:
             case 'save':
@@ -1808,11 +1851,11 @@ $.fn.spCRUD = (function () {
                 break;
             case 'update':
                 z.headers = updateHeader(z.headers);
-                thisUrl = z.path + "/_api/web/lists/GetByTitle('" + z.spType + "')/items(" + $(z.caller).find('[data-name="ID"]').val() + ")";
+                thisUrl = z.path + "/_api/web/lists/GetByTitle('" + z.spType + "')/items(" + thisValue + ")";
                 break;
             case 'delete':
                 z.headers = deleteHeader(z.headers);
-                thisUrl = z.path + "/_api/web/lists/GetByTitle('" + z.spType + "')/items(" + $(z.caller).find('[data-name="ID"]').val() + ")";
+                thisUrl = z.path + "/_api/web/lists/GetByTitle('" + z.spType + "')/items(" + thisValue + ")";
                 break;
         }
 
@@ -2154,11 +2197,12 @@ $.fn.spCRUD = (function () {
                                         var childObject = childForms[index];
 
                                         var childPostStruct = getDestionationUrl({
-                                            action: "save",
+                                            action: childObject.formObjects.ID ? "update" : "save",
                                             path: childObject.thisObject.path,
                                             spType: childObject.thisObject.spType,
                                             caller: childObject.thisObject.caller,
-                                            headers: {}
+                                            formObjects : childObject.formObjects,
+                                            headers: childObject.formObjects.ID ? updateHeader({}): {}
                                         });
 
                                         var crudChildRequest = {
@@ -2486,11 +2530,16 @@ $.fn.spCRUD = (function () {
     }
 
     function loadPickersWithData(m) {
-        $(m.objectParent).find('.people-picker').each(function (i, element) {
+        m.disableClear = typeof m.disableClear == "boolean" ? m.disableClear : false;
 
-            clearPicker({
-                selector: $(element).prop('id') + "_TopSpan"
-            });
+        $(m.objectParent).find('.people-picker').each(function (i, element) {
+            
+            if(m.disableClear)
+            {
+                clearPicker({
+                    selector: $(element).prop('id') + "_TopSpan"
+                });
+            }
 
             var parentName = $(element).data('name');
 
@@ -2543,8 +2592,14 @@ $.fn.spCRUD = (function () {
         $('.people-picker').each(function (i, element) {
             var data = $(element).data();
             data.id = $(element).prop('id');
+            data.pickerLoaded = typeof data.pickerLoaded == "boolean" ? data.pickerLoaded : false;
+            
+            if(data.pickerLoaded == false)
+            {
+                $.fn.spCRUD.initializePeoplePicker(data);
+            }
 
-            $.fn.spCRUD.initializePeoplePicker(data);
+            $(element).data('pickerLoaded', true);
         });
 
         $('.sp-peoplepicker-topLevel').addClass('form-control');
