@@ -423,7 +423,7 @@ $.fn.spCRUD = (function () {
         };
 
         var checkFileSize = function (m) {
-            if (m.sizeLimit > -1) {
+            if (!isNaN(m.sizeLimit) && m.sizeLimit > -1) {
                 var thisFileSize = m.file.size;
 
                 var addFile = m.sizeLimit >= thisFileSize;
@@ -1126,7 +1126,7 @@ $.fn.spCRUD = (function () {
 
         if (m.dataPresent == false) {
 
-            if (m.selectedRow && m.selectedRow > -1) {
+            if (!isNaN(m.selectedRow) && m.selectedRow > -1) {
                 m.actionData = m.selectedRow > -1 ? tables[m.owner].ajax.json().data[m.selectedRow] : m.actionData;
                 m.dataPresent = true;
             }
