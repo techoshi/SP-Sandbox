@@ -70,8 +70,10 @@ $(document).ready(function () {
 							singular: "Note Entry",
 							condition: "DCMain eq {{ID}}",
 							repeatable: { enable: true, hasSequence: false },
+							metaDataVisible : true,
 							wholeForm: false,
 							availableParent: ["edit"],
+							dataEditable: false,
 							columns: {
 								visible: ["NoteEntry"],
 								hidden: ["Title", "DCMain", "Sequence", "CurrentStatus"]

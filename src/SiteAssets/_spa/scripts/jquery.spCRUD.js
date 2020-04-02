@@ -79,7 +79,9 @@ $.fn.spCRUD = (function () {
         e.sectionName = e.sectionName ? e.sectionName : e.tabTitle;
         e.spType = e.spType ? e.spType : e.title;
         e.loadActionButtons = true;
-
+        e.dataEditable =  typeof e.dataEditable == "boolean" ? e.dataEditable : true;
+        e.metaDataVisible = typeof e.metaDataVisible == "boolean" ? e.metaDataVisible : false;
+        
         return e;
     }
 
@@ -991,6 +993,14 @@ $.fn.spCRUD = (function () {
 
                 var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
                 
+                if(e.fromButton == "add")
+                {
+                    currentChild.formType = "create";
+                }
+                else
+                {
+                    currentChild.formType = "edit";
+                }
 
                 if (currentChild) {
 
@@ -1033,14 +1043,6 @@ $.fn.spCRUD = (function () {
 
                     var currentChild = _.find(thisParentObject.children, { name: myChildren[formIndex].ownersource });
                     
-                    if(e.fromButton == "add")
-                    {
-                        currentChild.formType = "create";
-                    }
-                    else
-                    {
-                        currentChild.formType = "edit";
-                    }
 
                     if (e[formIndex] && e[formIndex].rowData) {
                         var latestEntryContainer = $(formElement);
@@ -1193,6 +1195,24 @@ $.fn.spCRUD = (function () {
             returnedData.FileLeafRef = actionData.FileLeafRef;
         }
 
+        var parentLi = $(m.formSelector).parents('li.li-child-form');
+
+        if(m.metaDataVisible && parentLi)
+        {
+            var modifiedDateSelector = $(parentLi).find('[name="modifiedDate"]');
+            var modifiedBySelector = $(parentLi).find('[name="modifiedBy"]');
+            
+            if(modifiedDateSelector && returnedData.Modified)
+            {
+                $(modifiedDateSelector).html(moment(returnedData.Modified).format('MM/DD/YYYY hh:mm a'));
+            }
+
+            if(modifiedBySelector && returnedData.Editor && returnedData.Editor.Title)
+            {
+                $(modifiedBySelector).html(returnedData.Editor.Title);
+            }
+        }
+
         $(m.formSelector).find('input, select, textarea, .people-picker-data').each(function (dIndex, dElement) {
             if ($(dElement).data('name')) {
                 if (!$(dElement).hasClass('people-picker-data')) {
@@ -1287,7 +1307,7 @@ $.fn.spCRUD = (function () {
             }
         });
 
-        if (m.action == 'view') {
+        if (m.action == 'view' || m.dataEditable == false) {
             $(m.formSelector).find('input, select, textarea').prop('readonly', true).prop('disabled', true).addClass('no-select object-disabled');
         }
 

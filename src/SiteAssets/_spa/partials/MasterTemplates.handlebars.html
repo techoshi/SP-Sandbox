@@ -138,7 +138,7 @@
         {{#case "edit"}} {{setVar "formType" "edit"}} {{setVar "hasID" true}} {{/case}} 
         {{#default}} {{setVar "formType" "create"}} {{/default}} 
     {{/switch}}
-
+    
     <div class="form row form-container" 
         id="form-{{formType}}-{{name}}" 
         data-source="{{name}}" 
@@ -776,11 +776,9 @@
 
 <script type="text/x-handlebars-template" id="spa-child-form-row">
     <li class="li-child-form">
+        <hr/>
         <div class="remove-a-child-form">
             <a href="javascript:void(0)" style="width: 20px; float: left; padding:5px;"><i class="fa fa-minus-circle"></i></a>
-        </div>
-        <div class="a-child-form">
-            {{{html}}}
         </div>
         {{#if repeatable.hasSequence}}
             <div class="reorder-a-child-form">
@@ -790,5 +788,16 @@
                 </div>
             </div>
         {{/if}}
+        {{#if metaDataVisible}}
+            {{#switch formType}} 
+                {{#case "edit" "view"}}
+                    <div class="col-md-12 form-meta-data">Last Updated: <span name="modifiedDate">{{Modified}}</span> | Editor: <span name="modifiedBy">{{Editor.Title}}</span></div>
+                {{/case}} 
+            {{/switch}}
+            
+        {{/if}}
+        <div class="a-child-form">
+            {{{html}}}
+        </div>                        
     </li>
 </script>

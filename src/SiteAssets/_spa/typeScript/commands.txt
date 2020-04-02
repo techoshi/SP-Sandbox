@@ -10,7 +10,7 @@ npm install -g ts-loader
 npm install -g handlebars
 npm install gulp
 npm install gulp-cli
-
+npm install -g moment  
 
 npm i
 

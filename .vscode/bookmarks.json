@@ -3,6 +3,11 @@
 		"path": "$ROOTPATH$\\src\\SiteAssets\\_spa\\scripts\\jquery.spCRUD.js",
 		"bookmarks": [
 			{
+				"line": 68,
+				"column": 25,
+				"label": ""
+			},
+			{
 				"line": 79,
 				"column": 14,
 				"label": "loadLists()"

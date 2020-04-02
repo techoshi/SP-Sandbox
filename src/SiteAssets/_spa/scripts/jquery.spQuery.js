@@ -241,6 +241,15 @@ $.fn.spQuery = (function () {
                 type: "required",
                 column: "ID"
             });
+            selectStruct.columns.push({
+                type: "lookup",
+                column: "Editor/Title",
+                expand: "Editor"
+            });
+            selectStruct.columns.push({
+                type: "required",
+                column: "Modified"
+            });
 
             var thisTemplateType = '100';
             if (m.templateType && m.templateType == '101') {
