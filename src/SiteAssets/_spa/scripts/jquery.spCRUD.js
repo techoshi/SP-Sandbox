@@ -79,9 +79,9 @@ $.fn.spCRUD = (function () {
         e.sectionName = e.sectionName ? e.sectionName : e.tabTitle;
         e.spType = e.spType ? e.spType : e.title;
         e.loadActionButtons = true;
-        e.dataEditable =  typeof e.dataEditable == "boolean" ? e.dataEditable : true;
+        e.dataEditable = typeof e.dataEditable == "boolean" ? e.dataEditable : true;
         e.metaDataVisible = typeof e.metaDataVisible == "boolean" ? e.metaDataVisible : false;
-        
+
         return e;
     }
 
@@ -268,7 +268,6 @@ $.fn.spCRUD = (function () {
                 if (thisLookupContainer.lastupdate && thisLookupContainer.lastupdate > Date.now() - (15 * 1000)) {
                     return false;
                 }
-
 
                 $.fn.spCommon.ajax({
                     source: m.source,
@@ -744,12 +743,21 @@ $.fn.spCRUD = (function () {
 
     var markHiddenObjects = function (childObject) {
 
-        if (childObject && childObject.columns && childObject.columns.hidden && childObject.d) {
+        if (childObject && childObject.columns && (childObject.columns.hidden || childObject.columns.readOnly) && childObject.d) {
             childObject.d.results = _.filter(childObject.d.results, function (o) {
 
-                var notHidden = childObject.columns.hidden.indexOf(o.StaticName) == -1;
-                if (!notHidden) {
-                    o.hidden = true;
+                if (childObject.columns.hidden) {
+                    var markHidden = childObject.columns.hidden.indexOf(o.StaticName) > -1;
+                    if (markHidden) {
+                        o.hidden = true;
+                    }
+                }
+
+                if (childObject.columns.readOnly) {
+                    var markReadOnly = childObject.columns.readOnly.indexOf(o.StaticName) > -1;
+                    if (markReadOnly) {
+                        o.readOnly = true;
+                    }
                 }
 
                 return true;
@@ -762,6 +770,7 @@ $.fn.spCRUD = (function () {
     function initModalContent(m) {
         var crudModal = "";
 
+        var thisParentObject = thisApp.objects[m.source.toLowerCase()];
         var thisCurrentObject = thisApp.objects[m.source].d.results;
 
         addUiGuidsToItem(thisCurrentObject);
@@ -772,15 +781,19 @@ $.fn.spCRUD = (function () {
 
         var childObject;
         var childObjectRoot;
+        var modalSelector = "#modal-" + m.action + '-' + m.source;
 
-        thisApp.objects[m.source.toLowerCase()].formType = m.action;
+        
+
+        thisParentObject.formType = m.action;
         var mainFormContent;
         if (m.action != "delete") {
-            mainFormContent = $.fn.spEnvironment.baseForm(thisApp.objects[m.source]);
+            thisParentObject = markHiddenObjects(thisParentObject);
+            mainFormContent = $.fn.spEnvironment.baseForm(thisParentObject);
 
             var actionsForChildren = ["edit", "view"];
 
-            if (Array.isArray(thisApp.objects[m.source].children)) {
+            if (Array.isArray(thisParentObject.children)) {
                 if (actionsForChildren.indexOf(m.action) > -1) {
 
 
@@ -799,8 +812,8 @@ $.fn.spCRUD = (function () {
                         return true;
                     };
 
-                    for (var index = 0; index < thisApp.objects[m.source].children.length; index++) {
-                        var currentChild = thisApp.objects[m.source].children[index];
+                    for (var index = 0; index < thisParentObject.children.length; index++) {
+                        var currentChild = thisParentObject.children[index];
 
                         if (currentChild) {
                             hasChild = true;
@@ -826,7 +839,6 @@ $.fn.spCRUD = (function () {
                 }
             }
 
-
             crudModal += $.fn.spEnvironment.baseModal({
                 id: m.action + '-' + m.source,
                 owner: m.source,
@@ -836,9 +848,8 @@ $.fn.spCRUD = (function () {
                 content: mainFormContent
             });
 
-
         } else {
-            mainFormContent = $.fn.spEnvironment.deleteItem(thisApp.objects[m.source]);
+            mainFormContent = $.fn.spEnvironment.deleteItem(thisParentObject);
 
             crudModal += $.fn.spEnvironment.baseModal({
                 id: m.action + '-' + m.source,
@@ -849,18 +860,26 @@ $.fn.spCRUD = (function () {
             });
         }
 
-        $('body').append(crudModal);
+        $('body').append(crudModal);               
 
-        $("#modal-" + m.action + '-' + m.source).on("click", ".move-child-up", function () {
+        
+
+        $(modalSelector).on("click", ".move-child-up", function () {
             var thisLi = $(this).parents('li');
 
             $(thisLi).moveUp();
         });
 
-        $("#modal-" + m.action + '-' + m.source).on("click", ".move-child-down", function () {
+        $(modalSelector).on("click", ".move-child-down", function () {
             var thisLi = $(this).parents('li');
             $(thisLi).moveDown();
         });
+
+        var deleteObject = function () {
+            console.log('delete');
+        };
+
+        $(modalSelector).on('click', '[name="DeleteChildEntry"]', deleteObject);
 
         if (hasChild) {
 
@@ -870,8 +889,8 @@ $.fn.spCRUD = (function () {
                 loadChildRow(m);
             };
 
-            for (var index2 = 0; index2 < thisApp.objects[m.source].children.length; index2++) {
-                var currentChild2 = thisApp.objects[m.source].children[index2];
+            for (var index2 = 0; index2 < thisParentObject.children.length; index2++) {
+                var currentChild2 = thisParentObject.children[index2];
                 $('.add-child[data-ownersource="' + currentChild2.source + '"]').unbind('click', triggerloadChildRow);
                 $('.add-child[data-ownersource="' + currentChild2.source + '"]').bind('click', triggerloadChildRow);
             }
@@ -964,6 +983,13 @@ $.fn.spCRUD = (function () {
         }
 
         initFormObject(m);
+
+        disableReadOnlyFields({ selector : modalSelector });
+    }
+
+    var disableReadOnlyFields = function(m)
+    {
+        $(m.selector).find('[data-readonly="true"]').prop('readonly', true).prop('disabled', true).addClass('no-select object-disabled');
     }
 
     var addChildRow = function (a) {
@@ -992,13 +1018,11 @@ $.fn.spCRUD = (function () {
                 var thisParentObject = thisApp.objects[m.source];
 
                 var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
-                
-                if(e.fromButton == "add")
-                {
+
+                if (e.fromButton == "add") {
                     currentChild.formType = "create";
                 }
-                else
-                {
+                else {
                     currentChild.formType = "edit";
                 }
 
@@ -1014,11 +1038,10 @@ $.fn.spCRUD = (function () {
                         thisChildParentRef.currentParentID = thisParentObject.lastSelectedRecord.d.ID;
                     }
 
-                    if(m.fromButton == "add")
-                    {
+                    if (m.fromButton == "add") {
                         currentChild.formType = "create";
                     }
-                    
+
                     currentChild.html = addChildRow(currentChild);
                     var rowContent = $.fn.spEnvironment.spaChildFormRow(currentChild);
 
@@ -1033,6 +1056,7 @@ $.fn.spCRUD = (function () {
             thisApp.objects[firstChild.source].action = firstChild.action;
 
             initFormObject(thisApp.objects[firstChild.source]);
+            disableReadOnlyFields({ selector : '#' + firstChild.container + ' ul' });
 
             var allForms = $('#' + firstChild.container + ' ul li .form-container');
 
@@ -1042,7 +1066,7 @@ $.fn.spCRUD = (function () {
                     var thisParentObject = thisApp.objects[myChildren[formIndex].source];
 
                     var currentChild = _.find(thisParentObject.children, { name: myChildren[formIndex].ownersource });
-                    
+
 
                     if (e[formIndex] && e[formIndex].rowData) {
                         var latestEntryContainer = $(formElement);
@@ -1053,11 +1077,11 @@ $.fn.spCRUD = (function () {
                         currentChild.disableClear = true;
                         loadDataToDom(currentChild, e[formIndex].rowData);
                         //loadFormData(currentChild);
-                        
+
                     }
                 });
             }
-        }
+        }       
     };
 
     function initFormObject(m) {
@@ -1197,18 +1221,15 @@ $.fn.spCRUD = (function () {
 
         var parentLi = $(m.formSelector).parents('li.li-child-form');
 
-        if(m.metaDataVisible && parentLi)
-        {
+        if (m.metaDataVisible && parentLi) {
             var modifiedDateSelector = $(parentLi).find('[name="modifiedDate"]');
             var modifiedBySelector = $(parentLi).find('[name="modifiedBy"]');
-            
-            if(modifiedDateSelector && returnedData.Modified)
-            {
+
+            if (modifiedDateSelector && returnedData.Modified) {
                 $(modifiedDateSelector).html(moment(returnedData.Modified).format('MM/DD/YYYY hh:mm a'));
             }
 
-            if(modifiedBySelector && returnedData.Editor && returnedData.Editor.Title)
-            {
+            if (modifiedBySelector && returnedData.Editor && returnedData.Editor.Title) {
                 $(modifiedBySelector).html(returnedData.Editor.Title);
             }
         }
@@ -1309,7 +1330,7 @@ $.fn.spCRUD = (function () {
 
         if (m.action == 'view' || m.dataEditable == false) {
             $(m.formSelector).find('input, select, textarea').prop('readonly', true).prop('disabled', true).addClass('no-select object-disabled');
-        }
+        }        
 
         //for (var mo = 0; mo < modalTypes.length; mo++) {
         //    var thisMo = modalTypes[mo];
@@ -1322,7 +1343,7 @@ $.fn.spCRUD = (function () {
         //initPeoplePickers();
         //Loads any people selectors
         loadPickersWithData({
-            disableClear : m.disableClear,
+            disableClear: m.disableClear,
             objectParent: $(m.formSelector)
         });
     }
@@ -1362,7 +1383,7 @@ $.fn.spCRUD = (function () {
                     m.lastSelectedRecord = a;
 
                     loadDataToDom(m, returnedData);
-
+                    
                     if (m.baseTemplate != '101') {
                         var attachments = [];
                         if (returnedData.AttachmentFiles && returnedData.AttachmentFiles.results) {
@@ -1590,6 +1611,7 @@ $.fn.spCRUD = (function () {
                         //Mark all List Objects Hidden before Displaying if has m.meta.dtColumns
                         spLoadObject: (m.meta.dtColumns && m.meta.dtColumns.length) > 0 ? false : true,
                         hidden: false,
+                        readOnly: false,
                         spObjectOrder: thisApp.objects[m.source.toLowerCase()].d.results.length,
                         bootstrapGridOverride: bootstrapGridOverride,
                         hasBootstrapGridOverride: hasBootstrapGridOverride
@@ -1730,12 +1752,10 @@ $.fn.spCRUD = (function () {
                                 var thisHiddenData = $(element).data();
 
                                 if (thisHiddenData.owner == f.thisObject.owner) {
-                                    if(thisCurrentObject == "ID")
-                                    {
+                                    if (thisCurrentObject == "ID") {
                                         formObjects[thisCurrentObject] = $(element).val() ? $(element).val() : null;
                                     }
-                                    else
-                                    {
+                                    else {
                                         formObjects[thisCurrentObject] = $(element).val() ? $(element).val() : "";
                                     }
                                 }
@@ -1754,15 +1774,13 @@ $.fn.spCRUD = (function () {
                             if ($(element).hasClass('sp-calendar')) {
                                 var thisDate;
                                 var tempDate = $(element).val();
-                                if(tempDate)
-                                {
+                                if (tempDate) {
                                     thisDate = moment(tempDate, ["MM-DD-YYYY"]).format();
                                 }
-                                else
-                                {
+                                else {
                                     thisDate = null;
                                 }
-                                
+
                                 formObjects[thisCurrentObject] = thisDate != undefined && thisDate.toLowerCase() != "invalid date" ? thisDate : null;
                             } else {
                                 var thisValue = $(element).val();
@@ -1855,12 +1873,10 @@ $.fn.spCRUD = (function () {
         var thisUrl;
 
         var thisValue;
-        if(z.formObjects && z.formObjects.ID)
-        {
+        if (z.formObjects && z.formObjects.ID) {
             thisValue = z.formObjects.ID;
         }
-        else
-        {
+        else {
             thisValue = z.caller ? $(z.caller).find('[data-name="ID"]').val() : undefined;
         }
 
@@ -2221,8 +2237,8 @@ $.fn.spCRUD = (function () {
                                             path: childObject.thisObject.path,
                                             spType: childObject.thisObject.spType,
                                             caller: childObject.thisObject.caller,
-                                            formObjects : childObject.formObjects,
-                                            headers: childObject.formObjects.ID ? updateHeader({}): {}
+                                            formObjects: childObject.formObjects,
+                                            headers: childObject.formObjects.ID ? updateHeader({}) : {}
                                         });
 
                                         var crudChildRequest = {
@@ -2553,9 +2569,8 @@ $.fn.spCRUD = (function () {
         m.disableClear = typeof m.disableClear == "boolean" ? m.disableClear : false;
 
         $(m.objectParent).find('.people-picker').each(function (i, element) {
-            
-            if(m.disableClear)
-            {
+
+            if (m.disableClear) {
                 clearPicker({
                     selector: $(element).prop('id') + "_TopSpan"
                 });
@@ -2613,9 +2628,8 @@ $.fn.spCRUD = (function () {
             var data = $(element).data();
             data.id = $(element).prop('id');
             data.pickerLoaded = typeof data.pickerLoaded == "boolean" ? data.pickerLoaded : false;
-            
-            if(data.pickerLoaded == false)
-            {
+
+            if (data.pickerLoaded == false) {
                 $.fn.spCRUD.initializePeoplePicker(data);
             }
 

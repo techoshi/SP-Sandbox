@@ -111,6 +111,16 @@ var thisLists = [
 				},
 				AllowMultipleValues: false,
 				LookupFieldName: 'Marking'
+			},
+			{
+				type: 'FieldText',
+				Title: 'CurrentPerson',
+				DefaultValue : 'Not Assigned'
+			},
+			{
+				type: 'FieldText',
+				Title: 'CurrentStatus',
+				DefaultValue : 'Pending'
 			}
 		]
 	},

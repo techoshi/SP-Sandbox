@@ -18,7 +18,8 @@ $(document).ready(function () {
 						singular: 'Document Clearance',
 						columns: {
 							visible: [],
-							hidden: ["Title"]
+							hidden: ["Title"],
+							readOnly: ["CurrentPerson", "CurrentStatus"]
 						},
 						table: {
 							css: {
@@ -43,7 +44,8 @@ $(document).ready(function () {
 							wholeForm: false,
 							columns: {
 								visible: ["RoleType", "Participant", "Status", "DateOfDecision"],
-								hidden: ["Title", "DCMain", "Sequence"]
+								hidden: ["Title", "DCMain", "Sequence"],
+								readOnly: ["DateOfDecision"]
 							},
 							availableParent: ["edit"],
 							singular: 'Participant',

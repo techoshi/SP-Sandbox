@@ -215,7 +215,8 @@
                                 {{/ifCondition}}
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}"
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 aria-describedby="{{Title}}Help" 
                                 placeholder="Enter {{{replace Title '_' ' '}}}" 
                                 data-defaultvalue="{{DefaultValue}}" 
@@ -228,7 +229,8 @@
                                 class="form-control sp-Number" 
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}" 
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 aria-describedby="{{Title}}Help" 
                                 placeholder="Enter {{{replace Title '_' ' '}}}" 
                                 data-defaultvalue="{{DefaultValue}}"
@@ -241,7 +243,8 @@
                                 class="form-control sp-Currency" 
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}" 
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 aria-describedby="{{Title}}Help" 
                                 placeholder="Enter {{{replace Title '_' ' '}}}" 
                                 data-defaultvalue="{{DefaultValue}}"
@@ -254,7 +257,8 @@
                                 class="form-control select2-js" 
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}" 
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 aria-describedby="{{Title}}Help" 
                                 placeholder="Enter {{Title}}" 
                                 data-defaultvalue="{{DefaultValue}}"
@@ -271,7 +275,8 @@
                                 class="" 
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}" 
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 {{#if Required}}required{{/if}}
                             />
                             <label class="" for="{{uiID}}">Check this custom checkbox</label>
@@ -284,7 +289,8 @@
                                         class="form-control select2-js" 
                                         name="{{@root.name}}.{{Title}}" 
                                         data-entity="{{EntityPropertyName}}" 
-                                        data-name="{{Title}}" 
+                                        data-name="{{Title}}"
+                                        data-readOnly = "{{readOnly}}" 
                                         aria-describedby="{{Title}}Help" 
                                         placeholder="Enter {{Title}}" 
                                         data-defaultvalue="{{DefaultValue}}"
@@ -305,10 +311,12 @@
                                                     name="{{@root.name}}.{{Title}}" 
                                                     data-entity="{{EntityPropertyName}}" 
                                                     data-source="{{@root.name}}" 
-                                                    data-owner="{{Title}}" 
+                                                    data-owner="{{Title}}"
+                                                    data-readOnly = "{{readOnly}}" 
                                                     data-editformat="{{EditFormat}}"
+                                                    data-readOnly = "{{readOnly}}"
                                                     data-trigger="hover" 
-                                                    data-placement="top"
+                                                    data-placement="top"                                                    
                                                     title="Add New Value" 
                                                     data-content="Your desired value is not in the list? Click the plus and add it."
                                                 >
@@ -347,6 +355,7 @@
                                                         data-entity="{{EntityPropertyName}}" 
                                                         data-source="{{@root.name}}" 
                                                         data-owner="{{Title}}"
+                                                        data-readOnly = "{{readOnly}}"
                                                         data-editformat="{{EditFormat}}" 
                                                         data-trigger="hover" 
                                                         data-placement="top" 
@@ -363,7 +372,8 @@
                                 {{#case 2}}
                                     <select multiple type="text" id="{{uiID}}" 
                                         class="form-control select2-js" 
-                                        name="{{@root.name}}.{{../Title}}" 
+                                        name="{{@root.name}}.{{../Title}}"
+                                        data-readOnly = "{{readOnly}}" 
                                         data-entity="{{EntityPropertyName}}" 
                                         data-name="{{Title}}" 
                                         aria-describedby="{{../Title}}Help" 
@@ -382,7 +392,8 @@
                                                 <a href="javascript:void(0);" class="sp-fill-in" 
                                                     data-choicetype="dropdown" 
                                                     data-toggle="popover" 
-                                                    name="{{@root.name}}.{{Title}}" 
+                                                    name="{{@root.name}}.{{Title}}"
+                                                    data-readOnly = "{{readOnly}}" 
                                                     data-entity="{{EntityPropertyName}}" 
                                                     data-source="{{@root.name}}" 
                                                     data-owner="{{Title}}" 
@@ -405,7 +416,8 @@
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}Id" 
                                 data-owner="{{@root.name}}" 
-                                data-name="{{Title}}Id" 
+                                data-name="{{Title}}Id"
+                                data-readOnly = "{{readOnly}}" 
                                 data-selectname="{{EntityPropertyName}}" 
                                 aria-describedby="{{Title}}Help"
                                 placeholder="Enter {{Title}}" 
@@ -425,7 +437,8 @@
                         {{#case "User" "UserMulti"}}
                             <input type="hidden" id="{{uiID}}" 
                                 name="{{@root.formType}}.{{@root.name}}.{{Title}}" 
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 data-owner="{{@root.name}}" 
                                 data-entity="{{EntityPropertyName}}" 
                                 data-multi="{{AllowMultipleValues}}" 
@@ -439,7 +452,8 @@
                             <textarea id="{{uiID}}" type="text" class="form-control spa-textarea" 
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}" 
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 aria-describedby="{{Title}}Help" 
                                 placeholder="Enter {{{replace Title '_' ' '}}}" 
                                 value="{{DefaultValue}}" 
@@ -450,7 +464,8 @@
                             <input type="text" id="{{uiID}}" class="form-control sp-calendar" 
                                 name="{{@root.name}}.{{Title}}" 
                                 data-entity="{{EntityPropertyName}}" 
-                                data-name="{{Title}}" 
+                                data-name="{{Title}}"
+                                data-readOnly = "{{readOnly}}" 
                                 aria-describedby="{{Title}}Help" 
                                 placeholder="Enter {{{replace Title '_' ' '}}}" 
                                 data-defaultvalue="{{DefaultValue}}" 
@@ -470,7 +485,8 @@
                                             <svg class="box__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
                                             <input class="box__file" id="{{uiID}}" type="file" 
                                                 name="{{@root.formType}}.{{@root.name}}.{{Title}}" 
-                                                data-name="{{@root.name}}.{{Title}}" 
+                                                data-name="{{@root.name}}.{{Title}}"
+                                                data-readOnly = "{{readOnly}}" 
                                                 data-entity="{{EntityPropertyName}}" 
                                                 id="{{@root.formType}}.{{@root.name}}.{{Title}}" 
                                                 data-multiple-caption="{count} files selected"
@@ -778,7 +794,7 @@
     <li class="li-child-form">
         <hr/>
         <div class="remove-a-child-form">
-            <a href="javascript:void(0)" style="width: 20px; float: left; padding:5px;"><i class="fa fa-minus-circle"></i></a>
+            <a href="javascript:void(0)" name="DeleteChildEntry" style="width: 20px; float: left; padding:5px;"><i class="fa fa-minus-circle"></i></a>
         </div>
         {{#if repeatable.hasSequence}}
             <div class="reorder-a-child-form">
@@ -791,10 +807,9 @@
         {{#if metaDataVisible}}
             {{#switch formType}} 
                 {{#case "edit" "view"}}
-                    <div class="col-md-12 form-meta-data">Last Updated: <span name="modifiedDate">{{Modified}}</span> | Editor: <span name="modifiedBy">{{Editor.Title}}</span></div>
+                    <div  class="col-md-12 form-meta-data"><strong>Last Updated:</strong> <span name="modifiedDate">{{Modified}}</span> | <strong>Editor:</strong> <span name="modifiedBy">{{Editor.Title}}</span></div>
                 {{/case}} 
-            {{/switch}}
-            
+            {{/switch}}            
         {{/if}}
         <div class="a-child-form">
             {{{html}}}
