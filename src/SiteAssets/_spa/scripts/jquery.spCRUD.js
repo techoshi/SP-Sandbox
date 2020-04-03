@@ -875,8 +875,63 @@ $.fn.spCRUD = (function () {
             $(thisLi).moveDown();
         });
 
-        var deleteObject = function () {
-            console.log('delete');
+        var deleteObject = function (m) {
+
+            var thisItem = $(this);
+            var thisItemData = $(thisItem).data();
+            var parentObject = _.find(theseLists, function (o) { return o.source == thisItemData.source; });
+            var thisLI = $(this).parents('li.li-child-form');    
+            var thisForm = $(thisLI).find('.form-container');  
+            var thisFormID = $(thisForm).find('input[data-name="ID"]');
+            var hasValue = $(thisFormID).val() ? true : false;                                   
+            
+            promptDialog.prompt({
+                promptID: 'Delete-Object',
+                body: 'Are you sure you want to delete this item?',
+                header: 'Delete Item',
+                closeOnEscape: true,
+                open: function (event, ui) {
+                    //toastr.success('Data has been successfully submitted.', 'Form Submitted!');
+                },
+                buttons: [{
+                    text: "Cancel",
+                    active: false,
+                    close: true,
+                    click: function () {
+    
+                    }
+                },
+                {
+                    text: "Delete",
+                    active: true,
+                    close: true,
+                    click: function () {
+                        if(hasValue)
+                        {
+                            var thisFormRequest = {
+                                formObjects : {
+                                    ID : $(thisFormID).val()
+                                },
+                                caller : thisLI,
+                                action : "delete",
+                                source : thisItemData.source,
+                                callerType : "child"
+                            };   
+
+                            saveForm(thisFormRequest);
+                        }
+                        else
+                        {
+                            $(thisLI).remove();
+                        }
+                        //$(this).parents('.modal').modal('close');
+                        //$($(this).parents('.modal')).modal('hide');
+                        //deleteItemAttachment(thisObjectData);
+    
+                    }
+                }
+                ]
+            });
         };
 
         $(modalSelector).on('click', '[name="DeleteChildEntry"]', deleteObject);
@@ -949,7 +1004,6 @@ $.fn.spCRUD = (function () {
             }
         }
 
-
         loadFormDataForSelectRow(m);
 
         var thisMo = m.action;
@@ -964,12 +1018,12 @@ $.fn.spCRUD = (function () {
             }
         });
 
-        $('.btn.save-data').unbind('click', $.fn.spCRUD.saveData);
-        $('.btn.save-data').bind('click', $.fn.spCRUD.saveData);
+        $('.btn.save-data').unbind('click', saveModalForm);
+        $('.btn.save-data').bind('click', saveModalForm);
         $('.btn.clear-data').unbind('click', $.fn.spCRUD.clearData);
         $('.btn.clear-data').bind('click', $.fn.spCRUD.clearData);
-        $('.btn.delete-data').unbind('click', $.fn.spCRUD.saveData);
-        $('.btn.delete-data').bind('click', $.fn.spCRUD.saveData);
+        $('.btn.delete-data').unbind('click', saveModalForm);
+        $('.btn.delete-data').bind('click', saveModalForm);
         $('.sp-fill-in').unbind('click', $.fn.spCRUD.loadFillinModal);
         $('.sp-fill-in').bind('click', $.fn.spCRUD.loadFillinModal);
 
@@ -1825,7 +1879,7 @@ $.fn.spCRUD = (function () {
                                         break;
                                     case "User":
                                         var thisUser = $.fn.spCommon.ajax({
-                                            source: f.thisData.owner,
+                                            //source: f.thisData.owner,
                                             method: 'GET',
                                             // headers: {
                                             //     "X-HTTP-Method": "PUT",
@@ -1898,18 +1952,29 @@ $.fn.spCRUD = (function () {
         return { url: thisUrl, headers: z.headers };
     }
 
+    function saveModalForm(m)
+    {
+        m.thisData = $(m.currentTarget).data();
+        m.caller = '#' + m.thisData.caller;
+        m.action = thisData.action;
+        m.source = thisData.source;
+        m.callerType = "modal";
+        saveForm(m);
+    }
+
     function saveForm(m) {
 
-        var thisData = $(m.currentTarget).data();
-        var caller = '#' + thisData.owner;
-        var baseTemplate = $(caller).data().basetemplate;
-
-        var thisActionType = thisData.action;
-        var parentObject = _.find(theseLists, function (o) { return o.source == thisData.source; });
+        var thisData = m.thisData;
+        var caller = m.caller;
+        
+        var thisActionType = m.action;
+        var parentObject = _.find(theseLists, function (o) { return o.source == m.source; });
+        
+        var baseTemplate = parentObject.baseTemplate;
 
         var destinationURL = '';
         var headers = {};
-        var formObjects = {};
+        var formObjects = m.formObjects ? m.formObjects : {};
         var fileObjects = [];
         var multiTypes = [];
 
@@ -1920,32 +1985,56 @@ $.fn.spCRUD = (function () {
                 path: parentObject.path,
                 spType: parentObject.spType,
                 caller: caller,
-                headers: headers
+                headers: headers,
+                formObjects: formObjects
             });
 
             destinationURL = postStruct.url;
             headers = postStruct.headers;
+            if(m.action != "delete")
+            {
+                var processedFormData = getFormData({ formSelector: caller, formObjects: formObjects, /*thisData: thisData,*/ thisObject: thisApp.objects[m.source] });
+                formObjects = processedFormData.formObjects;
+                fileObjects = processedFormData.fileObjects;
+            
+                var childForms = [];
 
-            var processedFormData = getFormData({ formSelector: caller, formObjects: formObjects, thisData: thisData, thisObject: thisApp.objects[thisData.source] });
-            formObjects = processedFormData.formObjects;
-            fileObjects = processedFormData.fileObjects;
+                $('.child-wrapper .card').each(function (c, childElement) {
+                    var thisChildBody = $(childElement).find('.card-body ul li');
 
-            var childForms = [];
+                    if (thisChildBody) {
+                        $(thisChildBody).each(function (cli, liElement) {
+                            var thisForm = $(liElement).find('.form-container');
+                            var thisChildData = $(thisForm).data();
+                            var thisFormData = getFormData({ formSelector: thisForm, formObjects: {}, thisData: thisData, thisObject: thisApp.objects[thisChildData.source] });
+                            thisFormData.thisActionType = "save";
+                            thisFormData.caller = $(thisForm)[0].id;
+                            childForms.push(thisFormData);
+                        });
+                    }
+                });
+            }
+        }
 
-            $('.child-wrapper .card').each(function (c, childElement) {
-                var thisChildBody = $(childElement).find('.card-body ul li');
+        function closeModalRefreshData(s)
+        {
+            if(m.callerType == "modal")
+            {
+                var callerId = '#' + s.caller;
+                $(callerId).parents('.modal').modal('hide');
 
-                if (thisChildBody) {
-                    $(thisChildBody).each(function (cli, liElement) {
-                        var thisForm = $(liElement).find('.form-container');
-                        var thisChildData = $(thisForm).data();
-                        var thisFormData = getFormData({ formSelector: thisForm, formObjects: {}, thisData: thisData, thisObject: thisApp.objects[thisChildData.source] });
-                        thisFormData.thisActionType = "save";
-                        thisFormData.caller = $(thisForm)[0].id;
-                        childForms.push(thisFormData);
-                    });
-                }
-            });
+                setTimeout(function () {
+                    //var thisowner = $(callerId).parents('.modal').data('owner');
+                    $(callerId).parents('.modal').remove();
+                    $('.fillin-modal').remove();
+                    tables[s.spource].ajax.reload();
+                }, 200);
+            }
+
+            if(m.callerType == "child")
+            {   
+                $(m.caller).remove();
+            }
         }
 
         if (destinationURL && !inTestMode) {
@@ -2008,17 +2097,8 @@ $.fn.spCRUD = (function () {
                             }
                             break;
                     }
-                    var callerData = $(m.currentTarget).data();
 
-                    var callerId = '#' + callerData.owner;
-                    $(callerId).parents('.modal').modal('hide');
-
-                    setTimeout(function () {
-                        var thisowner = $(callerId).parents('.modal').data('owner');
-                        $(callerId).parents('.modal').remove();
-                        $('.fillin-modal').remove();
-                        tables[thisowner].ajax.reload();
-                    }, 200);
+                    closeModalRefreshData(m);                    
                 };
 
                 crudRequest2.fail = function (r) {
@@ -2045,17 +2125,8 @@ $.fn.spCRUD = (function () {
 
                             break;
                     }
-                    var callerData = $(m.currentTarget).data();
 
-                    var callerId = '#' + callerData.owner;
-                    $(callerId).parents('.modal').modal('hide');
-
-                    setTimeout(function () {
-                        var thisowner = $(callerId).parents('.modal').data('owner');
-                        $(callerId).parents('.modal').remove();
-                        $('.fillin-modal').remove();
-                        tables[thisowner].ajax.reload();
-                    }, 200);
+                    closeModalRefreshData(m);                                      
                 };
 
                 $.fn.spCommon.ajax(crudRequest2);
@@ -2106,28 +2177,15 @@ $.fn.spCRUD = (function () {
 
                                             },
                                             done: function (a) {
-
-                                                var callerData = $(m.currentTarget).data();
-
-                                                var callerId = '#' + callerData.owner;
-                                                $(callerId).parents('.modal').modal('hide');
-
-                                                setTimeout(function () {
-                                                    var thisowner = $(callerId).parents('.modal').data('owner');
-                                                    $(callerId).parents('.modal').remove();
-                                                    $('.fillin-modal').remove();
-                                                    tables[thisowner].ajax.reload();
-                                                }, 200);
-
+                                                
+                                                closeModalRefreshData(m);
+                                                                                            
                                                 toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                             }
                                         };
 
-
-
                                         $.fn.spCommon.ajax(crudRequest2);
 
-                                        //										console.log("_api/Web/GetFileByServerRelativePath(decodedurl='/sites/BP/BPi/Sandbox/SOP/Procedures/2018-2022%20FBS%20(1).pdf')/");
                                         break;
                                     case 'update':
                                         clearLastSave();
@@ -2139,7 +2197,6 @@ $.fn.spCRUD = (function () {
                         break;
                     case 'update':
                         headers = updateHeader(headers);
-
 
                         if (fileObjects && fileObjects.length > 0) {
                             if (fileObjects[0].name.toLowerCase() == $.fn.spCRUD.currentRecord().FileLeafRef.toLowerCase()) {
@@ -2182,17 +2239,7 @@ $.fn.spCRUD = (function () {
                                                     },
                                                     done: function (a) {
 
-                                                        var callerData = $(m.currentTarget).data();
-
-                                                        var callerId = '#' + callerData.owner;
-                                                        $(callerId).parents('.modal').modal('hide');
-
-                                                        setTimeout(function () {
-                                                            var thisowner = $(callerId).parents('.modal').data('owner');
-                                                            $(callerId).parents('.modal').remove();
-                                                            $('.fillin-modal').remove();
-                                                            tables[thisowner].ajax.reload();
-                                                        }, 200);
+                                                        closeModalRefreshData(m);
 
                                                         toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                                     }
@@ -2256,16 +2303,8 @@ $.fn.spCRUD = (function () {
                                     }
                                 },
                                 done: function (a) {
-                                    var callerData = $(m.currentTarget).data();
-                                    var callerId = '#' + callerData.owner;
-                                    $(callerId).parents('.modal').modal('hide');
 
-                                    setTimeout(function () {
-                                        var thisowner = $(callerId).parents('.modal').data('owner');
-                                        $(callerId).parents('.modal').remove();
-                                        $('.fillin-modal').remove();
-                                        tables[thisowner].ajax.reload();
-                                    }, 200);
+                                    closeModalRefreshData(m);
 
                                     toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                 }
@@ -2282,12 +2321,9 @@ $.fn.spCRUD = (function () {
                             url: destinationURL,
                             data: undefined,
                             done: function (a) {
-
-
                                 toastr.success('File has been deleted successfully submitted.', 'File deleted!');
                             },
                             fail: function (r) {
-
 
                                 var matchedError = false;
 
@@ -2306,18 +2342,7 @@ $.fn.spCRUD = (function () {
                             }
                         };
 
-                        var callerData = $(m.currentTarget).data();
-
-                        var callerId = '#' + callerData.owner;
-                        $(callerId).parents('.modal').modal('hide');
-
-                        setTimeout(function () {
-                            var thisowner = $(callerId).parents('.modal').data('owner');
-                            $(callerId).parents('.modal').remove();
-                            $('.fillin-modal').remove();
-                            tables[thisowner].ajax.reload();
-                        }, 200);
-
+                        closeModalRefreshData(m);                        
 
                         $.fn.spCommon.ajax(crudRequest3);
 

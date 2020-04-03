@@ -128,7 +128,7 @@
     <div class="form col-md-12 form-container" id="form-{{formType}}-{{name}}" data-source="{{name}}" data-formtype="{{formType}}" data-basetemplate="{{baseTemplate}}">
         <input type="hidden" name="{{@root.name}}.ID" data-name="ID" />
         <h2>You are about to delete an item. Continue?</h2>
-        <button type="button" class="btn btn-primary delete-data" data-source="{{name}}" data-sptype="{{title}}" data-owner="form-{{formType}}-{{name}}" data-action="Delete">Delete</button>
+        <button type="button" class="btn btn-primary delete-data" data-source="{{name}}" data-sptype="{{title}}" data-caller="form-{{formType}}-{{name}}" data-action="Delete">Delete</button>
     </div>
 </script>
 <script type="text/x-handlebars-template" id="sp_forms_template">
@@ -522,13 +522,13 @@
         {{#if loadActionButtons}}
             {{#switch formType}}
                 {{#case "edit"}}
-                    <button type="button" class="btn btn-primary save-data" data-source="{{name}}" data-sptype="{{spType}}" data-owner="form-{{formType}}-{{name}}" data-action="Update">Update Form</button> 
+                    <button type="button" class="btn btn-primary save-data" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Update">Update Form</button> 
                 {{/case}} 
                 {{#case "view"}}
                 {{/case}} 
                 {{#default}}{{setVar "formType" "create"}}
-                    <button type="button" class="btn btn-primary save-data" data-source="{{name}}" data-sptype="{{spType}}" data-owner="form-{{formType}}-{{name}}" data-action="Save">Save Form</button>
-                    <button type="button" class="btn btn-success clear-data" data-source="{{name}}" data-sptype="{{spType}}" data-owner="form-{{formType}}-{{name}}" data-action="Reset">Reset Form</button> 
+                    <button type="button" class="btn btn-primary save-data" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Save">Save Form</button>
+                    <button type="button" class="btn btn-success clear-data" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Reset">Reset Form</button> 
                 {{/default}} 
             {{/switch}} 
         {{/if}}
@@ -794,7 +794,16 @@
     <li class="li-child-form">
         <hr/>
         <div class="remove-a-child-form">
-            <a href="javascript:void(0)" name="DeleteChildEntry" style="width: 20px; float: left; padding:5px;"><i class="fa fa-minus-circle"></i></a>
+            <a href="javascript:void(0)" 
+                name="DeleteChildEntry"
+                data-itemType="list-delete"
+                data-owner="{{owner}}" 
+                data-source="{{source}}" 
+                data-sptype="{{spType}}"
+                data-action="Delete"                
+                style="width: 20px; float: left; padding:5px;">
+                <i class="fa fa-minus-circle"></i>
+            </a>
         </div>
         {{#if repeatable.hasSequence}}
             <div class="reorder-a-child-form">
