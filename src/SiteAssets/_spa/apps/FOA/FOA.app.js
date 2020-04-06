@@ -7,13 +7,13 @@ $(document).ready(function(){
 	 	
 	 		var loadWhenReady = setInterval(function(){
 	 		
-	 			if($.fn && $.fn.spCRUD)
+	 			if($.fn && $pa.spCRUD)
 	 			{
 	 				clearInterval(loadWhenReady);
 	 				
-	 				$.fn.spCRUD.clear ({});
+	 				$pa.spCRUD.clear({});
 
-					$.fn.spCRUD.getList({
+					$pa.spCRUD.getList({
 						objects : 
 						[
 							{ name : 'FOClearanceForm3', 

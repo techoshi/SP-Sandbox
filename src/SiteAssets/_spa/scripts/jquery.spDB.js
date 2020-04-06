@@ -1,7 +1,7 @@
 //requires jquery.spCommon.js
 //requires jquery.spAsyncQueue.js
 
-$.fn.spDB = (function () {
+$pa.spDB = (function () {
 
     function getListTypeID(m) {
         switch (m.type) {
@@ -256,7 +256,7 @@ $.fn.spDB = (function () {
     }
 
     function goDelete(m) {
-        $.fn.spCommon.ajax({
+        $pa.spCommon.ajax({
             url: m.url + "/_api/web/lists/GetByTitle('" + m.Title + "')",
             method: 'POST',
             original: m,
@@ -268,14 +268,14 @@ $.fn.spDB = (function () {
                 "IF-MATCH": "*"
             },
             done: function (a) {
-                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                     content: 'List ' + m.Title + ' deleted! ',
                     type: 'success'
                 }));
                 toastr.success('List ' + m.Title + ' deleted! ');
             },
             fail: function (response, errorCode, errorMessage) {
-                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                     content: 'List ' + m.Title + ' not deleted! ' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -285,7 +285,7 @@ $.fn.spDB = (function () {
     }
 
     function AddViewColumn(m) {
-        $.fn.spAsyncQueue.call({
+        $pa.spAsyncQueue.call({
             // _spPageContextInfo.webAbsoluteUrl - will give absolute URL of the site where you are running the code.
             // You can replace this with other site URL where you want to apply the function
 
@@ -302,13 +302,13 @@ $.fn.spDB = (function () {
 
             },
             done: function (a, status, xhr) {
-                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                     content: 'View Field ' + m.Title + ' added to View' + m.ViewTitle + '.',
                     type: 'success'
                 }));
             },
             fail: function (response, errorCode, errorMessage) {
-                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                     content: 'View Field ' + m.Title + ' not added to View' + m.ViewTitle + '.' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -320,7 +320,7 @@ $.fn.spDB = (function () {
         //<Where><Eq><FieldRef Name=\"Location\" /><Value Type=\"Text\">India</Value></Eq></Where>
         var viewQuery = "<OrderBy><FieldRef Name=\"Created\" /></OrderBy>";
 
-        $.fn.spAsyncQueue.call({
+        $pa.spAsyncQueue.call({
             // _spPageContextInfo.webAbsoluteUrl - will give absolute URL of the site where you are running the code.
             // You can replace this with other site URL where you want to apply the function
 
@@ -337,7 +337,7 @@ $.fn.spDB = (function () {
 
             },
             done: function (a, status, xhr) {
-                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                     content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.',
                     type: 'success'
                 }));
@@ -358,7 +358,7 @@ $.fn.spDB = (function () {
                 }
             },
             fail: function (response, errorCode, errorMessage) {
-                $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                     content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -374,7 +374,7 @@ $.fn.spDB = (function () {
         m.method = 'POST';
         m.data = JSON.stringify(m.data);
         m.done = function (a) {
-            $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+            $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                 content: 'Field ' + thisFieldTitle + ' added to List ' + m.originalRequest.Title + '!',
                 type: 'success'
             }));
@@ -382,12 +382,12 @@ $.fn.spDB = (function () {
         };
         m.fail = function (response, errorCode, errotMessage) {
             toastr.error('Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!', 'Field Create Failed!');
-            $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+            $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                 content: 'Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!',
                 type: 'danger'
             }));
         };
-        $.fn.spAsyncQueue.call(m);
+        $pa.spAsyncQueue.call(m);
     }
 
     function createList(m) {
@@ -397,7 +397,7 @@ $.fn.spDB = (function () {
             if (m.url && m.Title && m.Description) {
                 list[m.Title] = {};
 
-                $.fn.spCommon.ajax({
+                $pa.spCommon.ajax({
                     url: m.url + "/_api/web/lists",
                     method: 'POST',
                     original: m,
@@ -424,7 +424,7 @@ $.fn.spDB = (function () {
                         list[m.Title].Id = a.d.Id;
                         toastr.success(m.type + ' ' + m.Title + ' created!', 'List Created!');
 
-                        $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                        $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                             content: m.type + ' ' + m.Title + ' created!',
                             type: 'primary'
                         }));
@@ -445,7 +445,7 @@ $.fn.spDB = (function () {
                         CreateListView(m);
                     },
                     fail: function (response, errorCode, errorMessage) {
-                        $('#DeltaPageInstrumentation').prepend($.fn.spEnvironment.bootstrapAlert({
+                        $('#DeltaPageInstrumentation').prepend($pa.env.bootstrapAlert({
                             content: 'List ' + m.Title + ' not created! ' + response.responseJSON.error.message.value,
                             type: 'danger'
                         }));
@@ -456,7 +456,7 @@ $.fn.spDB = (function () {
                     return list;
                 }
             } else {
-                $('#DeltaPageInstrumentation').append($.fn.spEnvironment.bootstrapAlert({
+                $('#DeltaPageInstrumentation').append($pa.env.bootstrapAlert({
                     content: 'List not created the necessary criteria not provided!',
                     type: 'danger'
                 }));
@@ -496,7 +496,7 @@ $.fn.spDB = (function () {
             }
         }
 
-        if (PendingRequests.length > 0 && $.fn.spAsyncQueue.queue().length == 0) {
+        if (PendingRequests.length > 0 && $pa.spAsyncQueue.queue().length == 0) {
             theLoader.show({
                 id: 'async-loader'
             });
@@ -575,7 +575,7 @@ $.fn.spDB = (function () {
                         done: crudRequestDone
                     };
 
-                    $.fn.spCommon.ajax(crudRequest);
+                    $pa.spCommon.ajax(crudRequest);
                 }
             }
         }
@@ -602,7 +602,7 @@ $.fn.spDB = (function () {
             deleteList(m);
         },
         demoApp: function (m) {
-            $.fn.spDB.createApp({
+            $pa.spDB.createApp({
                 url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists",
                 Title: 'Test_List123',
                 Description: 'Test Description',

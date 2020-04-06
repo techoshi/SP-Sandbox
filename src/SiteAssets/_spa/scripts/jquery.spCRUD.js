@@ -1,5 +1,5 @@
 /*jshint scripturl:true*/
-$.fn.spCRUD = (function () {
+$pa.spCRUD = (function () {
     var modalTypes = ['create', 'view', 'edit', 'delete'];
 
     var isAdvancedUpload = function () {
@@ -96,7 +96,7 @@ $.fn.spCRUD = (function () {
 
         settings.hashidden = _.filter(theseLists, { loaded: false, hidden: true }).length > 0 ? true : false;
 
-        $.fn.spCommon.getUserPermissions({
+        $pa.spCommon.getUserPermissions({
             urls: _.uniq(_.map(theseLists, 'path')),
             accountName: _spPageContextInfo.userLoginName
         });
@@ -111,7 +111,7 @@ $.fn.spCRUD = (function () {
                         var expectedObject = theseLists[i];
 
                         thisApp.objects[theseLists[i].source] = expectedObject;
-                        if ($.fn.spCommon.checkUserPermission({
+                        if ($pa.spCommon.checkUserPermission({
                             path: expectedObject.path,
                             privilege: "viewListItems"
                         }) && (expectedObject.config != true || settings.loadConfigs == true)) {
@@ -135,7 +135,7 @@ $.fn.spCRUD = (function () {
                     thisApp.objects[m.source].id = thisApp.objects[m.source].listData.Id;
 
                     var ajaxCallStructure = getCallStructure(m);
-                    $.fn.spCommon.ajax(ajaxCallStructure);
+                    $pa.spCommon.ajax(ajaxCallStructure);
                 }
             },
             fail: function (a) {
@@ -146,7 +146,7 @@ $.fn.spCRUD = (function () {
             }
         };
 
-        $.fn.spCommon.ajax(thisAjax);
+        $pa.spCommon.ajax(thisAjax);
     }
 
     function getCallStructure(m) {
@@ -199,7 +199,7 @@ $.fn.spCRUD = (function () {
     }
 
     function getListLookups(m) {
-        var thisSPListLookups = _.filter($.fn.spCRUD.data().objects[m.source].d.results, function (o) {
+        var thisSPListLookups = _.filter($pa.spCRUD.data().objects[m.source].d.results, function (o) {
             return o.TypeAsString == "Lookup";
         });
 
@@ -269,7 +269,7 @@ $.fn.spCRUD = (function () {
                     return false;
                 }
 
-                $.fn.spCommon.ajax({
+                $pa.spCommon.ajax({
                     source: m.source,
                     method: 'GET',
                     async: false,
@@ -293,7 +293,7 @@ $.fn.spCRUD = (function () {
                 a: lookupDataPoints[m.owner][m.listGuid].response
             });
         } else {
-            $.fn.spCommon.ajax({
+            $pa.spCommon.ajax({
                 source: m.parentObject.source,
                 method: 'GET',
                 url: m.parentObject.path + "/_api/web/lists(guid'" + m.listGuid + "')/items",
@@ -384,7 +384,7 @@ $.fn.spCRUD = (function () {
 
         sfm.files = newFileArray;
 
-        $('[data-filecontainer=' + sfm.box + '] .box__inventory').html($.fn.spEnvironment.fileInventory(sfm));
+        $('[data-filecontainer=' + sfm.box + '] .box__inventory').html($pa.env.fileInventory(sfm));
 
         $('.box__inventory tbody tr .Remove-File').unbind('click', removeFile);
         $('.box__inventory tbody tr .Remove-File').bind('click', removeFile);
@@ -409,7 +409,7 @@ $.fn.spCRUD = (function () {
 
         var checkExtension = function (m) {
             if (m.allowedExtensions.length > 0) {
-                var thisExtension = $.fn.spCommon.getExtension(m.file.name);
+                var thisExtension = $pa.spCommon.getExtension(m.file.name);
 
                 var addFile = m.allowedExtensions.indexOf(thisExtension.toLowerCase()) > -1;
 
@@ -524,15 +524,15 @@ $.fn.spCRUD = (function () {
             thisApp.objects[m.source.toLowerCase()].active = true;
         }
 
-        $('.spa-app-items').append($.fn.spEnvironment.thisNavLiTemplate(thisApp.objects[m.source.toLowerCase()]));
+        $('.spa-app-items').append($pa.env.thisNavLiTemplate(thisApp.objects[m.source.toLowerCase()]));
 
-        var tabContent = $.fn.spEnvironment.thisNavDivTemplate(thisApp.objects[m.source.toLowerCase()]);
+        var tabContent = $pa.env.thisNavDivTemplate(thisApp.objects[m.source.toLowerCase()]);
 
         //Plug here
         $('#sp-app-contents').append(tabContent);
 
         var thisDefaultLink = "javascript:void(0)";
-        var actionItems = $.fn.spEnvironment.anchorList({
+        var actionItems = $pa.env.anchorList({
             actions: [{
                 href: thisDefaultLink,
                 id: 'create-item-' + m.source.toLowerCase(),
@@ -568,7 +568,7 @@ $.fn.spCRUD = (function () {
             ]
         });
 
-        var miscItems = $.fn.spEnvironment.anchorList({
+        var miscItems = $pa.env.anchorList({
             actions: [{
                 href: thisDefaultLink,
                 id: 'config-item-' + m.source.toLowerCase(),
@@ -579,7 +579,7 @@ $.fn.spCRUD = (function () {
             },]
         });
 
-        var TabsActions = $.fn.spEnvironment.tabTemplate({
+        var TabsActions = $pa.env.tabTemplate({
             name: m.source.toLowerCase(),
             tabs: [{
                 active: true,
@@ -677,10 +677,8 @@ $.fn.spCRUD = (function () {
             }
         }
 
-        //thisApp.objects[m.source.toLowerCase()].thisContent = $.fn.dosEnvironment.hbTemplates(thisApp.objects[m.source.toLowerCase()]);
-
-        $('#spTable-wrap-' + m.source.toLowerCase()).html($.fn.spEnvironment.spTableTemplate(m.meta));
-        $('#lf-tree-' + m.source.toLowerCase()).html($.fn.spEnvironment.spJsTreeTemplate(m.meta));
+        $('#spTable-wrap-' + m.source.toLowerCase()).html($pa.env.spTableTemplate(m.meta));
+        $('#lf-tree-' + m.source.toLowerCase()).html($pa.env.spJsTreeTemplate(m.meta));
 
         thisApp.objects[m.source.toLowerCase()].baseTemplate = baseTemplate;
         $('#nav-tab-' + m.source.toLowerCase()).data(thisApp.objects[m.source.toLowerCase()]);
@@ -691,7 +689,7 @@ $.fn.spCRUD = (function () {
 
         $('#tree_size_' + m.source.toLowerCase()).jstree();
 
-        $.fn.spQuery.genTable({
+        $pa.spQuery.genTable({
             tableName: m.source.toLowerCase(),
             tableID: m.source.toLowerCase(),
             tableSelector: '#' + m.source.toLowerCase(),
@@ -789,7 +787,7 @@ $.fn.spCRUD = (function () {
         var mainFormContent;
         if (m.action != "delete") {
             thisParentObject = markHiddenObjects(thisParentObject);
-            mainFormContent = $.fn.spEnvironment.baseForm(thisParentObject);
+            mainFormContent = $pa.env.baseForm(thisParentObject);
 
             var actionsForChildren = ["edit", "view"];
 
@@ -835,11 +833,11 @@ $.fn.spCRUD = (function () {
                             }
                         }
                     }
-                    mainFormContent += $.fn.spEnvironment.spaAccordion(m);
+                    mainFormContent += $pa.env.spaAccordion(m);
                 }
             }
 
-            crudModal += $.fn.spEnvironment.baseModal({
+            crudModal += $pa.env.baseModal({
                 id: m.action + '-' + m.source,
                 owner: m.source,
                 action: m.action,
@@ -849,9 +847,9 @@ $.fn.spCRUD = (function () {
             });
 
         } else {
-            mainFormContent = $.fn.spEnvironment.deleteItem(thisParentObject);
+            mainFormContent = $pa.env.deleteItem(thisParentObject);
 
-            crudModal += $.fn.spEnvironment.baseModal({
+            crudModal += $pa.env.baseModal({
                 id: m.action + '-' + m.source,
                 owner: m.source,
                 action: m.action,
@@ -951,16 +949,16 @@ $.fn.spCRUD = (function () {
             }
         }
 
-        var fillinObjects = _.filter($.fn.spCRUD.data().objects[m.source].d.results, {
+        var fillinObjects = _.filter($pa.spCRUD.data().objects[m.source].d.results, {
             FillInChoice: true
         });
 
         if (fillinObjects) {
-            var tempObject = _.cloneDeep($.fn.spCRUD.data().objects[m.source], true);
+            var tempObject = _.cloneDeep($pa.spCRUD.data().objects[m.source], true);
             tempObject.d.results = fillinObjects; //fillinObjects.length > 0 ? fillinObjects : tempObject.d.results;
 
             for (var fi = 0; fi < fillinObjects.length; fi++) {
-                $('body').append($.fn.spEnvironment.fillinModal(tempObject));
+                $('body').append($pa.env.fillinModal(tempObject));
             }
         }
 
@@ -968,14 +966,14 @@ $.fn.spCRUD = (function () {
             var LookupData = $(this).data();
             var currentValue = $(this).val();
 
-            var thisLookupContainer = $.fn.spCRUD.lookupDataPoints()[LookupData.owner].lists;
+            var thisLookupContainer = $pa.spCRUD.lookupDataPoints()[LookupData.owner].lists;
 
             var childDropDown = _.find(thisLookupContainer, {
                 owner: LookupData.child
             });
 
             if (childDropDown) {
-                var theChildList = $.fn.spCRUD.lookupDataPoints()[LookupData.owner][childDropDown.guid];
+                var theChildList = $pa.spCRUD.lookupDataPoints()[LookupData.owner][childDropDown.guid];
 
                 if (theChildList && theChildList.response && theChildList.response.d && theChildList.response.d.results) {
                     var thisData = theChildList.response.d.results;
@@ -993,7 +991,7 @@ $.fn.spCRUD = (function () {
                         matchedOptions[thisLookupData].lookupText = matchedOptions[thisLookupData][usedLookupColumn];
                     }
                     LookupData.results = matchedOptions;
-                    var optionsHtml = $.fn.spEnvironment.spDropDownOptions({
+                    var optionsHtml = $pa.env.spDropDownOptions({
                         Title: LookupData.selectname,
                         LookupData: LookupData
                     });
@@ -1020,12 +1018,12 @@ $.fn.spCRUD = (function () {
 
         $('.btn.save-data').unbind('click', saveModalForm);
         $('.btn.save-data').bind('click', saveModalForm);
-        $('.btn.clear-data').unbind('click', $.fn.spCRUD.clearData);
-        $('.btn.clear-data').bind('click', $.fn.spCRUD.clearData);
+        $('.btn.clear-data').unbind('click', $pa.spCRUD.clearData);
+        $('.btn.clear-data').bind('click', $pa.spCRUD.clearData);
         $('.btn.delete-data').unbind('click', saveModalForm);
         $('.btn.delete-data').bind('click', saveModalForm);
-        $('.sp-fill-in').unbind('click', $.fn.spCRUD.loadFillinModal);
-        $('.sp-fill-in').bind('click', $.fn.spCRUD.loadFillinModal);
+        $('.sp-fill-in').unbind('click', $pa.spCRUD.loadFillinModal);
+        $('.sp-fill-in').bind('click', $pa.spCRUD.loadFillinModal);
 
         if (m.relationships && m.relationships.length > 0) {
             for (var rel = 0; rel < m.relationships.length; rel++) {
@@ -1048,7 +1046,7 @@ $.fn.spCRUD = (function () {
 
     var addChildRow = function (a) {
 
-        var html = $.fn.spEnvironment.baseForm(a);
+        var html = $pa.env.baseForm(a);
 
         return html;
     };
@@ -1097,7 +1095,7 @@ $.fn.spCRUD = (function () {
                     }
 
                     currentChild.html = addChildRow(currentChild);
-                    var rowContent = $.fn.spEnvironment.spaChildFormRow(currentChild);
+                    var rowContent = $pa.env.spaChildFormRow(currentChild);
 
                     htmlLiString += rowContent;
                 }
@@ -1191,23 +1189,23 @@ $.fn.spCRUD = (function () {
     function reloadEditForm() {
         var foundRow = [];
 
-        if ($.fn.spCRUD.data().lastSave.action == "save") {
-            var allAvailableData = mGlobal.page[$.fn.spCRUD.data().lastSave.owner].currentJsonData.fullData;
+        if ($pa.spCRUD.data().lastSave.action == "save") {
+            var allAvailableData = mGlobal.page[$pa.spCRUD.data().lastSave.owner].currentJsonData.fullData;
 
 
-            if ($.fn.spCRUD.data().lastSave.templateType == '100') {
+            if ($pa.spCRUD.data().lastSave.templateType == '100') {
                 foundRow = _.filter(allAvailableData, function (f) {
-                    return f.ID == $.fn.spCRUD.data().lastSave.mainSaveData.ID;
+                    return f.ID == $pa.spCRUD.data().lastSave.mainSaveData.ID;
                 });
-            } else if ($.fn.spCRUD.data().lastSave.templateType == '101') {
+            } else if ($pa.spCRUD.data().lastSave.templateType == '101') {
                 foundRow = _.filter(allAvailableData, function (f) {
-                    return f.FileLeafRef == $.fn.spCRUD.data().lastSave.mainSaveData.Name;
+                    return f.FileLeafRef == $pa.spCRUD.data().lastSave.mainSaveData.Name;
                 });
             }
         }
 
         var thisData = {
-            owner: $.fn.spCRUD.data().lastSave.owner,
+            owner: $pa.spCRUD.data().lastSave.owner,
             action: "edit"
         };
 
@@ -1262,7 +1260,7 @@ $.fn.spCRUD = (function () {
             itemQueryStruct.itemCall = true;
         }
 
-        actionURL += "?" + $.fn.spQuery.getItemQuery(itemQueryStruct);
+        actionURL += "?" + $pa.spQuery.getItemQuery(itemQueryStruct);
         return actionURL;
     }
 
@@ -1454,7 +1452,7 @@ $.fn.spCRUD = (function () {
                         $('.Delete-Attachment-File').unbind('click', deleteItemAttachmentPrompt);
                         $('.Delete-Attachment-File').bind('click', deleteItemAttachmentPrompt);
                     } else {
-                        var relativeFilePath = $.fn.spCommon.getRelativeURL({
+                        var relativeFilePath = $pa.spCommon.getRelativeURL({
                             url: returnedData.EncodedAbsUrl
                         });
                         var attachments2 = [{
@@ -1503,7 +1501,7 @@ $.fn.spCRUD = (function () {
                                 }
                             };
 
-                            $.fn.spCommon.ajax({
+                            $pa.spCommon.ajax({
                                 source: cm.thisChild.owner,
                                 method: 'GET',
                                 url: cm.url,
@@ -1516,7 +1514,7 @@ $.fn.spCRUD = (function () {
                             var parentID = m.lastSelectedRecord.d.ID;
 
                             if (thisChild.condition) {
-                                var ConditionHB = $.fn.spCommon.addHandlebar(thisChild.condition);
+                                var ConditionHB = $pa.spCommon.addHandlebar(thisChild.condition);
 
                                 thisChild.queryFilter = ConditionHB({ ID: parentID });
                                 var thisQuery = getQueryForObject(thisChild);
@@ -1537,7 +1535,7 @@ $.fn.spCRUD = (function () {
                 };
 
                 if (getDataForType.indexOf(action) > -1 && m.dataPresent) {
-                    $.fn.spCommon.ajax({
+                    $pa.spCommon.ajax({
                         source: m.owner,
                         method: 'GET',
                         url: m.path + "/_api/" + actionURL + "",
@@ -1591,7 +1589,7 @@ $.fn.spCRUD = (function () {
                 }
             };
 
-            $.fn.spCommon.ajax(crudRequest2);
+            $pa.spCommon.ajax(crudRequest2);
         }
     }
 
@@ -1878,7 +1876,7 @@ $.fn.spCRUD = (function () {
                                         ids.push(theseValues[u].EntityData.SPGroupID);
                                         break;
                                     case "User":
-                                        var thisUser = $.fn.spCommon.ajax({
+                                        var thisUser = $pa.spCommon.ajax({
                                             //source: f.thisData.owner,
                                             method: 'GET',
                                             // headers: {
@@ -1887,9 +1885,9 @@ $.fn.spCRUD = (function () {
                                             //     },
                                             async: false,
                                             //data : { 'logonName': theseValues[u].Key },
-                                            url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
-                                            //url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'" 
-                                            //url: $.fn.spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
+                                            url: $pa.spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
+                                            //url: $pa.spCRUD.data().objects[parentData.owner].path + "/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'" 
+                                            //url: $pa.spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
                                         });
 
                                         if (thisUser && thisUser.d) {
@@ -2129,7 +2127,7 @@ $.fn.spCRUD = (function () {
                     closeModalRefreshData(m);                                      
                 };
 
-                $.fn.spCommon.ajax(crudRequest2);
+                $pa.spCommon.ajax(crudRequest2);
             } else if (baseTemplate == '101') {
                 switch (thisActionType.toLowerCase()) {
                     default:
@@ -2184,7 +2182,7 @@ $.fn.spCRUD = (function () {
                                             }
                                         };
 
-                                        $.fn.spCommon.ajax(crudRequest2);
+                                        $pa.spCommon.ajax(crudRequest2);
 
                                         break;
                                     case 'update':
@@ -2199,7 +2197,7 @@ $.fn.spCRUD = (function () {
                         headers = updateHeader(headers);
 
                         if (fileObjects && fileObjects.length > 0) {
-                            if (fileObjects[0].name.toLowerCase() == $.fn.spCRUD.currentRecord().FileLeafRef.toLowerCase()) {
+                            if (fileObjects[0].name.toLowerCase() == $pa.spCRUD.currentRecord().FileLeafRef.toLowerCase()) {
                                 triggerDocumentLibraryUpload({
                                     parentObject: parentObject,
                                     overwrite: true,
@@ -2245,7 +2243,7 @@ $.fn.spCRUD = (function () {
                                                     }
                                                 };
 
-                                                $.fn.spCommon.ajax(crudRequest2);
+                                                $pa.spCommon.ajax(crudRequest2);
 
                                                 break;
                                         }
@@ -2299,7 +2297,7 @@ $.fn.spCRUD = (function () {
                                             }
                                         };
 
-                                        $.fn.spCommon.ajax(crudChildRequest);
+                                        $pa.spCommon.ajax(crudChildRequest);
                                     }
                                 },
                                 done: function (a) {
@@ -2310,7 +2308,7 @@ $.fn.spCRUD = (function () {
                                 }
                             };
 
-                            $.fn.spCommon.ajax(crudRequest21);
+                            $pa.spCommon.ajax(crudRequest21);
                         }
 
                         break;
@@ -2344,7 +2342,7 @@ $.fn.spCRUD = (function () {
 
                         closeModalRefreshData(m);                        
 
-                        $.fn.spCommon.ajax(crudRequest3);
+                        $pa.spCommon.ajax(crudRequest3);
 
                         break;
                 }
@@ -2397,7 +2395,7 @@ $.fn.spCRUD = (function () {
                         processQueue();
                     };
 
-                    $.fn.spCommon.ajax(tempList[0].xhrRequest);
+                    $pa.spCommon.ajax(tempList[0].xhrRequest);
                 });
             }
         }
@@ -2445,7 +2443,7 @@ $.fn.spCRUD = (function () {
                         processQueue();
                     };
 
-                    $.fn.spCommon.ajax(tempList[0].xhrRequest);
+                    $pa.spCommon.ajax(tempList[0].xhrRequest);
                 });
             }
         }
@@ -2509,7 +2507,7 @@ $.fn.spCRUD = (function () {
             },
         };
 
-        //$.fn.spCommon.ajax(uploadFileXHR);	        				
+        //$pa.spCommon.ajax(uploadFileXHR);	        				
         //});
         return {
             xhrRequest: uploadFileXHR,
@@ -2655,7 +2653,7 @@ $.fn.spCRUD = (function () {
             data.pickerLoaded = typeof data.pickerLoaded == "boolean" ? data.pickerLoaded : false;
 
             if (data.pickerLoaded == false) {
-                $.fn.spCRUD.initializePeoplePicker(data);
+                $pa.spCRUD.initializePeoplePicker(data);
             }
 
             $(element).data('pickerLoaded', true);
@@ -2783,7 +2781,7 @@ $.fn.spCRUD = (function () {
 
                 theseLists = newObjectOrder;
                 loadLists();
-                //$.fn.spCommon.theList(m);
+                //$pa.spCommon.theList(m);
                 setTimeout(function () {
                     theLoader.hide({
                         id: 'initiateApp'

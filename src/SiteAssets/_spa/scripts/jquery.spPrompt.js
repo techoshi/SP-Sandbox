@@ -12,7 +12,7 @@ var promptDialog = function promptDialog() {
             $('#' + model.promptID + '').remove();
         }
 
-        $('body').append($.fn.spEnvironment.promptModal(model));       
+        $('body').append($pa.env.promptModal(model));       
         
         if(model.open && typeof model.open == "function")
         {

@@ -1,4 +1,4 @@
-$.fn.spAsyncQueue = (function () {
+$pa.spAsyncQueue = (function () {
 
     var PendingRequests = [];
     var waitingForRequest = true;

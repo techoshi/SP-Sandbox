@@ -1,4 +1,4 @@
-$.fn.spCommon = (function () {
+$pa.spCommon = (function () {
     var thisSite = {};
     thisSite.objects = {};
     var continueToUpdateContext = true;
@@ -149,7 +149,7 @@ $.fn.spCommon = (function () {
             }
         };
 
-        $.fn.spCommon.ajax(thisAjax);
+        $pa.spCommon.ajax(thisAjax);
     }
     
     return {
@@ -200,7 +200,7 @@ $.fn.spCommon = (function () {
 					}
 				};
 				
-				var returnedData = $.fn.spCommon.ajax(ajaxStruct);
+				var returnedData = $pa.spCommon.ajax(ajaxStruct);
 				
 				var permissions = new SP.BasePermissions();
 		        permissions.initPropertiesFromJson(returnedData.d.GetUserEffectivePermissions);
@@ -236,36 +236,36 @@ $.fn.spCommon = (function () {
     };
 })();
 
-$.fn.spCommon.addHandlebarPartial({ name: 'jsTree', content: $('#sp_jstree_template').html() });
-$.fn.spCommon.addHandlebarPartial({ name: 'listTabs', content: $('#list-family').html() });
-$.fn.spCommon.addHandlebarPartial({ name: 'spForm', content: $('#sp_forms_template').html() });
-$.fn.spCommon.addHandlebarPartial({ name: 'spTable', content: $('#sp_table_template').html() });
-$.fn.spCommon.addHandlebarPartial({ name: 'spaCard', content: $('#spa_accordion_card').html() });
+$pa.spCommon.addHandlebarPartial({ name: 'jsTree', content: $('#sp_jstree_template').html() });
+$pa.spCommon.addHandlebarPartial({ name: 'listTabs', content: $('#list-family').html() });
+$pa.spCommon.addHandlebarPartial({ name: 'spForm', content: $('#sp_forms_template').html() });
+$pa.spCommon.addHandlebarPartial({ name: 'spTable', content: $('#sp_table_template').html() });
+$pa.spCommon.addHandlebarPartial({ name: 'spaCard', content: $('#spa_accordion_card').html() });
 
 
-$.fn.spEnvironment.tabBody = $.fn.spCommon.addHandlebar($('#sp_tab_container').html());
-$.fn.spEnvironment.fileAttachment = $.fn.spCommon.addHandlebar($('#sp_file_attachment').html());
-$.fn.spEnvironment.fileInventory = $.fn.spCommon.addHandlebar($('#sp_file_inventory_template').html());
-$.fn.spEnvironment.tabTemplate = $.fn.spCommon.addHandlebar($('#tabs-template').html());
-$.fn.spEnvironment.anchorList = $.fn.spCommon.addHandlebar($('#list-anchor-items-template').html());
-$.fn.spEnvironment.baseForm = $.fn.spCommon.addHandlebar($('#sp_forms_template').html());
-$.fn.spEnvironment.deleteItem = $.fn.spCommon.addHandlebar($('#sp_delete_item').html());
-$.fn.spEnvironment.baseModal = $.fn.spCommon.addHandlebar($('#sp-modal-template').html());
-$.fn.spEnvironment.datatable_refresh_html = $.fn.spCommon.addHandlebar($('#datatable_refresh_html').html());
-$.fn.spEnvironment.spTableTemplate = $.fn.spCommon.addHandlebar($('#sp_table_template').html());
-$.fn.spEnvironment.spJsTreeTemplate = $.fn.spCommon.addHandlebar($('#sp_jstree_template').html());
-$.fn.spEnvironment.spSearchCondition = $.fn.spCommon.addHandlebar($('#sp-search-condition').html());
-$.fn.spEnvironment.fillinModal = $.fn.spCommon.addHandlebar($('#sp-modal-fillin-template').html());
-$.fn.spEnvironment.promptModal = $.fn.spCommon.addHandlebar($('#prompt-modal-template').html());
-$.fn.spEnvironment.spDropDownOptions = $.fn.spCommon.addHandlebar($('#sp-lookup-dropdown').html());
-$.fn.spEnvironment.bootstrapAlert = $.fn.spCommon.addHandlebar($('#bootstrap-alert').html());
-$.fn.spEnvironment.spaAccordion = $.fn.spCommon.addHandlebar($('#spa_accordion').html());
-$.fn.spEnvironment.spaAccordionCard = $.fn.spCommon.addHandlebar($('#spa_accordion_card').html());
-$.fn.spEnvironment.spaChildFormRow = $.fn.spCommon.addHandlebar($('#spa-child-form-row').html());
-$.fn.spEnvironment.thisNavLiTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-li').html());
-$.fn.spEnvironment.thisNavDivTemplate = $.fn.spCommon.addHandlebar($('#bootstrap-nav-div').html());
+$pa.env.tabBody = $pa.spCommon.addHandlebar($('#sp_tab_container').html());
+$pa.env.fileAttachment = $pa.spCommon.addHandlebar($('#sp_file_attachment').html());
+$pa.env.fileInventory = $pa.spCommon.addHandlebar($('#sp_file_inventory_template').html());
+$pa.env.tabTemplate = $pa.spCommon.addHandlebar($('#tabs-template').html());
+$pa.env.anchorList = $pa.spCommon.addHandlebar($('#list-anchor-items-template').html());
+$pa.env.baseForm = $pa.spCommon.addHandlebar($('#sp_forms_template').html());
+$pa.env.deleteItem = $pa.spCommon.addHandlebar($('#sp_delete_item').html());
+$pa.env.baseModal = $pa.spCommon.addHandlebar($('#sp-modal-template').html());
+$pa.env.datatable_refresh_html = $pa.spCommon.addHandlebar($('#datatable_refresh_html').html());
+$pa.env.spTableTemplate = $pa.spCommon.addHandlebar($('#sp_table_template').html());
+$pa.env.spJsTreeTemplate = $pa.spCommon.addHandlebar($('#sp_jstree_template').html());
+$pa.env.spSearchCondition = $pa.spCommon.addHandlebar($('#sp-search-condition').html());
+$pa.env.fillinModal = $pa.spCommon.addHandlebar($('#sp-modal-fillin-template').html());
+$pa.env.promptModal = $pa.spCommon.addHandlebar($('#prompt-modal-template').html());
+$pa.env.spDropDownOptions = $pa.spCommon.addHandlebar($('#sp-lookup-dropdown').html());
+$pa.env.bootstrapAlert = $pa.spCommon.addHandlebar($('#bootstrap-alert').html());
+$pa.env.spaAccordion = $pa.spCommon.addHandlebar($('#spa_accordion').html());
+$pa.env.spaAccordionCard = $pa.spCommon.addHandlebar($('#spa_accordion_card').html());
+$pa.env.spaChildFormRow = $pa.spCommon.addHandlebar($('#spa-child-form-row').html());
+$pa.env.thisNavLiTemplate = $pa.spCommon.addHandlebar($('#bootstrap-nav-li').html());
+$pa.env.thisNavDivTemplate = $pa.spCommon.addHandlebar($('#bootstrap-nav-div').html());
 
-$('#DeltaPlaceHolderMain').append($.fn.spEnvironment.tabBody());
+$('#DeltaPlaceHolderMain').append($pa.env.tabBody());
 $('.container').on('click', 'tbody tr', function () {
 
     var thisTable = $(this).parents('table').data('table');

@@ -154,9 +154,9 @@ function getMarkings() {
 
 function loadAppData()
 {
-    $.fn.spDB.loadData(getStatusData());
-    $.fn.spDB.loadData(getRoles());
-    $.fn.spDB.loadData(getPriorities());
-    $.fn.spDB.loadData(getSources());
-    $.fn.spDB.loadData(getMarkings());
+    $pa.spDB.loadData(getStatusData());
+    $pa.spDB.loadData(getRoles());
+    $pa.spDB.loadData(getPriorities());
+    $pa.spDB.loadData(getSources());
+    $pa.spDB.loadData(getMarkings());
 }

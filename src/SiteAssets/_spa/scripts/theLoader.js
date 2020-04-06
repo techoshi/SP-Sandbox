@@ -1,12 +1,12 @@
 var theLoader = function () {
 
-    $.fn.spEnvironment.theLoaderTemplate = $('#the_loader_template').html() ? Handlebars.compile($('#the_loader_template').html()) : function () { console.log('Handlebar Not Present'); };
+    $pa.env.theLoaderTemplate = $('#the_loader_template').html() ? Handlebars.compile($('#the_loader_template').html()) : function () { console.log('Handlebar Not Present'); };
 
     var addThis = function (model) {
 
         if ($('.' + model.id).length == 0) {
             var html = '';
-            html += $.fn.spEnvironment.theLoaderTemplate(model);
+            html += $pa.env.theLoaderTemplate(model);
             $('body').append(html);
         }
     };

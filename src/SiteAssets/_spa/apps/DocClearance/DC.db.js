@@ -206,7 +206,7 @@ var thisLists = [
 $(document).ready(function () {
 
 	if (!inEditMode) {
-		//$.fn.spDB.createApp(thisLists);
+		//$pa.spDB.createApp(thisLists);
 	} else {
 		$('#DeltaPlaceHolderMain').append('<h1>The JS Application does not load during SharePoint Edit Mode</h1>');
 	}

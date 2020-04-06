@@ -1,4 +1,4 @@
-$.fn.spQuery = (function () {
+$pa.spQuery = (function () {
 
     var defaultPageSize = 50;
 
@@ -455,7 +455,7 @@ $.fn.spQuery = (function () {
                     } else if (typeof d2[o] === "boolean") {
                         if (o.toLowerCase() == "attachments") {
                             if (d2[o]) {
-                                d2[o] = $.fn.spEnvironment.fileAttachment();
+                                d2[o] = $pa.env.fileAttachment();
                             } else {
                                 d2[o] = '';
                             }
@@ -525,7 +525,7 @@ $.fn.spQuery = (function () {
         if (m.meta && m.meta.search && m.meta.search.value) {
             var searchStageData = data;
 
-            var conditionSyntax = $.fn.spEnvironment.spSearchCondition({
+            var conditionSyntax = $pa.env.spSearchCondition({
                 objectName : "o",
                 columns: m.meta.columns,
                 search: m.meta.search
@@ -556,7 +556,7 @@ $.fn.spQuery = (function () {
     }
 
     function fnDrawCallback(m, oSettings, json) {
-        $('.dataTables_scrollHead th.css_dt_' + m.tableName + '.css_Attachments').html($.fn.spEnvironment.fileAttachment());
+        $('.dataTables_scrollHead th.css_dt_' + m.tableName + '.css_Attachments').html($pa.env.fileAttachment());
         $('.css_dt_' + m.tableName + '.css_Attachments').css({
             width: '50px',
             'min-width': '50px',
@@ -586,9 +586,9 @@ $.fn.spQuery = (function () {
             $('.dataTable:visible').find('#' + m.tableID + '_wrapper .dataTables_scrollHeadInner .table:hidden, #' + m.tableID + '_wrapper .dataTables_scrollHeadInner:hidden, .dataTable').css('width', '100%');
         }, 300);
 
-        var rootObject = $.fn.spCRUD.data();
+        var rootObject = $pa.spCRUD.data();
         if (rootObject.lastSave && rootObject.lastSave.action == "save") {
-            $.fn.spCRUD.reloadEditForm();
+            $pa.spCRUD.reloadEditForm();
         }
     }
 
@@ -667,7 +667,7 @@ $.fn.spQuery = (function () {
                             }, 1000));
 
                         $('#' + m.tableName + ' input[type="search"]').addClass('iris-pager-nav');
-                        $('#' + m.tableName + '_filter').append($.fn.spEnvironment.datatable_refresh_html({
+                        $('#' + m.tableName + '_filter').append($pa.env.datatable_refresh_html({
                             owner: m.tableName
                         }));
 

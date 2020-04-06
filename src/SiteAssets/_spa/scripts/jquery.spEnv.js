@@ -12,6 +12,9 @@ if (inDesignMode == "1") {
 var tables = {};
 var mGlobal = {};
 mGlobal.page = {};
+var $pa = {
+	fn : {}
+};
 
 var spPermissions = {
 	loaded : false,
@@ -32,20 +35,18 @@ $.fn.extend({
 	}
 });
 
-$.fn.extend({
-	spEnvironment: {
-		updatePermission: function (m) {
-			if (!spPermissions.loaded) {
-				Object.defineProperty(spPermissions, "privileges", {
-					value: m,
-					writable: false,
-					enumerable: true,
-					configurable: true
-				});
+$pa.env = {
+	updatePermission: function (m) {
+		if (!spPermissions.loaded) {
+			Object.defineProperty(spPermissions, "privileges", {
+				value: m,
+				writable: false,
+				enumerable: true,
+				configurable: true
+			});
 
-				spPermissions.loaded = true;
-				Object.freeze(spPermissions);
-			}
+			spPermissions.loaded = true;
+			Object.freeze(spPermissions);
 		}
 	}
-});
+};
