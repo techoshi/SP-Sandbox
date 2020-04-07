@@ -1,10 +1,7 @@
-declare var Handlebars: any;
-declare var moment: any;
-declare interface Math {
-    uuidFast() : string;
-}
+import * as Handlebars from 'handlebars';
+import * as moment from 'moment';
 
-function getFileExtension(fileNameOrURL : string, showUnixDotFiles : boolean) {
+export function getFileExtension(fileNameOrURL : string, showUnixDotFiles : boolean) {
     /* First, let's declare some preliminary variables we'll need later on. */
     var fileName;
     var fileExt;
@@ -119,15 +116,18 @@ Handlebars.registerHelper('ifEmpty', ifEmpty);
 
 Handlebars.registerHelper('noSpace', function (context : any) { return context.replace(/ /g, "_"); });
 
+//@ts-ignore
 Handlebars.__switch_stack__ = [];
 
 Handlebars.registerHelper("switch", function (value : any, options : any) {
     //https://github.com/wycats/handlebars.js/issues/927
+    //@ts-ignore
     Handlebars.__switch_stack__.push({
         switch_match: false,
         switch_value: value
     });
     var html = options.fn(this);
+    //@ts-ignore
     Handlebars.__switch_stack__.pop();
     return html;
 });
@@ -136,6 +136,7 @@ Handlebars.registerHelper("case", function (value : any, options : any) {
     var args = Array.from(arguments);
     var options = args.pop();
     var caseValues = args;
+    //@ts-ignore
     var stack = Handlebars.__switch_stack__[Handlebars.__switch_stack__.length - 1];
 
     if (stack.switch_match || caseValues.indexOf(stack.switch_value) === -1) {
@@ -147,6 +148,7 @@ Handlebars.registerHelper("case", function (value : any, options : any) {
 });
 Handlebars.registerHelper("default", function (options : any) {
     //https://github.com/wycats/handlebars.js/issues/927
+    //@ts-ignore
     var stack = Handlebars.__switch_stack__[Handlebars.__switch_stack__.length - 1];
     if (!stack.switch_match) {
         return options.fn(this);

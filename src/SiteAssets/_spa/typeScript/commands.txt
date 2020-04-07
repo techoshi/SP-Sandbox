@@ -3,14 +3,40 @@ tsc --version
 
 npm install -g jshint
 npm install -g typescript
+npm install --save-dev typescript
+
 npm install -g webpack
+npm install --save-dev webpack
+
+npm install -g ts-loader
+npm install --save-dev ts-loader
+
 npm install jquery --save
 npm install @types/jquery@3.3.33
-npm install -g ts-loader
+
+npm install jquery-ui-bundle --save
+npm install @types/jqueryui
+
 npm install -g handlebars
+npm install --save-dev handlebars
+
 npm install gulp
 npm install gulp-cli
 npm install -g moment  
+npm install -g json-loader
+
+npm install @types/lodash
+
+npm install bootstrap
+npm install @types/bootstrap
+
+npm install toastr
+npm install @types/toastr    
+
+npm install @types/sharepoint --save-dev
+
+npm install select2
+npm install @types/select2
 
 npm i
 
