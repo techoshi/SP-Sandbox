@@ -1,4 +1,3 @@
-
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import * as Handlebars from 'handlebars';
@@ -33,7 +32,7 @@ type pager = {
     ExtensionHTML: string
 }
 
-var iGlobal = {
+export var iGlobal = {
 
     pager: {
         name: 'IrisPager',
@@ -511,7 +510,7 @@ iGlobal.pager.navExtentions = function (model) {
 
 
 
-var dt_nav_clicked = function () {
+export var dt_nav_clicked = function () {
 
     var btnSelected = $(this).attr('name');
     var ownerId = $(this).data('owner');
@@ -545,7 +544,7 @@ var dt_nav_clicked = function () {
 
 };
 
-var dt_select_changed = function () {
+export var dt_select_changed = function () {
 
     var ownerId = $(this).data('owner');
 
@@ -553,7 +552,7 @@ var dt_select_changed = function () {
 
 };
 
-var dt_length_changed = function (e) {
+export var dt_length_changed = function (e) {
 
     if ($('body').find('.iris-pager').length > 0) {
 

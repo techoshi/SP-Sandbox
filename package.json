@@ -1,8 +1,29 @@
 {
   "dependencies": {
-    "@types/jquery": "^3.3.33"
+    "@types/bootstrap": "^4.3.2",
+    "@types/datatables.net": "^1.10.19",
+    "@types/handlebars": "^4.1.0",
+    "@types/jquery": "^3.3.33",
+    "@types/jqueryui": "^1.12.10",
+    "@types/lodash": "^4.14.149",
+    "@types/moment": "^2.13.0",
+    "@types/select2": "^4.0.48",
+    "@types/toastr": "^2.1.37",
+    "bootstrap": "^4.4.1",
+    "datatables.net": "^1.10.20",
+    "handlebars-loader": "^1.7.1",
+    "jquery-ui-bundle": "^1.12.1-migrate",
+    "path": "^0.12.7",
+    "select2": "^4.0.13",
+    "toastr": "^2.1.4"
   },
   "devDependencies": {
+    "@types/sharepoint": "^2016.1.8",
+    "handlebars": "^4.7.6",
+    "moment": "^2.24.0",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }
 }

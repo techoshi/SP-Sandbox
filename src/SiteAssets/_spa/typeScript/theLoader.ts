@@ -1,4 +1,3 @@
-
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import * as Handlebars from 'handlebars';

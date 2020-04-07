@@ -80,5 +80,7 @@ export var $pa = {
 	},
 	spCommon: undefined as any,
 	spCRUD: undefined as any,
-	spQuery: undefined as any
+	spQuery: undefined as any,
+	spDB: undefined as any,
+	spAsyncQueue: undefined as any,
 }

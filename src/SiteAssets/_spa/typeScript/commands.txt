@@ -19,6 +19,8 @@ npm install @types/jqueryui
 
 npm install -g handlebars
 npm install --save-dev handlebars
+npm install handlebars-loader
+npm install path
 
 npm install gulp
 npm install gulp-cli
@@ -37,6 +39,9 @@ npm install @types/sharepoint --save-dev
 
 npm install select2
 npm install @types/select2
+
+npm install datatables.net
+npm install @types/datatables.net
 
 npm i
 
