@@ -2,9 +2,6 @@ import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 declare var MSOWebPartPageFormName: any;
-declare var SP: any;
-declare var SPClientPeoplePicker: any;
-declare var SPClientPeoplePicker_InitStandaloneControlWrapper: any;
 
 type mGlobal = {
 	page: {},

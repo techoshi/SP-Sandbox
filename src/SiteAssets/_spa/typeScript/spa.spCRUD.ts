@@ -11,6 +11,10 @@ import * as spLoader from "./theLoader";
 import * as spPrompt from "./spa.spPrompt";
 import * as spExtensions from "./handlebars-helper";
 
+declare var SP: any;
+declare var SPClientPeoplePicker: any;
+declare var SPClientPeoplePicker_InitStandaloneControlWrapper: any;
+
 spEnv.$pa.spCRUD = (function () {
     var modalTypes = ['create', 'view', 'edit', 'delete'];
 
@@ -2040,14 +2044,14 @@ spEnv.$pa.spCRUD = (function () {
         {
             if(m.callerType == "modal")
             {
-                var callerId = '#' + s.caller;
+                var callerId = s.caller;
                 $(callerId).parents('.modal').modal('hide');
 
                 setTimeout(function () {
                     //var thisowner = $(callerId).parents('.modal').data('owner');
                     $(callerId).parents('.modal').remove();
                     $('.fillin-modal').remove();
-                    spEnv.tables[s.spource].ajax.reload();
+                    spEnv.tables[s.source].ajax.reload();
                 }, 200);
             }
 
@@ -2568,14 +2572,14 @@ spEnv.$pa.spCRUD = (function () {
         // Pass the ID of the DOM element that contains the picker, an array of initial
         // PickerEntity objects to set the picker value, and a schema that defines
         // picker properties.
-        this.SPClientPeoplePicker_InitStandaloneControlWrapper(m.id, prepop, schema);
+        SPClientPeoplePicker_InitStandaloneControlWrapper(m.id, prepop, schema);
     }
 
     // Query the picker for user information.
     function getUserInfo(m: any) {
 
         // Get the people picker object from the page.
-        var peoplePicker = this.SPClientPeoplePicker.SPClientPeoplePickerDict.peoplePickerDiv_TopSpan;
+        var peoplePicker = SPClientPeoplePicker.SPClientPeoplePickerDict.peoplePickerDiv_TopSpan;
 
         // Get information about all users.
         var users = peoplePicker.GetAllUserInfo();
