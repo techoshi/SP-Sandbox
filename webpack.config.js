@@ -4,19 +4,17 @@ module.exports = {
     mode: "development",
     entry: { 
         spa : [
-        './src/SiteAssets/_spa/scripts/handlebars-helper.js',
-        './src/SiteAssets/_spa/scripts/jquery.spEnv.js',
-        './src/SiteAssets/_spa/scripts/dt-helper.js',
-        './src/SiteAssets/_spa/scripts/theLoader.js',
-        './src/SiteAssets/_spa/scripts/jquery.spPrompt.js',
-        './src/SiteAssets/_spa/scripts/jquery.spCommon.js',
-        './src/SiteAssets/_spa/scripts/jquery.spQuery.js',
-        
-        
-        './src/SiteAssets/_spa/scripts/jquery.spCRUD.js',
-
-        './src/SiteAssets/_spa/scripts/jquery.spAsyncQueue.js',
-        './src/SiteAssets/_spa/scripts/jquery.spDB.js',
+        './src/SiteAssets/_spa/typeScript/handlebars-helper.ts',
+        './src/SiteAssets/_spa/typeScript/spa.spEnv.ts',
+        './src/SiteAssets/_spa/typeScript/dt-helper.ts',
+        './src/SiteAssets/_spa/typeScript/theLoader.ts',
+        './src/SiteAssets/_spa/typeScript/spa.spPrompt.ts',
+        './src/SiteAssets/_spa/typeScript/spa.spCommon.ts',
+        './src/SiteAssets/_spa/typeScript/spa.spQuery.ts',                
+        './src/SiteAssets/_spa/typeScript/spa.spCRUD.ts',
+        './src/SiteAssets/_spa/typeScript/spa.spAsyncQueue.ts',
+        './src/SiteAssets/_spa/typeScript/spa.spDB.ts',
+        './src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.app.ts',
     ] },
     module: {
         rules: [
@@ -27,17 +25,26 @@ module.exports = {
             },
             {
                 test: /\.hbs?$/,
-                use: 'handlebars-loader',
-                exclude: /node_modules/,
+                use: [{
+                    loader: "handlebars-loader",
+                    options: {helperDirs: path.resolve(__dirname, "./src/SiteAssets/_spa/handlebars")}
+                  }],
+                exclude: /node_modules/
             },
         ],
     },
     devtool: 'inline-source-map',
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.tsx', '.ts', '.js', '.hbs'],
     },
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'src/SiteAssets/_spa/webpack'),
     },
+    externals: {
+        // require("jquery") is external and available
+        //  on the global var jQuery
+        // "jquery": "jQuery",
+        // "lodash": "lodash"
+      }
 };

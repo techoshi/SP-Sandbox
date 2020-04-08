@@ -28,12 +28,14 @@ npm install -g moment
 npm install -g json-loader
 
 npm install @types/lodash
+npm install lodash --save-dev
 
 npm install bootstrap
 npm install @types/bootstrap
 
 npm install toastr
-npm install @types/toastr    
+npm install @types/toastr  
+npm install toastr --save-dev  
 
 npm install @types/sharepoint --save-dev
 
@@ -42,6 +44,18 @@ npm install @types/select2
 
 npm install datatables.net
 npm install @types/datatables.net
+
+npm install datatables.net-autofill 
+npm install datatables.net-buttons
+npm install datatables.net-fixedheader
+npm install datatables.net-keytable
+npm install datatables.net-responsive
+npm install datatables.net-rowgroup
+npm install datatables.net-select
+npm install datatables.net-bs4 
+
+npm install jstree
+npm uninstall @typesjstree
 
 npm i
 

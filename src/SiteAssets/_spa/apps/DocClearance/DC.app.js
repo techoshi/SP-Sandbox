@@ -72,23 +72,23 @@ $(document).ready(function () {
 							singular: "Note Entry",
 							condition: "DCMain eq {{ID}}",
 							repeatable: { enable: true, hasSequence: false },
-							metaDataVisible : true,
+							metaDataVisible: true,
 							wholeForm: false,
 							availableParent: ["edit"],
 							dataEditable: false,
 							columns: {
 								visible: ["NoteEntry"],
 								hidden: ["Title", "DCMain", "Sequence", "CurrentStatus"]
-							},		
-							form : {
-								columns : [{
+							},
+							form: {
+								columns: [{
 									name: 'NoteEntry',
-									bootstrapGridOverride : {
-										class : "col-md-12"
+									bootstrapGridOverride: {
+										class: "col-md-12"
 									},
-									css: { }
+									css: {}
 								}]
-							},																			
+							},
 							table: {
 								css: {
 									"width": "200px",
@@ -99,7 +99,7 @@ $(document).ready(function () {
 									css: {
 										"width": "300px",
 										"min-width": "300px"
-									}									
+									}
 								}]
 							},
 							search: [""]
@@ -155,6 +155,8 @@ $(document).ready(function () {
 						config: true
 					}
 					]
+				
+				
 				});
 			}
 		}, 50);

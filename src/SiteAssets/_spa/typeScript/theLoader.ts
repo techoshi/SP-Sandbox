@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import * as Handlebars from 'handlebars';
-import * as spEnv from "./jquery.spEnv";
+import * as spEnv from "./spa.spEnv";
 
 export var theLoader = function () {
     var flag;
