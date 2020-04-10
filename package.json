@@ -10,7 +10,7 @@
     "@types/moment": "^2.13.0",
     "@types/select2": "^4.0.48",
     "@types/toastr": "^2.1.37",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "^4.0.0",
     "datatables.net": "^1.10.20",
     "datatables.net-autofill": "^2.3.4",
     "datatables.net-bs4": "^1.10.20",
@@ -24,6 +24,7 @@
     "jquery-ui-bundle": "^1.12.1-migrate",
     "jstree": "^3.3.9",
     "path": "^0.12.7",
+    "popper.js": "^1.12.9",
     "select2": "^4.0.13"
   },
   "devDependencies": {

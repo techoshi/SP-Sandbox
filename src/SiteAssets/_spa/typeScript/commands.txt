@@ -31,7 +31,10 @@ npm install @types/lodash
 npm install lodash --save-dev
 
 npm install bootstrap
+npm install bootstrap@4.0.0
 npm install @types/bootstrap
+
+npm install popper.js@^1.12.9
 
 npm install toastr
 npm install @types/toastr  
