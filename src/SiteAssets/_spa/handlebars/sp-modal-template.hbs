@@ -1,0 +1,19 @@
+<div class="modal fade" id="modal-{{id}}" data-action="{{action}}" data-owner="{{owner}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
+    <!-- Modal -->
+    <div class="modal-dialog {{#if modalcentered}}modal-dialog-centered{{/if}}" role="document" style="{{#if minWidth}}min-width: {{minWidth}};{{/if}}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title-{{id}}">{{title}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modal-overflow">
+                {{{content}}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

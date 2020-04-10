@@ -1,0 +1,29 @@
+<table class="table table-sm" id="{{name}}" data-table="{{name}}">
+    <thead>
+        <tr>
+        {{#d.results}}
+            {{#if spLoadObject}}
+                {{#switch TypeAsString}}
+                    {{#case "Attachments"}}
+                        <th class="css_dt_{{@root.name}} css_{{replace EntityPropertyName ' ' '_'}}" scope="col" data-name="{{EntityPropertyName}}" data-type="{{TypeAsString}}">{{{replace Title '_' ' '}}}</th>
+                    {{/case}}
+                    {{#default}}
+                    {{/default}}
+                {{/switch}}
+            {{/if}}
+        {{/d.results}}
+        
+        {{#d.results}}
+            {{#if spLoadObject}}
+                {{#switch TypeAsString}}
+                    {{#case "Text" "Choice" "MultiChoice" "Lookup" "Note" "UserMulti" "Computed" "File" "User" "DateTime" "Boolean" "Number" "Currency"}}
+                        <th class="css_dt_{{@root.name}} css_{{replace EntityPropertyName ' ' '_'}}" scope="col" data-name="{{EntityPropertyName}}" data-type="{{TypeAsString}}">{{{replace Title '_' ' '}}}</th>
+                    {{/case}}
+                    {{#default}}{{/default}}
+                {{/switch}}
+            {{/if}}
+        {{/d.results}}
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>

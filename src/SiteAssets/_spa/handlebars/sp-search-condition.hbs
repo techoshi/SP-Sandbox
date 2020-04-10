@@ -1,0 +1,3 @@
+{{#columns}}
+    {{@root.objectName}}["{{name}}"].toString().toLowerCase().indexOf("{{toLowerCase ../search.value}}") > -1 {{#if @last}}{{else }} || {{/if}}
+{{/columns}}

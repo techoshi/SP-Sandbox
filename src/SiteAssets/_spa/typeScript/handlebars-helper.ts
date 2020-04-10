@@ -1,5 +1,5 @@
-import * as Handlebars from 'handlebars';
-import * as moment from 'moment';
+// import * as Handlebars from 'handlebars';
+// import * as moment from 'moment';
 
 export function getFileExtension(fileNameOrURL : string, showUnixDotFiles : boolean) {
     /* First, let's declare some preliminary variables we'll need later on. */
@@ -54,117 +54,117 @@ export function getFileExtension(fileNameOrURL : string, showUnixDotFiles : bool
     return fileExt;
 }
 
-function ifEven(conditional : any, options : any) {
-    if ((conditional % 2) == 0) {
-        return options.fn(this);
-    } else {
-        return options.inverse(this);
-    }
-}
+// function ifEven(conditional : any, options : any) {
+//     if ((conditional % 2) == 0) {
+//         return options.fn(this);
+//     } else {
+//         return options.inverse(this);
+//     }
+// }
 
-function ifEmpty(conditional : any, options : any) {
-    if (conditional == undefined || conditional == "" || conditional == "null") {
-        return options.fn(this);
-    } else {
-        return options.inverse(this);
-    }
-}
+// function ifEmpty(conditional : any, options : any) {
+//     if (conditional == undefined || conditional == "" || conditional == "null") {
+//         return options.fn(this);
+//     } else {
+//         return options.inverse(this);
+//     }
+// }
 
-function ifCondition(index : any, evalcond : any, options : any) {
+// function ifCondition(index : any, evalcond : any, options : any) {
 
-    var thisCond = isNaN(index) ? ("'" + index + "' " + evalcond) : (index + evalcond);
+//     var thisCond = isNaN(index) ? ("'" + index + "' " + evalcond) : (index + evalcond);
 
-    if (eval(thisCond)) {
-        return options.fn(this);
-    } else {
-        return options.inverse(this);
-    }
-}
+//     if (eval(thisCond)) {
+//         return options.fn(this);
+//     } else {
+//         return options.inverse(this);
+//     }
+// }
 
-Handlebars.registerHelper('ifFirst', function (index : any, options : any) {
-    if (index == 0) {
-        return options.fn(this);
-    } else {
-        return options.inverse(this);
-    }
+// Handlebars.registerHelper('ifFirst', function (index : any, options : any) {
+//     if (index == 0) {
+//         return options.fn(this);
+//     } else {
+//         return options.inverse(this);
+//     }
 
-});
+// });
 
-Handlebars.registerHelper('json', function (context : any) {
-    return JSON.stringify(context);
-});
+// Handlebars.registerHelper('json', function (context : any) {
+//     return JSON.stringify(context);
+// });
 
-Handlebars.registerHelper('replace', function (find : any, regexMatch : any, replaceWith : any) {
-    var temp = find.replace(new RegExp(regexMatch, "g"), replaceWith);
-    return temp;
-});
+// Handlebars.registerHelper('replace', function (find : any, regexMatch : any, replaceWith : any) {
+//     var temp = find.replace(new RegExp(regexMatch, "g"), replaceWith);
+//     return temp;
+// });
 
-Handlebars.registerHelper('toLower', function (find : any) {
-    var temp = find.toLowerCase();
-    return temp;
-});
+// Handlebars.registerHelper('toLower', function (find : any) {
+//     var temp = find.toLowerCase();
+//     return temp;
+// });
 
-Handlebars.registerHelper('fileDate', function (context : any) {
-    return moment(context).format('MM/DD/YYYY hh:mm A');
-});
+// Handlebars.registerHelper('fileDate', function (context : any) {
+//     return moment(context).format('MM/DD/YYYY hh:mm A');
+// });
 
-Handlebars.registerHelper('if_even', ifEven);
+// Handlebars.registerHelper('if_even', ifEven);
 
-Handlebars.registerHelper('ifCondition', ifCondition);
+// Handlebars.registerHelper('ifCondition', ifCondition);
 
-Handlebars.registerHelper('ifEmpty', ifEmpty);
+// Handlebars.registerHelper('ifEmpty', ifEmpty);
 
-Handlebars.registerHelper('noSpace', function (context : any) { return context.replace(/ /g, "_"); });
+// Handlebars.registerHelper('noSpace', function (context : any) { return context.replace(/ /g, "_"); });
 
-//@ts-ignore
-Handlebars.__switch_stack__ = [];
+// //@ts-ignore
+// Handlebars.__switch_stack__ = [];
 
-Handlebars.registerHelper("switch", function (value : any, options : any) {
-    //https://github.com/wycats/handlebars.js/issues/927
-    //@ts-ignore
-    Handlebars.__switch_stack__.push({
-        switch_match: false,
-        switch_value: value
-    });
-    var html = options.fn(this);
-    //@ts-ignore
-    Handlebars.__switch_stack__.pop();
-    return html;
-});
-Handlebars.registerHelper("case", function (value : any, options : any) {
-    //https://github.com/wycats/handlebars.js/issues/927
-    var args = Array.from(arguments);
-    var options = args.pop();
-    var caseValues = args;
-    //@ts-ignore
-    var stack = Handlebars.__switch_stack__[Handlebars.__switch_stack__.length - 1];
+// Handlebars.registerHelper("switch", function (value : any, options : any) {
+//     //https://github.com/wycats/handlebars.js/issues/927
+//     //@ts-ignore
+//     Handlebars.__switch_stack__.push({
+//         switch_match: false,
+//         switch_value: value
+//     });
+//     var html = options.fn(this);
+//     //@ts-ignore
+//     Handlebars.__switch_stack__.pop();
+//     return html;
+// });
+// Handlebars.registerHelper("case", function (value : any, options : any) {
+//     //https://github.com/wycats/handlebars.js/issues/927
+//     var args = Array.from(arguments);
+//     var options = args.pop();
+//     var caseValues = args;
+//     //@ts-ignore
+//     var stack = Handlebars.__switch_stack__[Handlebars.__switch_stack__.length - 1];
 
-    if (stack.switch_match || caseValues.indexOf(stack.switch_value) === -1) {
-        return '';
-    } else {
-        stack.switch_match = true;
-        return options.fn(this);
-    }
-});
-Handlebars.registerHelper("default", function (options : any) {
-    //https://github.com/wycats/handlebars.js/issues/927
-    //@ts-ignore
-    var stack = Handlebars.__switch_stack__[Handlebars.__switch_stack__.length - 1];
-    if (!stack.switch_match) {
-        return options.fn(this);
-    }
-});
+//     if (stack.switch_match || caseValues.indexOf(stack.switch_value) === -1) {
+//         return '';
+//     } else {
+//         stack.switch_match = true;
+//         return options.fn(this);
+//     }
+// });
+// Handlebars.registerHelper("default", function (options : any) {
+//     //https://github.com/wycats/handlebars.js/issues/927
+//     //@ts-ignore
+//     var stack = Handlebars.__switch_stack__[Handlebars.__switch_stack__.length - 1];
+//     if (!stack.switch_match) {
+//         return options.fn(this);
+//     }
+// });
 
-Handlebars.registerHelper("setVar", function (varName : any, varValue : any, options : any) {
-    options.data.root[varName] = varValue;
-});
+// Handlebars.registerHelper("setVar", function (varName : any, varValue : any, options : any) {
+//     options.data.root[varName] = varValue;
+// });
 
-Handlebars.registerHelper("randomUUID", function () {
-    return Math.uuidFast();
-});
+// Handlebars.registerHelper("randomUUID", function () {
+//     return Math.uuidFast();
+// });
 
-Handlebars.registerHelper('getFileExtension', getFileExtension);
+// Handlebars.registerHelper('getFileExtension', getFileExtension);
 
-Handlebars.registerHelper("toLowerCase", function (e : any) {
-    return e.toString().toLowerCase();
-});
+// Handlebars.registerHelper("toLowerCase", function (e : any) {
+//     return e.toString().toLowerCase();
+// });

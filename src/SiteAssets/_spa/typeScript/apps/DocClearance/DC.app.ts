@@ -4,7 +4,6 @@ import * as spEnv from "../../spa.spEnv";
 import "../../spa.spCommon";
 import "../../spa.spCRUD";
 import "../../dt-helper";
-import "../../handlebars-helper";
 import "../../matth.uuid";
 import "select2"
 

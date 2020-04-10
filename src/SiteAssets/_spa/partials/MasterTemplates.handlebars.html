@@ -1,4 +1,4 @@
-<script type="text/x-handlebars-template" id="the_loader_template">
+<!-- <script type="text/x-handlebars-template" id="the_loader_template">
     <div class="modal-backdrop in the-Loader-wrap app-loader-text-centered {{id}}" style="opacity: 0; z-index: 999999;">
         <div class="app-loader">
             <div class="app-loader-text">
@@ -23,13 +23,13 @@
             <div class="tab-content" id="sp-app-contents" style="padding: 20px 0px 0px 0px;"></div>
         </div>
     </div>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp_file_attachment">
+<!-- <script type="text/x-handlebars-template" id="sp_file_attachment">
     <i class="fa fa-paperclip" />
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp_jstree_template">
+<!-- <script type="text/x-handlebars-template" id="sp_jstree_template">
     <div id="container_{{name}}">
         <h1>{{title}}</h1>
         <div id="tree_size_{{name}}">
@@ -49,14 +49,14 @@
             </ul>
         </div>
     </div>
-</script>
-<script type="text/x-handlebars-template" id="bootstrap-nav-li">
+</script> -->
+<!-- <script type="text/x-handlebars-template" id="bootstrap-nav-li">
     <li class="nav-item"><a class="nav-link {{#if active}}active{{/if}} {{#if hidden}}hidden-tab{{/if}}" id="nav-tab-{{name}}" data-owner="{{name}}" data-toggle="tab" href="#nav-{{name}}" role="tab" aria-controls="home" aria-selected="false">{{tabTitle}}</a></li>
-</script>
-<script type="text/x-handlebars-template" id="bootstrap-nav-div">
+</script> -->
+<!-- <script type="text/x-handlebars-template" id="bootstrap-nav-div">
     <div class="tab-pane {{#if active}}active{{/if}}" id="nav-{{name}}" role="" aria-labelledby="{{name}}-tab">{{> listTabs}}</div>
-</script>
-<script type="text/x-handlebars-template" id="list-family">
+</script> -->
+<!-- <script type="text/x-handlebars-template" id="list-family">
     <ul class="nav nav-tabs" id="lf-item-container-{{name}}" role="lf-item-container-{{name}}">
         <li class="nav-item">
             <a class="nav-link datatable-link active" id="data-tab" data-toggle="tab" href="#lf-list-{{name}}" data-hastable="true" data-owner="{{name}}" data-tablename="{{name}}" role="tab" aria-controls="data-tab" aria-selected="true">Data</a>
@@ -80,8 +80,8 @@
             <div class="iframeContainer">
             </div>
         </div>
-</script>
-<script type="text/x-handlebars-template" id="tabs-template">
+</script> -->
+<!-- <script type="text/x-handlebars-template" id="tabs-template">
     <ul class="nav nav-tabs" id="tab-item-container-{{name}}" role="lf-item-container-{{name}}">
         {{#tabs}}
             <li class="nav-item">
@@ -123,15 +123,15 @@
         {{/tabs}}
     </div>
 
-</script>
-<script type="text/x-handlebars-template" id="sp_delete_item">
+</script> -->
+<!-- <script type="text/x-handlebars-template" id="sp_delete_item">
     <div class="form col-md-12 form-container" id="form-{{formType}}-{{name}}" data-source="{{name}}" data-formtype="{{formType}}" data-basetemplate="{{baseTemplate}}">
         <input type="hidden" name="{{@root.name}}.ID" data-name="ID" />
         <h2>You are about to delete an item. Continue?</h2>
         <button type="button" class="btn btn-primary delete-data" data-source="{{name}}" data-sptype="{{title}}" data-caller="form-{{formType}}-{{name}}" data-action="Delete">Delete</button>
     </div>
-</script>
-<script type="text/x-handlebars-template" id="sp_forms_template">
+</script> -->
+<!-- <script type="text/x-handlebars-template" id="sp_forms_template">
     {{#switch formType}} 
         {{#case "create"}} {{setVar "formType" "create"}} {{/case}} 
         {{#case "view"}} {{setVar "formType" "view"}} {{setVar "hasID" true}} {{/case}} 
@@ -533,9 +533,9 @@
             {{/switch}} 
         {{/if}}
     </div>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp_table_template">
+<!-- <script type="text/x-handlebars-template" id="sp_table_template">
     <table class="table table-sm" id="{{name}}" data-table="{{name}}">
         <thead>
             <tr>
@@ -565,9 +565,9 @@
         </thead>
         <tbody></tbody>
     </table>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp_file_inventory_template">
+<!-- <script type="text/x-handlebars-template" id="sp_file_inventory_template">
     <table class="table">
         <thead>
             <tr>
@@ -632,15 +632,15 @@
             {{/files}}
         </tbody>
     </table>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="datatable_refresh_html">
+<!-- <script type="text/x-handlebars-template" id="datatable_refresh_html">
     <a type="button" href="javascript:void(0);" class="actionRefresh btn btn-default iris-pager-nav iris-pager-nav-btn" style="margin: -9px 0px 0px 0px;" data-owner="{{owner}}" title="Refresh Data From SharePoint Server">
         <span class="fa fa-refresh" style="color: #aaaaaa !important"></span>
     </a>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="list-anchor-items-template">
+<!-- <script type="text/x-handlebars-template" id="list-anchor-items-template">
     <ul class="list-anchors" id="list-anchor-items-{{name}}">
         {{#actions}}
             <li class="list-anchor-items">
@@ -648,11 +648,10 @@
             </li>
         {{/actions}}
     </ul>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp-modal-template">
-    <div class="modal fade" id="modal-{{id}}" data-action="{{action}}" data-owner="{{owner}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
-        <!-- Modal -->
+<!-- <script type="text/x-handlebars-template" id="sp-modal-template">
+    <div class="modal fade" id="modal-{{id}}" data-action="{{action}}" data-owner="{{owner}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">      
         <div class="modal-dialog {{#if modalcentered}}modal-dialog-centered{{/if}}" role="document" style="{{#if minWidth}}min-width: {{minWidth}};{{/if}}">
             <div class="modal-content">
                 <div class="modal-header">
@@ -670,15 +669,15 @@
             </div>
         </div>
     </div>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp-search-condition">
+<!-- <script type="text/x-handlebars-template" id="sp-search-condition">
     {{#columns}}
         {{@root.objectName}}["{{name}}"].toString().toLowerCase().indexOf("{{toLowerCase ../search.value}}") > -1 {{#if @last}}{{else }} || {{/if}}
     {{/columns}}
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp-modal-fillin-template">
+<!-- <script type="text/x-handlebars-template" id="sp-modal-fillin-template">
     {{#d.results}}
         <div class="modal fade fillin-modal" 
             id="modal-fillin-{{@root.name}}-{{Title}}" 
@@ -690,8 +689,7 @@
             data-uiid="{{uiID}}"
             data-c="" data-backdrop="static" 
             tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true"
-        >
-            <!-- Modal -->
+        >            
             <div class="modal-dialog modal-dialog-centered" role="fill-in-modal" style="min-width: 600px;">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -712,12 +710,11 @@
             </div>
         </div>
     {{/d.results}}
-</script>
+</script> -->
 
 
-<script type="text/x-handlebars-template" id="prompt-modal-template">
-    <div class="modal fade" id="{{promptID}}" data-choicetype="{{EditFormat}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
-        <!-- Modal -->
+<!-- <script type="text/x-handlebars-template" id="prompt-modal-template">
+    <div class="modal fade" id="{{promptID}}" data-choicetype="{{EditFormat}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">        
         <div class="modal-dialog modal-dialog-centered" role="{{promptID}}-modal" style="min-width: {{width}};">
             <div class="modal-content" style="height: {{height}}">
                 <div class="modal-header">
@@ -739,28 +736,28 @@
             </div>
         </div>
     </div>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="sp-lookup-dropdown">
+<!-- <script type="text/x-handlebars-template" id="sp-lookup-dropdown">
     <option value="">Please Select {{replace Title '/_/' ' '}}</option>
     {{#LookupData.results}}
         <option value="{{Id}}">{{lookupText}}</option>
     {{/LookupData.results}}
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="bootstrap-alert">
+<!-- <script type="text/x-handlebars-template" id="bootstrap-alert">
     <div class="alert alert-{{type}}" role="alert">
         {{content}}
     </div>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="spa_accordion">
+<!-- <script type="text/x-handlebars-template" id="spa_accordion">
     <div id="{{wrapper_id}}" class="child-wrapper" data-source="{{source}}" data-sptype="{{thisVar}}" data-owner="{{buttonOwner}}">
         {{#children}} {{> spaCard}} {{/children}}
     </div>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="spa_accordion_card">
+<!-- <script type="text/x-handlebars-template" id="spa_accordion_card">
     <div class="card">
         <div class="card-header" id="child-card-{{name}}">
             <div class="row">
@@ -788,9 +785,9 @@
             </div>
         </div>
     </div>
-</script>
+</script> -->
 
-<script type="text/x-handlebars-template" id="spa-child-form-row">
+<!-- <script type="text/x-handlebars-template" id="spa-child-form-row">
     <li class="li-child-form">
         <hr/>
         <div class="remove-a-child-form">
@@ -824,4 +821,4 @@
             {{{html}}}
         </div>                        
     </li>
-</script>
+</script> -->

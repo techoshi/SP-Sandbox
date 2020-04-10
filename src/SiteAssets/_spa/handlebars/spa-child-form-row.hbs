@@ -1,0 +1,33 @@
+<li class="li-child-form">
+    <hr/>
+    <div class="remove-a-child-form">
+        <a href="javascript:void(0)" 
+            name="DeleteChildEntry"
+            data-itemType="list-delete"
+            data-owner="{{owner}}" 
+            data-source="{{source}}" 
+            data-sptype="{{spType}}"
+            data-action="Delete"                
+            style="width: 20px; float: left; padding:5px;">
+            <i class="fa fa-minus-circle"></i>
+        </a>
+    </div>
+    {{#if repeatable.hasSequence}}
+        <div class="reorder-a-child-form">
+            <div style="width: 20px; float: left;">
+                <a href="javascript:void(0)"><i class="fa fa-caret-up move-child-up"></i></a>
+                <a href="javascript:void(0)"><i class="fa fa-caret-down move-child-down"></i></a>
+            </div>
+        </div>
+    {{/if}}
+    {{#if metaDataVisible}}
+        {{#switch formType}} 
+            {{#case "edit" "view"}}
+                <div  class="col-md-12 form-meta-data"><strong>Last Updated:</strong> <span name="modifiedDate">{{Modified}}</span> | <strong>Editor:</strong> <span name="modifiedBy">{{Editor.Title}}</span></div>
+            {{/case}} 
+        {{/switch}}            
+    {{/if}}
+    <div class="a-child-form">
+        {{{html}}}
+    </div>                        
+</li>

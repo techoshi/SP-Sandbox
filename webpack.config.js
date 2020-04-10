@@ -27,7 +27,12 @@ module.exports = {
                 test: /\.hbs?$/,
                 use: [{
                     loader: "handlebars-loader",
-                    options: {helperDirs: path.resolve(__dirname, "./src/SiteAssets/_spa/handlebars")}
+                    options: {
+                        helperDirs: path.resolve(__dirname, "./src/SiteAssets/_spa/handlebars", 'helpers'),
+                        partialDirs: [
+                            path.join(__dirname, './src/SiteAssets/_spa/handlebars', 'partials')
+                        ]
+                    }
                   }],
                 exclude: /node_modules/
             },

@@ -304,34 +304,28 @@ spEnv.$pa.spCommon = (function () {
     };
 })();
 
-spEnv.$pa.spCommon.addHandlebarPartial({ name: 'jsTree', content: $('#sp_jstree_template').html() });
-spEnv.$pa.spCommon.addHandlebarPartial({ name: 'listTabs', content: $('#list-family').html() });
-spEnv.$pa.spCommon.addHandlebarPartial({ name: 'spForm', content: $('#sp_forms_template').html() });
-spEnv.$pa.spCommon.addHandlebarPartial({ name: 'spTable', content: $('#sp_table_template').html() });
-spEnv.$pa.spCommon.addHandlebarPartial({ name: 'spaCard', content: $('#spa_accordion_card').html() });
-
 
 spEnv.$pa.env.tabBody = require("../handlebars/sp_tab_container.hbs");
-spEnv.$pa.env.fileAttachment = spEnv.$pa.spCommon.addHandlebar($('#sp_file_attachment').html());
-spEnv.$pa.env.fileInventory = spEnv.$pa.spCommon.addHandlebar($('#sp_file_inventory_template').html());
-spEnv.$pa.env.tabTemplate = spEnv.$pa.spCommon.addHandlebar($('#tabs-template').html());
-spEnv.$pa.env.anchorList = spEnv.$pa.spCommon.addHandlebar($('#list-anchor-items-template').html());
-spEnv.$pa.env.baseForm = spEnv.$pa.spCommon.addHandlebar($('#sp_forms_template').html());
-spEnv.$pa.env.deleteItem = spEnv.$pa.spCommon.addHandlebar($('#sp_delete_item').html());
-spEnv.$pa.env.baseModal = spEnv.$pa.spCommon.addHandlebar($('#sp-modal-template').html());
-spEnv.$pa.env.datatable_refresh_html = spEnv.$pa.spCommon.addHandlebar($('#datatable_refresh_html').html());
-spEnv.$pa.env.spTableTemplate = spEnv.$pa.spCommon.addHandlebar($('#sp_table_template').html());
-spEnv.$pa.env.spJsTreeTemplate = spEnv.$pa.spCommon.addHandlebar($('#sp_jstree_template').html());
-spEnv.$pa.env.spSearchCondition = spEnv.$pa.spCommon.addHandlebar($('#sp-search-condition').html());
-spEnv.$pa.env.fillinModal = spEnv.$pa.spCommon.addHandlebar($('#sp-modal-fillin-template').html());
-spEnv.$pa.env.promptModal = spEnv.$pa.spCommon.addHandlebar($('#prompt-modal-template').html());
-spEnv.$pa.env.spDropDownOptions = spEnv.$pa.spCommon.addHandlebar($('#sp-lookup-dropdown').html());
-spEnv.$pa.env.bootstrapAlert = spEnv.$pa.spCommon.addHandlebar($('#bootstrap-alert').html());
-spEnv.$pa.env.spaAccordion = spEnv.$pa.spCommon.addHandlebar($('#spa_accordion').html());
-spEnv.$pa.env.spaAccordionCard = spEnv.$pa.spCommon.addHandlebar($('#spa_accordion_card').html());
-spEnv.$pa.env.spaChildFormRow = spEnv.$pa.spCommon.addHandlebar($('#spa-child-form-row').html());
-spEnv.$pa.env.thisNavLiTemplate = spEnv.$pa.spCommon.addHandlebar($('#bootstrap-nav-li').html());
-spEnv.$pa.env.thisNavDivTemplate = spEnv.$pa.spCommon.addHandlebar($('#bootstrap-nav-div').html());
+spEnv.$pa.env.fileAttachment = require("../handlebars/sp_file_attachment.hbs");
+spEnv.$pa.env.fileInventory = require("../handlebars/sp_file_inventory_template.hbs");
+spEnv.$pa.env.tabTemplate = require("../handlebars/tabs-template.hbs");
+spEnv.$pa.env.anchorList = require("../handlebars/list-anchor-items-template.hbs");
+spEnv.$pa.env.baseForm = require("../handlebars/sp_forms_template.hbs"); 
+spEnv.$pa.env.deleteItem = require("../handlebars/sp_delete_item.hbs");
+spEnv.$pa.env.baseModal = require("../handlebars/sp-modal-template.hbs");
+spEnv.$pa.env.datatable_refresh_html = require("../handlebars/datatable_refresh_html.hbs");
+spEnv.$pa.env.spTableTemplate = require("../handlebars/sp_table_template.hbs");
+spEnv.$pa.env.spJsTreeTemplate = require("../handlebars/sp_jstree_template.hbs");
+spEnv.$pa.env.spSearchCondition = require("../handlebars/sp-search-condition.hbs");
+spEnv.$pa.env.fillinModal = require("../handlebars/sp-modal-fillin-template.hbs");
+spEnv.$pa.env.promptModal = require("../handlebars/prompt-modal-template.hbs");
+spEnv.$pa.env.spDropDownOptions = require("../handlebars/sp-lookup-dropdown.hbs");
+spEnv.$pa.env.bootstrapAlert = require("../handlebars/bootstrap-alert.hbs");
+spEnv.$pa.env.spaAccordion = require("../handlebars/spa_accordion.hbs");
+spEnv.$pa.env.spaAccordionCard = require("../handlebars/spa_accordion_card.hbs");
+spEnv.$pa.env.spaChildFormRow = require("../handlebars/spa-child-form-row.hbs");
+spEnv.$pa.env.thisNavLiTemplate = require("../handlebars/bootstrap-nav-li.hbs");
+spEnv.$pa.env.thisNavDivTemplate = require("../handlebars/bootstrap-nav-div.hbs");
 
 $('#DeltaPlaceHolderMain').append(spEnv.$pa.env.tabBody());
 $('.container').on('click', 'tbody tr', function () {

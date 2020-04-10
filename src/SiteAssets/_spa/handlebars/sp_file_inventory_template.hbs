@@ -1,0 +1,64 @@
+    <table class="table">
+        <thead>
+            <tr>
+                <th>File</th>
+                {{#if officeLinks}}
+                    <th>Edit Options</th>
+                {{/if}}
+                <th>Last Modified</th>
+                {{#if create}}
+                    <th>Size</th>
+                {{/if}}  
+                {{#unless view}}
+                    <th></th>
+                {{/unless}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#files}}
+            <tr>
+                <td style="width: 50%">
+                    <i class="fa fa-paperclip" /> 
+                    {{#if ServerRelativeUrl}}
+                        <a target="_blank" href="{{ServerRelativeUrl}}">{{FileName}}</a>
+                    {{else}}
+                        {{name}}
+                    {{/if}}
+                </td>
+
+                {{#if ../officeLinks}}
+                <td>
+                    {{#switch extension}}
+                        {{#case "docx" "doc" "xlsx" "xls" "ppt" "pptx"}}
+                            <a href="{{ServerRelativeUrl}}?Web=1" target="_blank" title="Open Document in Office Online." class="fileDownloadSimpleRichExperience" style="text-decoration:underline;color:#256cba"><i><b>Edit Online</b></i></a> 
+                        {{/case}}
+                        {{#default}}
+                            <a href="{{ServerRelativeUrl}}?Web=1" target="_blank" title="Download {{extension}}." class="fileDownloadSimpleRichExperience" style="text-decoration:underline;color:#256cba"><i><b>Download</b></i></a> 
+                        {{/default}}
+                    {{/switch}}
+                    {{#switch extension}}
+                        {{#case "docx" "doc"}} | <a href="ms-word:ofe|u|{{exactURL}}?Web=1" target="_blank" title="Open Document in Word." class="fileDownloadSimpleRichExperience" style="text-decoration:underline;color:#256cba"><i><b>MS Word</b></i></a>{{/case}}
+                        {{#case "xlsx" "xls"}} | <a href="ms-excel:ofe|u|{{exactURL}}?Web=1" target="_blank" title="Open Document in Excel." class="fileDownloadSimpleRichExperience" style="text-decoration:underline;color:#256cba"><i><b>MS Excel</b></i></a>{{/case}}
+                        {{#case "ppt" "pptx"}} | <a href="ms-powerpoint:ofe|u|{{exactURL}}" target="_blank" title="Open Document in PowerPoint." class="fileDownloadSimpleRichExperience" style="text-decoration:underline;color:#256cba"><i><b>MS PowerPoint</b></i></a>{{/case}}
+                        {{#default}}{{/default}}
+                    {{/switch}}
+                </td>
+                {{/if}}
+
+                <td style="width: 20%">
+                    {{fileDate lastModified}}
+                </td>
+
+                {{#if ../create}}
+                    <td style="width: 10%">{{#if ServerRelativeUrl}}{{else}}{{size}} Bytes{{/if}}</td>
+                {{/if}}
+
+                {{#unless ../view}}
+                    <td style="width: 10%; text-align:center;">
+                        <a href="javascript:void(0);" data-owner="{{../owner}}" data-item="{{#if ../itemURL}}{{../itemURL}}{{/if}}" data-name="{{FileName}}" class="{{#if ../create}}Remove-File{{else}}Delete-Attachment-File{{/if}}"><i class="fa fa-trash" /></a>
+                    </td>
+                {{/unless}}
+            </tr>
+            {{/files}}
+        </tbody>
+    </table>

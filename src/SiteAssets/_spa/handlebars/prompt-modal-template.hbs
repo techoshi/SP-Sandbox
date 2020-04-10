@@ -1,0 +1,23 @@
+<div class="modal fade" id="{{promptID}}" data-choicetype="{{EditFormat}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
+    <!-- Modal -->
+    <div class="modal-dialog modal-dialog-centered" role="{{promptID}}-modal" style="min-width: {{width}};">
+        <div class="modal-content" style="height: {{height}}">
+            <div class="modal-header">
+                <h5 class="modal-title" id="{{promptID}}-modal-title}">{{header}}</h5>
+                {{#unless removeClose}}
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                {{/unless}}
+            </div>
+            <div class="modal-body modal-overflow">
+                <div>{{body}}</div>
+            </div>
+            <div class="modal-footer">
+                {{#buttons}}
+                    <button id="{{../promptID}}-btn-{{@index}}" type="button" {{#if close}}data-dismiss="modal" {{/if}} class="btn {{#if active}}btn-primary{{else}}btn-secondary{{/if}}{{btnClasses}}" {{!data-dismiss="modal" }}>{{text}}</button>
+                {{/buttons}}
+            </div>
+        </div>
+    </div>
+</div>

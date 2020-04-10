@@ -1,0 +1,40 @@
+<ul class="nav nav-tabs" id="tab-item-container-{{name}}" role="lf-item-container-{{name}}">
+    {{#tabs}}
+        <li class="nav-item">
+            <a 
+                {{#if active}} 
+                    class="nav-link active" 
+                    aria-selected="true" 
+                {{else}} 
+                    class="nav-link" 
+                    aria-selected="false" 
+                {{/if}} 
+                id="{{li_id}}" 
+                data-toggle="tab" 
+                href="#{{div_id}}" 
+                data-tablename="{{name}}" 
+                role="tab" 
+                aria-controls="{{li_id}}" 
+                {{{li_attr}}}
+            >
+                {{li_title}}
+            </a>
+        </li>
+    {{/tabs}}
+</ul>
+<div class="tab-content" id="tab-content-container-{{name}}" style="padding-top: 10px;">
+    {{#tabs}}
+        <div 
+            {{#if active}}
+                class="tab-pane fade show active" 
+            {{else}}
+                class="tab-pane fade"
+            {{/if}}
+            id="{{div_id}}" 
+            role="tabpanel" 
+            aria-labelledby="{{li_id}}"
+            {{{div_attr}}}>
+            {{{htmlContent}}}
+        </div>
+    {{/tabs}}
+</div>

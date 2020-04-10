@@ -6,7 +6,7 @@ import * as spEnv from "./spa.spEnv";
 export var theLoader = function () {
     var flag;
     
-    spEnv.$pa.env.theLoaderTemplate = $('#the_loader_template').html() ? Handlebars.compile($('#the_loader_template').html()) : function () { console.log('Handlebar Not Present'); };
+    spEnv.$pa.env.theLoaderTemplate = require("../handlebars/the_loader_template.hbs");
 
     var addThis = function (model : any) {
 

@@ -1,0 +1,33 @@
+{{#d.results}}
+    <div class="modal fade fillin-modal" 
+        id="modal-fillin-{{@root.name}}-{{Title}}" 
+        data-choicetype="{{EditFormat}}" 
+        data-action="{{@root.action}}" 
+        data-source="{{@root.name}}" 
+        data-entity="{{EntityPropertyName}}" 
+        data-for="{{Title}}" 
+        data-uiid="{{uiID}}"
+        data-c="" data-backdrop="static" 
+        tabindex="-1" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true"
+    >
+        <!-- Modal -->
+        <div class="modal-dialog modal-dialog-centered" role="fill-in-modal" style="min-width: 600px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-fillin-title-{{Title}}">Add new value for {{@root.name}} {{Title}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body modal-overflow">
+                    <label for="{{Title}}" style="width: 100%;">{{{replace Title '_' ' '}}}<span style="color:red;">*</span></label>
+                    <input name="fillin-{{@root.name}}-{{Title}}" class="form-control fill-in-value" data-uiid="{{uiID}}"></input>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fill-in-btn" data-dismiss="modal" data-choicetype="{{EditFormat}}" data-action="{{@root.action}}" data-entity="{{EntityPropertyName}}" data-source="{{@root.name}}" data-for="{{Title}}" data-uiid="{{uiID}}">Add to List</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/d.results}}
