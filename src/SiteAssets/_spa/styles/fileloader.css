@@ -44,7 +44,7 @@
 .box__button {
   display: none;
 }
-.no-js .box__button {
+.no_js .box__button {
   display: block;
 }
 
