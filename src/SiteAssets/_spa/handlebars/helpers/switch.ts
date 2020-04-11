@@ -1,7 +1,5 @@
-
-
 //@ts-ignore
-module.exports = function (value, options) {
+module.exports = function (value: any, options: any) {
     globalThis.HandleBarGlobal = globalThis.HandleBarGlobal ? globalThis.HandleBarGlobal : {
         __switch_stack__: []
     }

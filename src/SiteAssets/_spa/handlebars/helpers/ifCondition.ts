@@ -1,4 +1,5 @@
-module.exports = function (index, evalcond, options) {
+//@ts-ignore
+module.exports = function (index: any, evalcond: any, options: any) {
 
     var thisCond = isNaN(index) ? ("'" + index + "' " + evalcond) : (index + evalcond);
 
