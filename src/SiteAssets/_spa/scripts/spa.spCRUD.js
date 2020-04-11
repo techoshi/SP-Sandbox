@@ -52,7 +52,7 @@ $pa.spCRUD = (function () {
         var parent = $(this).parents('.file_inventory');
         var thisOwner = $(parent).data('filecontainer');
 
-        var thisFileInput = $(parent).siblings('.box.has-advanced-upload').find('input.box__file');
+        var thisFileInput = $(parent).siblings('.box.has_advanced_upload').find('input.box__file');
 
         var FileArray = $(thisFileInput).data().files;
 
@@ -401,7 +401,7 @@ $pa.spCRUD = (function () {
         var $form = $(m.thisObject);
 
         if (isAdvancedUpload) {
-            $form.addClass('has-advanced-upload');
+            $form.addClass('has_advanced_upload');
         }
 
         var $input = $form.find('input[type="file"]');
@@ -445,9 +445,9 @@ $pa.spCRUD = (function () {
                 e.preventDefault();
                 e.stopPropagation();
             }).on('dragover dragenter', function () {
-                $form.addClass('is-dragover');
+                $form.addClass('is_dragover');
             }).on('dragleave dragend drop', function () {
-                $form.removeClass('is-dragover');
+                $form.removeClass('is_dragover');
             }).on('drop', function (e) {
                 if (e.originalEvent.dataTransfer.files) {
                     if ($(this).find('input').prop('multiple') == false) {
