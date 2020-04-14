@@ -25,7 +25,8 @@
     "jstree": "^3.3.9",
     "path": "^0.12.7",
     "popper.js": "^1.12.9",
-    "select2": "^4.0.13"
+    "select2": "^4.0.13",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@types/sharepoint": "^2016.1.8",
