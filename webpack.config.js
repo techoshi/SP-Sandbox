@@ -1,21 +1,34 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
     mode: "development",
     entry: {
-        spa: [
-            './src/SiteAssets/_spa/typeScript/handlebars-helper.ts',
-            './src/SiteAssets/_spa/typeScript/spa.spEnv.ts',
-            './src/SiteAssets/_spa/typeScript/dt-helper.ts',
-            './src/SiteAssets/_spa/typeScript/theLoader.ts',
-            './src/SiteAssets/_spa/typeScript/spa.spPrompt.ts',
-            './src/SiteAssets/_spa/typeScript/spa.spCommon.ts',
-            './src/SiteAssets/_spa/typeScript/spa.spQuery.ts',
-            './src/SiteAssets/_spa/typeScript/spa.spCRUD.ts',
-            './src/SiteAssets/_spa/typeScript/spa.spAsyncQueue.ts',
-            './src/SiteAssets/_spa/typeScript/spa.spDB.ts',
-            './src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.app.ts',
-        ]
+        "DocumentClearance.App": [
+            "./src/SiteAssets/_spa/typeScript/handlebars-helper.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spEnv.ts",
+            "./src/SiteAssets/_spa/typeScript/dt-helper.ts",
+            "./src/SiteAssets/_spa/typeScript/theLoader.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spPrompt.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spCommon.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spQuery.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spCRUD.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spAsyncQueue.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spDB.ts",
+            "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.app.ts",
+        ],
+        "DocumentClearance.Installer": [
+            "./src/SiteAssets/_spa/typeScript/handlebars-helper.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spEnv.ts",
+            "./src/SiteAssets/_spa/typeScript/dt-helper.ts",
+            "./src/SiteAssets/_spa/typeScript/theLoader.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spPrompt.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spCommon.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spQuery.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spCRUD.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spAsyncQueue.ts",
+            "./src/SiteAssets/_spa/typeScript/spa.spDB.ts",
+            "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.db.ts",
+        ],
     },
     module: {
         rules: [
@@ -29,9 +42,9 @@ module.exports = {
                 use: [{
                     loader: "handlebars-loader",
                     options: {
-                        helperDirs: path.resolve(__dirname, "./src/SiteAssets/_spa/handlebars", 'helpers'),
+                        helperDirs: path.resolve(__dirname, "./src/SiteAssets/_spa/handlebars", "helpers"),
                         partialDirs: [
-                            path.join(__dirname, './src/SiteAssets/_spa/handlebars', 'partials')
+                            path.join(__dirname, "./src/SiteAssets/_spa/handlebars", "partials")
                         ]
                     }
                 }],
@@ -39,13 +52,13 @@ module.exports = {
             },
         ],
     },
-    devtool: 'inline-source-map',
+    devtool: "inline-source-map",
     resolve: {
-        extensions: ['.tsx', '.ts', '.js', '.hbs'],
+        extensions: [".tsx", ".ts", ".js", ".hbs"],
     },
     output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'src/SiteAssets/_spa/webpack'),
+        filename: "[name].bundle.js",
+        path: path.resolve(__dirname, "src/SiteAssets/_spa/webpack"),
     },
     externals: {
         // require("jquery") is external and available
