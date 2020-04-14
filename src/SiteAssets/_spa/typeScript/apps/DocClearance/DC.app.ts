@@ -1,7 +1,6 @@
-import * as $ from 'jquery';
+import * as $ from "jquery";
 import "../../polyfills";
 import * as spEnv from "../../spa.spEnv";
-import "../../spa.spCommon";
 import "../../spa.spCRUD";
 import "../../dt-helper";
 import "../../matth.uuid";
@@ -13,10 +12,10 @@ $(document).ready(function () {
 
     spEnv.$pa.spCRUD.getList({
         objects: [{
-            name: 'DCMain',
-            tabTitle: 'Document Clearance',
-            search: [''],
-            singular: 'Document Clearance',
+            name: "DCMain",
+            tabTitle: "Document Clearance",
+            search: [""],
+            singular: "Document Clearance",
             columns: {
                 visible: [],
                 hidden: ["Title"],
@@ -24,21 +23,21 @@ $(document).ready(function () {
             },
             table: {
                 css: {
-                    'width': '200px',
-                    'min-width': '200px'
+                    "width": "200px",
+                    "min-width": "200px"
                 },
                 columns: [{
-                    name: 'Title',
+                    name: "Title",
                     css: {
-                        'width': '300px',
-                        'min-width': '300px'
+                        "width": "300px",
+                        "min-width": "300px"
                     }
                 }]
             },
             children: [{
-                listName: 'WORK',
-                name: 'WORK',
-                tabTitle: 'Document Clearance Flow',
+                listName: "WORK",
+                name: "WORK",
+                tabTitle: "Document Clearance Flow",
                 sectionName: "Approval/Review Area",
                 condition: "DCMain eq {{ID}}",
                 repeatable: { enable: true, hasSequence: true },
@@ -49,22 +48,22 @@ $(document).ready(function () {
                     readOnly: ["DateOfDecision"]
                 },
                 availableParent: ["edit"],
-                singular: 'Participant',
+                singular: "Participant",
                 hidden: true,
                 table: {
                     css: {
-                        'width': '200px',
-                        'min-width': '200px'
+                        "width": "200px",
+                        "min-width": "200px"
                     },
                     columns: [{
-                        name: 'Title',
+                        name: "Title",
                         css: {
-                            'width': '300px',
-                            'min-width': '300px'
+                            "width": "300px",
+                            "min-width": "300px"
                         }
                     }]
                 },
-                search: ['']
+                search: [""]
             }, {
                 hidden: true,
                 listName: "Note",
@@ -83,7 +82,7 @@ $(document).ready(function () {
                 },
                 form: {
                     columns: [{
-                        name: 'NoteEntry',
+                        name: "NoteEntry",
                         bootstrapGridOverride: {
                             class: "col-md-12"
                         },
@@ -107,52 +106,52 @@ $(document).ready(function () {
             }]
         },
         {
-            name: 'P11',
-            tabTitle: 'Clearance Priorities',
-            search: [''],
-            singular: 'Clearance Priority',
+            name: "P11",
+            tabTitle: "Clearance Priorities",
+            search: [""],
+            singular: "Clearance Priority",
             config: true
         },
         {
-            name: 'S11',
-            tabTitle: 'Clearance Sources',
-            search: [''],
-            singular: 'Clearance Source',
+            name: "S11",
+            tabTitle: "Clearance Sources",
+            search: [""],
+            singular: "Clearance Source",
             config: true
         },
         {
-            name: 'M11',
-            tabTitle: 'Markings',
-            search: [''],
-            singular: 'Marking',
+            name: "M11",
+            tabTitle: "Markings",
+            search: [""],
+            singular: "Marking",
             config: true
         },
         {
-            name: 'PC11',
-            tabTitle: 'Portfolio Categories',
-            search: [''],
-            singular: 'Portfolio Category',
+            name: "PC11",
+            tabTitle: "Portfolio Categories",
+            search: [""],
+            singular: "Portfolio Category",
             config: true
         },
         {
-            name: 'LP11',
-            tabTitle: 'Lead Portfolios',
-            search: [''],
-            singular: 'Lead Portfolio',
+            name: "LP11",
+            tabTitle: "Lead Portfolios",
+            search: [""],
+            singular: "Lead Portfolio",
             config: true
         },
         {
-            name: 'ST11',
-            tabTitle: 'Doc Status',
-            search: [''],
-            singular: 'Document Status',
+            name: "ST11",
+            tabTitle: "Doc Status",
+            search: [""],
+            singular: "Document Status",
             config: true
         },
         {
-            name: 'UT11',
-            tabTitle: 'Role Types',
-            search: [''],
-            singular: 'Role Type',
+            name: "UT11",
+            tabTitle: "Role Types",
+            search: [""],
+            singular: "Role Type",
             config: true
         }
         ]
