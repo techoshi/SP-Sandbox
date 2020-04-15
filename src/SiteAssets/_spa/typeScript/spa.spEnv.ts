@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
-import 'material-design-icons'
+// import 'material-design-icons'
 // import 'font-awesome'
 import "jquery-ui-bundle"
 import 'bootstrap';
@@ -45,8 +45,20 @@ type page = {
 // interface env {
 // 	updatePermission: object
 // }
+var checkDesignMode = false;
+try
+{
+if(MSOWebPartPageFormName && document && document.forms && document.forms[MSOWebPartPageFormName])
+{
+	checkDesignMode = true;
+}
+}
+catch(e)
+{
+	checkDesignMode = false;
+}
 
-export var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode.value;
+export var inDesignMode = checkDesignMode ? document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode.value : "0";
 export var inEditMode = false;
 export var inTestMode = false;
 export var spSettings = {

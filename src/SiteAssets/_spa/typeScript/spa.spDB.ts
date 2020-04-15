@@ -9,8 +9,12 @@ import * as toastr from "toastr";
 import 'bootstrap';
 import * as spEnv from "./spa.spEnv";
 import * as spLoader from "./theLoader";
-import * as spPrompt from "./spa.spPrompt";
-import * as spExtensions from "./handlebars-helper";
+// import * as spPrompt from "./spa.spPrompt";
+// import * as spExtensions from "./handlebars-helper";
+
+export var thisLists : SharePointListStruct[] = [];
+
+// thisLists.push({ url : "ok", Title : "ok", type : "ok", Description : "pok", Columns : [] })
 
 spEnv.$pa.spDB = (function () {
 
