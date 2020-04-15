@@ -70,6 +70,7 @@ npm install font-awesome
 npm install font-awesome-loader --save-dev
 
 npm install node-sass extract-text-webpack-plugin transfer-webpack-plugin image-webpack-loader
+npm install url-loader --save-dev
 
 npm i
 
