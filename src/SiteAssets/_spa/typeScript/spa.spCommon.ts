@@ -327,7 +327,14 @@ spEnv.$pa.env.spaChildFormRow = require("../handlebars/spa-child-form-row.hbs");
 spEnv.$pa.env.thisNavLiTemplate = require("../handlebars/bootstrap-nav-li.hbs");
 spEnv.$pa.env.thisNavDivTemplate = require("../handlebars/bootstrap-nav-div.hbs");
 
+if($('#DeltaPlaceHolderMain').length == 0)
+{
+    $('#DeltaPlaceHolderMain')
+    $('body').append('<div id="DeltaPlaceHolderMain"></div>');
+}
+
 $('#DeltaPlaceHolderMain').append(spEnv.$pa.env.tabBody());
+
 $('.container').on('click', 'tbody tr', function () {
 
     var thisTable = $(this).parents('table').data('table');
