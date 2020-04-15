@@ -30,3 +30,20 @@ interface JQuery {
     moveDown: any;
     moveUp: any
 }
+
+interface SharePointListStruct { 
+    url: string; 
+    Title: string;
+    type : string; 
+    Description: string;
+    Columns : {
+        type : string; 
+        Title : string;
+        MaxLength : number;
+        AllowMultipleValues: boolean;
+        LookupFieldName: string;
+        LookupListId : {
+            listName : string
+        }
+    }[];
+}
