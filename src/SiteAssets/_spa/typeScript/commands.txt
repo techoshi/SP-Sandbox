@@ -58,7 +58,18 @@ npm install datatables.net-select
 npm install datatables.net-bs4 
 
 npm install jstree
-npm uninstall @typesjstree
+npm install @typesjstree
+
+npm install slick-carousel
+
+npm i -D css-loader style-loader
+npm install sass-loader sass --save-dev  
+
+npm install material-design-icons
+npm install font-awesome
+npm install font-awesome-loader --save-dev
+
+npm install node-sass extract-text-webpack-plugin transfer-webpack-plugin image-webpack-loader
 
 npm i
 
