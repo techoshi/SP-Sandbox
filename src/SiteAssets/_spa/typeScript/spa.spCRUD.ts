@@ -1,5 +1,6 @@
 /*jshint scripturl:true*/
 import * as $ from 'jquery';
+
 import * as _ from 'lodash';
 import * as Handlebars from 'handlebars';
 import * as moment from 'moment';
@@ -1089,7 +1090,7 @@ spEnv.$pa.spCRUD = (function () {
                 var thisParentObject = thisApp.objects[m.source];
 
                 var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
-
+               
                 if (e.fromButton == "add") {
                     currentChild.formType = "create";
                 }
@@ -1098,7 +1099,8 @@ spEnv.$pa.spCRUD = (function () {
                 }
 
                 if (currentChild) {
-
+                    currentChild.formType = thisParentObject.formType;
+                    currentChild.action = thisParentObject.formType;
                     if (currentChild.d && currentChild.d.results) {
                         addUiGuidsToItem(currentChild.d.results);
                     }
@@ -1511,7 +1513,7 @@ spEnv.$pa.spCRUD = (function () {
                                         childRowsQueue.push({
                                             ownersource: cm.thisChild.source,
                                             source: cm.m.source,
-                                            action: "edit",
+                                            action: action,
                                             sptype: cm.m.spType,
                                             owner: "",
                                             container: "child-card-body-" + cm.thisChild.source,
