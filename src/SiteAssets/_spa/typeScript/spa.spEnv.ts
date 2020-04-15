@@ -1,6 +1,37 @@
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
+import 'material-design-icons'
+// import 'font-awesome'
+import "jquery-ui-bundle"
+import 'bootstrap';
+import 'toastr'
+import "../styles/project.css"
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'datatables.net-autofill';
+import 'datatables.net-buttons';
+import 'datatables.net-fixedheader';
+import 'datatables.net-keytable';
+import 'datatables.net-responsive';
+import 'datatables.net-rowgroup';
+import 'datatables.net-select';
+
+import "./polyfills";
+import "./dt-helper"
+import "./matth.uuid";
+import "select2"
+
+import "../styles/loader.css"
+import "../styles/style1.css"
+import "../styles/style2.css"
+import "../styles/style3.css"
+import "../styles/fileloader.css"
+import "../styles/style5.css"
+import "../styles/style6.css"
+import "../styles/style7.css"
+import "../styles/iframe.css"
+
 declare var MSOWebPartPageFormName: any;
 
 type mGlobal = {
@@ -97,3 +128,5 @@ export var $pa = {
 	spDB: undefined as any,
 	spAsyncQueue: undefined as any,
 }
+
+require("./spa.spCommon");
