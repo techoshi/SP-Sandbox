@@ -13,7 +13,6 @@ module.exports = {
             "./src/SiteAssets/_spa/typeScript/spa.spQuery.ts",
             "./src/SiteAssets/_spa/typeScript/spa.spCRUD.ts",
             "./src/SiteAssets/_spa/typeScript/spa.spAsyncQueue.ts",
-            "./src/SiteAssets/_spa/typeScript/spa.spDB.ts",
             "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.app.ts",
         ],
         "DocumentClearance.Installer": [
@@ -50,6 +49,55 @@ module.exports = {
                 }],
                 exclude: /node_modules/
             },
+            {
+                test: /\.css/,
+                use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+                include: [
+                    path.join(__dirname, "./src/SiteAssets/_spa/", "styles")
+                ]
+            },
+            {
+                test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                use: 'url-loader?limit=10000',
+            },
+            {
+                test: /\.(png|jpg|gif)$/i,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 65536,
+                        },
+                    },
+                ],
+            },
+            // ,
+            // {
+            //   test: /\.(png|svg|jpg|gif)$/,
+            //   use: [
+            //     'file-loader',
+            //   ],
+            // }
+            /*,
+            {
+                test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+                use: 'file-loader',
+            },
+
+            {
+                test: /font-awesome\.config\.js/,
+                use: [
+                    { loader: 'style-loader' },
+                    { loader: 'font-awesome-loader' }
+                ]
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                use: [
+                    'file-loader?name=images/[name].[ext]',
+                    'image-webpack-loader?bypassOnDebug'
+                ]
+            },*/
         ],
     },
     devtool: "inline-source-map",
