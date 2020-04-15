@@ -1,10 +1,8 @@
 import * as $ from "jquery";
-import "../../polyfills";
 import * as spEnv from "../../spa.spEnv";
 import "../../spa.spCRUD";
-import "../../dt-helper";
-import "../../matth.uuid";
-import "select2"
+
+
 
 $(document).ready(function () {
 
@@ -157,3 +155,4 @@ $(document).ready(function () {
         ]
     });
 });
+

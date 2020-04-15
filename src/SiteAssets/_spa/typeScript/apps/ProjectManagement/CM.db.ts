@@ -20,7 +20,7 @@ var ContractList = {
 		Title: 'EndDate'
 	}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 var ContractorsList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'Contractors',
@@ -50,7 +50,7 @@ var ContractorsList = {
 			Title: 'EndDate'
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 var ProjectsList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'Projects',
@@ -79,7 +79,7 @@ var ProjectsList = {
 		Title: 'EndDate'
 	}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 
 spDB.thisLists.push(ContractList);

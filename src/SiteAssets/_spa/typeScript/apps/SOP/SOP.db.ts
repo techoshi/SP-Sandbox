@@ -17,7 +17,7 @@ var OfficeList = {
 		MaxLength: 100
 	}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 var DivisionsList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
@@ -45,7 +45,7 @@ var DivisionsList = {
 			MaxLength: 100
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 var PositionsList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
@@ -77,7 +77,7 @@ var PositionsList = {
 			MaxLength: 100
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 var BilletsList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
@@ -122,7 +122,7 @@ var BilletsList = {
 			MaxLength: 100
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 var DutiesList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
@@ -167,7 +167,7 @@ var DutiesList = {
 			Title: 'DutyDescription'
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 var ActivitiesList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
@@ -221,7 +221,7 @@ var ActivitiesList = {
 			Title: 'ActivityDescription'
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 var ProceduresList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
@@ -275,7 +275,7 @@ var ProceduresList = {
 			LookupFieldName: 'ActivityName'
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 var PersonnelList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
@@ -316,7 +316,7 @@ var PersonnelList = {
 			LookupFieldName: 'BilletName'
 		},
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 spDB.thisLists.push(OfficeList);
 spDB.thisLists.push(DivisionsList);

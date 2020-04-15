@@ -12,7 +12,7 @@ var DocClearanceList = {
 		MaxLength: 100
 	}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 var UserTypes = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'UT11',
@@ -29,7 +29,7 @@ var UserTypes = {
 		AllowMultipleValues: false
 	}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 var WorkflowList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'W11',
@@ -40,7 +40,7 @@ var WorkflowList = {
 		Title: 'WorkflowType',
 		MaxLength: 100
 	},]
-} as ListMeta;
+} as SharePointListStruct;
 var PrioritiesList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'P11',
@@ -51,7 +51,7 @@ var PrioritiesList = {
 		Title: 'Priority',
 		MaxLength: 100
 	},]
-} as ListMeta;
+} as SharePointListStruct;
 var SourcesList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'S11',
@@ -62,7 +62,7 @@ var SourcesList = {
 		Title: 'Source',
 		MaxLength: 100
 	}]
-} as ListMeta;
+} as SharePointListStruct;
 var MarkingsList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'M11',
@@ -73,7 +73,7 @@ var MarkingsList = {
 		Title: 'Marking',
 		MaxLength: 100
 	}]
-} as ListMeta;
+} as SharePointListStruct;
 var MainList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'DCMain',
@@ -126,7 +126,7 @@ var MainList = {
 		DefaultValue: 'Pending'
 	}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 var WorkList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'WORK',
@@ -174,7 +174,7 @@ var WorkList = {
 			Title: 'DateOfDecision'
 		}
 	]
-} as ListMeta;
+} as SharePointListStruct;
 var NoteList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'Note',
@@ -203,7 +203,7 @@ var NoteList = {
 			Title: 'NoteEntry'
 		},
 	]
-} as ListMeta;
+} as SharePointListStruct;
 
 
 spDB.thisLists.push(DocClearanceList);
