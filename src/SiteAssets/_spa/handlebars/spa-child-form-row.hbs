@@ -13,31 +13,33 @@
     >
       <i class="fa fa-minus-circle"></i>
     </a>
+  </div>  
+  <div class="a-child-form">
+    {{{html}}}
   </div>
   {{#if metaDataVisible}}
     {{#switch formType}}
       {{#case "edit" "view"}}
-        <div class="col-md-12 form-meta-data">
-          <strong>
-            Last Updated:
+      <div class="">
+        <div class="row col-md-12 form-meta-data">
+          <strong style="margin-right: 5px;">
+            Last Updated: 
           </strong>
           <span name="modifiedDate">
             {{Modified}}
           </span>
-          |
-          <strong>
-            Editor:
+          <span style="margin-right: 5px;margin-left: 5px;">|</span>
+          <strong  style="margin-right: 5px;">
+            Editor: 
           </strong>
-          <span name="modifiedBy">
+          <span name="modifiedBy" >
             {{Editor.Title}}
           </span>
         </div>
+      </div>
       {{/case}}
     {{/switch}}
   {{/if}}
-  <div class="a-child-form">
-    {{{html}}}
-  </div>
   {{#if repeatable.hasSequence}}
     <div class="reorder-a-child-form">
       <div style="width: 20px; float: left;">
