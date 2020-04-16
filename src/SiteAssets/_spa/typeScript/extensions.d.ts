@@ -36,6 +36,8 @@ interface SharePointListStruct {
     Title: string;
     type : string; 
     Description: string;
+    hasSequence: boolean,
+    hasActive: boolean,
     Columns : {
         type : string; 
         Title : string;
