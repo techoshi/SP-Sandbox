@@ -9,14 +9,15 @@ import * as toastr from "toastr";
 import 'bootstrap';
 import * as spEnv from "./spa.spEnv";
 import * as spLoader from "./theLoader";
-// import * as spPrompt from "./spa.spPrompt";
+import * as spPrompt from "./spa.spPrompt";
 // import * as spExtensions from "./handlebars-helper";
 
-export var thisLists : SharePointListStruct[] = [];
+export var thisLists: SharePointListStruct[] = [];
+export var thisDataLists: any[] = [];
 
 // thisLists.push({ url : "ok", Title : "ok", type : "ok", Description : "pok", Columns : [] })
 
-spEnv.$pa.spDB = (function () {
+export var spDB = (function () {
 
     function getListTypeID(m: any) {
         switch (m.type) {
@@ -283,14 +284,14 @@ spEnv.$pa.spDB = (function () {
                 "IF-MATCH": "*"
             },
             done: function (a: any) {
-                $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'List ' + m.Title + ' deleted! ',
                     type: 'success'
                 }));
                 toastr.success('List ' + m.Title + ' deleted! ');
             },
             fail: function (response: any, errorCode: any, errorMessage: any) {
-                $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'List ' + m.Title + ' not deleted! ' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -317,13 +318,13 @@ spEnv.$pa.spDB = (function () {
 
             },
             done: function (a: any, status: any, xhr: any) {
-                $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View Field ' + m.Title + ' added to View' + m.ViewTitle + '.',
                     type: 'success'
                 }));
             },
             fail: function (response: any, errorCode: any, errorMessage: any) {
-                $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View Field ' + m.Title + ' not added to View' + m.ViewTitle + '.' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -352,7 +353,7 @@ spEnv.$pa.spDB = (function () {
 
             },
             done: function (a: any, status: any, xhr: any) {
-                $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.',
                     type: 'success'
                 }));
@@ -373,7 +374,7 @@ spEnv.$pa.spDB = (function () {
                 }
             },
             fail: function (response: any, errorCode: any, errorMessage: any) {
-                $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -387,7 +388,7 @@ spEnv.$pa.spDB = (function () {
         m.method = 'POST';
         m.data = JSON.stringify(m.data);
         m.done = function (a: any) {
-            $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+            $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                 content: 'Field ' + thisFieldTitle + ' added to List ' + m.originalRequest.Title + '!',
                 type: 'success'
             }));
@@ -395,7 +396,7 @@ spEnv.$pa.spDB = (function () {
         };
         m.fail = function (response: any, errorCode: any, errotMessage: any) {
             toastr.error('Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!', 'Field Create Failed!');
-            $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+            $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                 content: 'Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!',
                 type: 'danger'
             }));
@@ -407,6 +408,23 @@ spEnv.$pa.spDB = (function () {
         var list = {};
 
         if (typeof m === 'object') {
+
+            if (Array.isArray(m.Columns)) {
+                if (m.hasActive) {
+                    m.Columns.push({
+                        type: 'FieldText',
+                        Title: 'zSequence'
+                    });
+                }
+
+                if (m.hasSequence) {
+                    m.Columns.push({
+                        type: 'FieldText',
+                        Title: 'zActive'
+                    });
+                }
+            }
+
             if (m.url && m.Title && m.Description) {
                 list[m.Title] = {};
 
@@ -437,7 +455,7 @@ spEnv.$pa.spDB = (function () {
                         list[m.Title].Id = a.d.Id;
                         toastr.success(m.type + ' ' + m.Title + ' created!', 'List Created!');
 
-                        $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                        $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                             content: m.type + ' ' + m.Title + ' created!',
                             type: 'primary'
                         }));
@@ -459,7 +477,7 @@ spEnv.$pa.spDB = (function () {
                         CreateListView(m);
                     },
                     fail: function (response: any, errorCode: any, errorMessage: any) {
-                        $('#DeltaPageInstrumentation').prepend(spEnv.$pa.env.bootstrapAlert({
+                        $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
                             content: 'List ' + m.Title + ' not created! ' + response.responseJSON.error.message.value,
                             type: 'danger'
                         }));
@@ -470,7 +488,7 @@ spEnv.$pa.spDB = (function () {
                     return list;
                 }
             } else {
-                $('#DeltaPageInstrumentation').append(spEnv.$pa.env.bootstrapAlert({
+                $('#DeltaPlaceHolderMain').append(spEnv.$pa.env.bootstrapAlert({
                     content: 'List not created the necessary criteria not provided!',
                     type: 'danger'
                 }));
@@ -596,8 +614,14 @@ spEnv.$pa.spDB = (function () {
     }
 
     return {
-        loadData: function (m: any) {
-            return loadData(m);
+        loadData: function (m: any[]) {
+
+            if (Array.isArray(m)) {
+                for (let index = 0; index < m.length; index++) {
+                    const element = m[index];
+                    loadData(element)
+                }
+            }
         },
         createApp: function (m: any) {
 
@@ -631,6 +655,48 @@ spEnv.$pa.spDB = (function () {
                     MaxLength: 400
                 }
                 ]
+            });
+        },
+        initUI: function () {
+
+            var uiActions = [];
+
+            uiActions.push({
+                text: "Install",
+                active: true,
+                close: true,
+                click: function () {
+                    spDB.createApp(thisLists);
+                }
+            });
+
+            if (thisDataLists.length > 0) {
+                uiActions.push({
+                    text: "Install Data",
+                    active: false,
+                    close: true,
+                    click: function () {
+                        spDB.loadData(thisDataLists);
+                    }
+                });
+            }
+
+            uiActions.push({
+                text: "Delete",
+                active: false,
+                close: true,
+                click: function () {
+                    spDB.deleteList(thisLists);
+                }
+            });
+
+            spPrompt.promptDialog.prompt({
+                promptID: 'DB-Installer',
+                body: 'Which DB Installer Action do you wish to perform?',
+                header: 'SharePoint Single Page Application Installer',
+                closeOnEscape: false,
+                removeClose: true,
+                buttons: uiActions
             });
         }
     };
