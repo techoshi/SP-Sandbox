@@ -26,13 +26,13 @@ module.exports = {
             "./src/SiteAssets/_spa/typeScript/spa.spCRUD.ts",
             "./src/SiteAssets/_spa/typeScript/spa.spAsyncQueue.ts",
             "./src/SiteAssets/_spa/typeScript/spa.spDB.ts",
-            "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.db.ts",
+            "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.db.ts"
         ],
     },
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /\.ts?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
