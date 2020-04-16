@@ -138,7 +138,8 @@ export var $pa = {
 	spCRUD: undefined as any,
 	spQuery: undefined as any,
 	spDB: undefined as any,
-	spAsyncQueue: undefined as any,
+	spAsyncQueue: undefined as any
 }
 
 require("./spa.spCommon");
+require("./spa.spEmail");
