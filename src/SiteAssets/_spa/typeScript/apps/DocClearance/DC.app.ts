@@ -38,7 +38,7 @@ $(document).ready(function () {
                 tabTitle: "Document Clearance Flow",
                 sectionName: "Approval/Review Area",
                 condition: "DCMain eq {{ID}}",
-                repeatable: { enable: true, hasSequence: true },
+                repeatable: { enable: true, hasSequence: true, hasActive: true },
                 wholeForm: false,
                 columns: {
                     visible: ["RoleType", "Participant", "Status", "DateOfDecision"],

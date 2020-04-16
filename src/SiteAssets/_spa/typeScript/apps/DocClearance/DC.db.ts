@@ -132,6 +132,8 @@ var WorkList = {
 	Title: 'WORK',
 	type: "Generic List",
 	Description: 'Document Clearance WorkFlow',
+	hasSequence : true,
+	hasActive: true,
 	Columns: [
 		{
 			type: 'FieldLookup',
@@ -164,10 +166,6 @@ var WorkList = {
 			},
 			AllowMultipleValues: false,
 			LookupFieldName: 'Status'
-		},
-		{
-			type: 'FieldText',
-			Title: 'Sequence'
 		},
 		{
 			type: 'FieldDateTime',
@@ -205,7 +203,6 @@ var NoteList = {
 	]
 } as SharePointListStruct;
 
-
 spDB.thisLists.push(DocClearanceList);
 spDB.thisLists.push(UserTypes);
 spDB.thisLists.push(WorkflowList);
@@ -215,3 +212,6 @@ spDB.thisLists.push(MarkingsList);
 spDB.thisLists.push(MainList);
 spDB.thisLists.push(WorkList);
 spDB.thisLists.push(NoteList);
+
+require("./DC.defaultData");
+spDB.spDB.initUI();

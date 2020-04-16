@@ -1,5 +1,5 @@
 import * as spEnv from "../../spa.spEnv";
-import "../../spa.spDB";
+import * as spDB from "../../spa.spDB";
 
 function getStatusData() {
     return {
@@ -155,11 +155,8 @@ function getMarkings() {
     };
 }
 
-function loadAppData()
-{
-    spEnv.$pa.spDB.loadData(getStatusData());
-    spEnv.$pa.spDB.loadData(getRoles());
-    spEnv.$pa.spDB.loadData(getPriorities());
-    spEnv.$pa.spDB.loadData(getSources());
-    spEnv.$pa.spDB.loadData(getMarkings());
-}
+spDB.thisDataLists.push(getStatusData());
+spDB.thisDataLists.push(getRoles());
+spDB.thisDataLists.push(getPriorities());
+spDB.thisDataLists.push(getSources());
+spDB.thisDataLists.push(getMarkings());
