@@ -3,14 +3,10 @@ const path = require("path");
 module.exports = {
     mode: "development",
     entry: {
-        "DocumentClearance.App": [
-            // "./src/SiteAssets/_spa/typeScript/handlebars-helper.ts",
-            "./src/SiteAssets/_spa/typeScript/spa.spEnv.ts",
+        "DocumentClearance.App": [            
             "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.app.ts",
         ],
         "DocumentClearance.Installer": [
-            // "./src/SiteAssets/_spa/typeScript/handlebars-helper.ts",
-            "./src/SiteAssets/_spa/typeScript/spa.spEnv.ts",
             "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.db.ts"
         ],
     },
