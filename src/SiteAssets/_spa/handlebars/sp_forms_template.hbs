@@ -43,7 +43,6 @@
                 {{/default}} 
             {{/switch}}                
         {{else}}
-
             <div class="form-group 
                 {{#switch TypeAsString}}
                     {{#case "Attachments" "File" }}
@@ -55,41 +54,71 @@
                 {{/switch}}">
                 
                 {{#switch TypeAsString}} 
-                    {{#case "Text" "Choice" "MultiChoice" "Lookup" "Note" "UserMulti" "Attachments" "File" "User" "DateTime" "Number" "Currency"}}
-                        <label for="{{Title}}" style="width: 100%; 
-                            {{#ifCondition Title '== "Title"'}}
-                            {{#ifCondition formType '== "create"'}}
-                                Display:none;
-                            {{/ifCondition}}
-                            {{/ifCondition}}"
-                        >
-                        {{{replace Title '_' ' '}}}
-                        {{#if Required}}
-                        <span class="red-text">*</span>
-                        {{/if}}
-                        </label>            
+                    {{#case "Text" "Choice" "MultiChoice" "Lookup" "Note" "UserMulti" "Attachments" "File" "User" "DateTime" "Number" "Currency"}}     
+                         {{#switch Title}} 
+                            {{#case "Name" "Title" "zSequence" "zActive"}}   
+                            {{/case}}
+                            {{#default}} 
+                                <label for="{{Title}}" style="width: 100%; 
+                                    {{#ifCondition Title '== "Title"'}}
+                                    {{#ifCondition formType '== "create"'}}
+                                        Display:none;
+                                    {{/ifCondition}}
+                                    {{/ifCondition}}"
+                                >
+                                {{{replace Title '_' ' '}}}
+                                {{#if Required}}
+                                <span class="red-text">*</span>
+                                {{/if}}
+                                </label> 
+                            {{/default}}
+                        {{/switch}}                                   
                     {{/case}} 
                 {{/switch}} 
                 
                 {{#switch TypeAsString}} 
-                    {{#case "Text"}}
-                        <input type="text" id="{{uiID}}" class="form-control" 
-                            
-                            {{#ifCondition Title '== "Title"'}}
-                            {{#ifCondition formType '== "create"'}}
-                                style="Display:none;" 
-                            {{/ifCondition}}
-                            {{/ifCondition}}
-                            name="{{@root.name}}.{{Title}}" 
-                            data-entity="{{EntityPropertyName}}"
-                            data-name="{{Title}}"
-                            data-readOnly = "{{readOnly}}" 
-                            aria-describedby="{{Title}}Help" 
-                            placeholder="Enter {{{replace Title '_' ' '}}}" 
-                            data-defaultvalue="{{DefaultValue}}" 
-                            value="{{DefaultValue}}" 
-                            {{#if Required}}required{{/if}}
-                        /> 
+                    {{#case "Text"}}                        
+                        {{#switch Title}}
+                            {{#case "zSequence" "zActive"}}
+                                {{#ifCondition Title '== "zSequence"'}}
+                                    {{#if @root.repeatable.hasSequence }}
+                                        <input type="hidden" id="{{uiID}}" 
+                                            name="{{@root.name}}.{{Title}}"  
+                                            data-entity="{{EntityPropertyName}}" 
+                                            data-name="{{Title}}"
+                                            data-owner="{{@root.name}}"
+                                            data-spType="{{TypeAsString}}" value="{{currentParentID}}" 
+                                        />
+                                    {{/if}}
+                                {{/ifCondition}}
+
+                                {{#ifCondition Title '== "zActive"'}}
+                                    {{#if @root.repeatable.hasActive}}
+                                        <input type="hidden" id="{{uiID}}" 
+                                            name="{{@root.name}}.{{Title}}"  
+                                            data-entity="{{EntityPropertyName}}" 
+                                            data-name="{{Title}}"
+                                            data-owner="{{@root.name}}"
+                                            data-spType="{{TypeAsString}}" value="{{currentParentID}}" 
+                                        /> 
+                                    {{/if}} 
+                                {{/ifCondition}}
+                            {{/case}}
+                            {{#default}}
+                                <input type="text" id="{{uiID}}" class="form-control" 
+                                    {{#ifCondition Title '== "Title"'}}{{#ifCondition formType '== "create"'}}style="Display:none;" {{/ifCondition}}{{/ifCondition}}
+                                    name="{{@root.name}}.{{Title}}" 
+                                    data-entity="{{EntityPropertyName}}"
+                                    data-name="{{Title}}"
+                                    data-readOnly = "{{readOnly}}" 
+                                    aria-describedby="{{Title}}Help" 
+                                    placeholder="Enter {{{replace Title '_' ' '}}}" 
+                                    data-defaultvalue="{{DefaultValue}}" 
+                                    value="{{DefaultValue}}" 
+                                    {{#if Required}}required{{/if}}
+                                /> 
+                            {{/default}}
+                        {{/switch}}                                               
                     {{/case}} 
                     {{#case "Number"}}
                         <input type="text" id="{{uiID}}" 

@@ -74,7 +74,8 @@ interface spaLoadListStruct {
     config : boolean,
     availableParent : string[],
     relationships : any[]
-
+    formType : string;
+    
     thisVar: string;
     thisObjectLower: string;
     owner: string;
