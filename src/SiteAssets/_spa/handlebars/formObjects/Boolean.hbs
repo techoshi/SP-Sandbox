@@ -1,0 +1,10 @@
+<input type="checkbox" id="{{uiID}}" 
+    class="" 
+    name="{{@root.name}}.{{Title}}" 
+    data-entity="{{EntityPropertyName}}" 
+    data-name="{{Title}}"
+    data-readOnly = "{{readOnly}}" 
+    {{#if Required}}required{{/if}}
+/>
+<label class="" for="{{uiID}}">Check this custom checkbox</label>
+<div class="invalid-feedback"></div>

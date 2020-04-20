@@ -1,0 +1,127 @@
+{{#switch EditFormat}} 
+    {{#case 0}}
+        <select type="text" id="{{uiID}}" 
+            class="form-control select2-js" 
+            name="{{@root.name}}.{{Title}}" 
+            data-entity="{{EntityPropertyName}}" 
+            data-name="{{Title}}"
+            data-readOnly = "{{readOnly}}" 
+            aria-describedby="{{Title}}Help" 
+            placeholder="Enter {{Title}}" 
+            data-defaultvalue="{{DefaultValue}}"
+            {{#if Required}}required{{/if}}
+        >
+            <option value="">Please Select {{replace Title '/_/' ' '}}</option>
+            {{#Choices.results}}
+                <option value="{{this}}">{{this}}</option>
+            {{/Choices.results}}
+        </select> 
+        {{#if FillInChoice}} 
+            {{#switch @root.formType}} 
+                {{#case "create" "edit"}}
+                    <a href="javascript:void(0);" for="{{uiID}}" 
+                        class="sp-fill-in" 
+                        data-choicetype="dropdown" 
+                        data-toggle="popover" 
+                        name="{{@root.name}}.{{Title}}" 
+                        data-entity="{{EntityPropertyName}}" 
+                        data-source="{{@root.name}}" 
+                        data-owner="{{Title}}"
+                        data-readOnly = "{{readOnly}}" 
+                        data-editformat="{{EditFormat}}"
+                        data-readOnly = "{{readOnly}}"
+                        data-trigger="hover" 
+                        data-placement="top"                                                    
+                        title="Add New Value" 
+                        data-content="Your desired value is not in the list? Click the plus and add it."
+                    >
+                        <i class="fa fa-plus-circle"></i>
+                    </a> 
+                {{/case}} 
+            {{/switch}} 
+        {{/if}} 
+    {{/case}} 
+    {{#case 1}}
+        {{! <div class="form-check form-check-inline"> }}
+        <div id="{{uiID}}" class="sp-radio-wrapper" 
+            data-uuid="{{uiID}}" 
+            data-source="{{@root.name}}" 
+            data-entity="{{EntityPropertyName}}" 
+            data-for="{{Title}}" 
+            data-action="{{@root.formType}}"
+        >
+            {{#Choices.results}}
+                <div class="form-check">
+                    <input class="form-check-input" for="{{../uiID}}" type="radio" name="{{@root.name}}.{{../Title}}" data-entity="{{../EntityPropertyName}}" id="{{@root.formType}}.{{@root.name}}.{{../Title}}{{@index}}" data-name="{{../Title}}" value="{{this}}">
+                    <label class="form-check-label" for="">{{this}}</label>
+                </div>
+            {{/Choices.results}}
+        </div>
+        {{#if FillInChoice}} 
+            {{#switch @root.formType}} 
+                {{#case "create" "edit"}}
+                    <div class="">
+                        <a href="javascript:void(0);" for="{{uiID}}" 
+                            class="sp-fill-in" 
+                            data-choicetype="radio" 
+                            style="position: relative; padding: 0px;" 
+                            data-toggle="popover" 
+                            name="{{@root.name}}.{{Title}}" 
+                            data-entity="{{EntityPropertyName}}" 
+                            data-source="{{@root.name}}" 
+                            data-owner="{{Title}}"
+                            data-readOnly = "{{readOnly}}"
+                            data-editformat="{{EditFormat}}" 
+                            data-trigger="hover" 
+                            data-placement="top" 
+                            title="Add New Value" 
+                            data-content="Your desired value is not in the list? Click the plus and add it."
+                        >
+                            <i class="fa fa-plus-circle"></i> Add new value
+                        </a>
+                    </div>
+                {{/case}}
+            {{/switch}}
+        {{/if}}
+    {{/case}}
+    {{#case 2}}
+        <select multiple type="text" id="{{uiID}}" 
+            class="form-control select2-js" 
+            name="{{@root.name}}.{{../Title}}"
+            data-readOnly = "{{readOnly}}" 
+            data-entity="{{EntityPropertyName}}" 
+            data-name="{{Title}}" 
+            aria-describedby="{{../Title}}Help" 
+            placeholder="Enter {{Title}}" 
+            data-defaultvalue="{{DefaultValue}}" 
+            {{#if Required}}required{{/if}}
+        >
+            <option value="">Please Select {{replace Title '/_/' ' '}}</option>
+            {{#Choices.results}}
+                <option value="{{this}}">{{this}}</option>
+            {{/Choices.results}}
+        </select>
+        {{#if FillInChoice}}
+            {{#switch @root.formType}}
+                {{#case "create" "edit"}}
+                    <a href="javascript:void(0);" class="sp-fill-in" 
+                        data-choicetype="dropdown" 
+                        data-toggle="popover" 
+                        name="{{@root.name}}.{{Title}}"
+                        data-readOnly = "{{readOnly}}" 
+                        data-entity="{{EntityPropertyName}}" 
+                        data-source="{{@root.name}}" 
+                        data-owner="{{Title}}" 
+                        data-editformat="{{EditFormat}}"
+                        data-trigger="hover" 
+                        data-placement="top" 
+                        title="Add New Value" 
+                        data-content="Your desired value is not in the list? Click the plus and add it."
+                    >
+                        <i class="fa fa-plus-circle"></i>
+                    </a> 
+                {{/case}}
+            {{/switch}}
+        {{/if}}
+    {{/case}}
+{{/switch}}

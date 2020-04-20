@@ -1,0 +1,12 @@
+<input type="hidden" id="{{uiID}}" 
+    name="{{@root.formType}}.{{@root.name}}.{{Title}}" 
+    data-name="{{Title}}"
+    data-readOnly = "{{readOnly}}" 
+    data-owner="{{@root.name}}" 
+    data-entity="{{EntityPropertyName}}" 
+    data-multi="{{AllowMultipleValues}}" 
+    class="people-picker-data"
+>
+<div id="{{randomUUID}}" type="sp-people" data-name="{{@root.formType}}.{{@root.name}}.{{Title}}" class="people-picker" data-owner="{{@root.name}}" data-multi="{{AllowMultipleValues}}" data-type="{{#ifCondition SelectionMode '== 0'}}User{{else}}Group{{/ifCondition}}"
+    data-selectiongroup="{{SelectionGroup}}"></div>
+<div class="picker-meta-data" data-name="{{@root.formType}}.{{@root.name}}.{{Title}}"></div>

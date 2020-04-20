@@ -1,0 +1,10 @@
+<textarea id="{{uiID}}" type="text" class="form-control spa-textarea" 
+    name="{{@root.name}}.{{Title}}" 
+    data-entity="{{EntityPropertyName}}" 
+    data-name="{{Title}}"
+    data-readOnly = "{{readOnly}}" 
+    aria-describedby="{{Title}}Help" 
+    placeholder="Enter {{{replace Title '_' ' '}}}" 
+    value="{{DefaultValue}}" 
+    {{#if Required}}required{{/if}}
+/>

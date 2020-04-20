@@ -1,0 +1,11 @@
+<input type="text" id="{{uiID}}" class="form-control sp-calendar" 
+    name="{{@root.name}}.{{Title}}" 
+    data-entity="{{EntityPropertyName}}" 
+    data-name="{{Title}}"
+    data-readOnly = "{{readOnly}}" 
+    aria-describedby="{{Title}}Help" 
+    placeholder="Enter {{{replace Title '_' ' '}}}" 
+    data-defaultvalue="{{DefaultValue}}" 
+    value="{{DefaultValue}}" 
+    {{#if Required}}required{{/if}}
+/>

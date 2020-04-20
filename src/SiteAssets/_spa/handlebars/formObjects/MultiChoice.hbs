@@ -1,0 +1,16 @@
+<select multiple type="text" id="{{uiID}}" 
+    class="form-control select2-js" 
+    name="{{@root.name}}.{{Title}}" 
+    data-entity="{{EntityPropertyName}}" 
+    data-name="{{Title}}"
+    data-readOnly = "{{readOnly}}" 
+    aria-describedby="{{Title}}Help" 
+    placeholder="Enter {{Title}}" 
+    data-defaultvalue="{{DefaultValue}}"
+    {{#if Required}}required{{/if}}
+>
+    {{!<option value="">Please Select {{replace Title '/_/' ' '}}</option>}}
+    {{#Choices.results}}
+        <option value="{{this}}">{{this}}</option>
+    {{/Choices.results}}
+</select>
