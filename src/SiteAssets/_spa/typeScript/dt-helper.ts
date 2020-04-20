@@ -1,6 +1,5 @@
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import * as Handlebars from 'handlebars';
 import * as spEnv from "./spa.spEnv";
 import 'jquery-ui-bundle';
 
