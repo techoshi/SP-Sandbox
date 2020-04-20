@@ -3,7 +3,7 @@ import * as spDB from "../../spa.spDB";
 
 function getStatusData() {
     return {
-        listName: 'ST11',
+        name: 'ST11',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -24,7 +24,7 @@ function getStatusData() {
 
 function getRoles() {
     return {
-        listName: 'UT11',
+        name: 'UT11',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -85,7 +85,7 @@ function getRoles() {
 
 function getPriorities() {
     return {
-        listName: 'P11',
+        name: 'P11',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -106,7 +106,7 @@ function getPriorities() {
 
 function getSources() {
     return {
-        listName: 'S11',
+        name: 'S11',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -131,7 +131,7 @@ function getSources() {
 
 function getMarkings() {
     return {
-        listName: 'M11',
+        name: 'M11',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [

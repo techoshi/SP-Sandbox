@@ -581,7 +581,7 @@ export var spDB = (function () {
             var headers = {};
             var formObjects = {
                 __metadata: {
-                    'type': 'SP.Data.' + m.listName.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
+                    'type': 'SP.Data.' + m.name.replace(/-/g, '') + 'ListItem' // it defines the ListEnitityTypeName  
                 }
             }
 
@@ -601,7 +601,7 @@ export var spDB = (function () {
                     var crudRequest = {
                         headers: headers,
                         method: 'POST',
-                        url: m.path + "/_api/web/lists/GetByTitle('" + m.listName + "')/items",
+                        url: m.path + "/_api/web/lists/GetByTitle('" + m.name + "')/items",
                         data: JSON.stringify(element),
                         fail: crudRequestFail,
                         done: crudRequestDone
