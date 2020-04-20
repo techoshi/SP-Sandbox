@@ -1,5 +1,4 @@
 import * as $ from 'jquery';
-import 'bootstrap';
 import * as spEnv from "./spa.spEnv";
 
 export var promptDialog = function promptDialog() {

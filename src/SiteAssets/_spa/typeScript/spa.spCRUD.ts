@@ -1,22 +1,20 @@
 /*jshint scripturl:true*/
 import * as $ from 'jquery';
-
 import * as _ from 'lodash';
-import * as Handlebars from 'handlebars';
 import * as moment from 'moment';
 import * as toastr from "toastr";
 import 'bootstrap';
 import 'jstree';
 import * as spEnv from "./spa.spEnv";
+import * as spQuery from "./spa.spQuery";
 import * as spLoader from "./theLoader";
 import * as spPrompt from "./spa.spPrompt";
-import * as spExtensions from "./handlebars-helper";
 
 declare var SP: any;
 declare var SPClientPeoplePicker: any;
 declare var SPClientPeoplePicker_InitStandaloneControlWrapper: any;
 
-spEnv.$pa.spCRUD = (function () {
+export var spCRUD = (function () {
     var modalTypes = ['create', 'view', 'edit', 'delete'];
 
     var isAdvancedUpload = function () {
@@ -27,10 +25,13 @@ spEnv.$pa.spCRUD = (function () {
     var thisApp = {
         objects: {},
         lastSave: {
-            mainSaveData: {},
+            mainSaveData: {
+                ID : undefined,
+                Name: undefined
+            },
             action: "",
             owner: "",
-            templateType: 0,
+            templateType: "0",
         }
     };
 
@@ -54,7 +55,9 @@ spEnv.$pa.spCRUD = (function () {
         loadLists();
     }
 
-    var currentRecord = {};
+    var currentRecord = {
+        FileLeafRef : ""
+    };
 
     function addUiGuidsToItem(m: any) {
         if (Array.isArray(m)) {
@@ -217,7 +220,7 @@ spEnv.$pa.spCRUD = (function () {
     }
 
     function getListLookups(m: any) {
-        var thisSPListLookups = _.filter(spEnv.$pa.spCRUD.data().objects[m.source].d.results, function (o) {
+        var thisSPListLookups = _.filter(spCRUD.data().objects[m.source].d.results, function (o) {
             return o.TypeAsString == "Lookup";
         });
 
@@ -390,7 +393,7 @@ spEnv.$pa.spCRUD = (function () {
         var newFileArray = [];
         for (var i = 0; i < sfm.files.length; i++) {
             if (sfm.files[i].size == undefined) {
-                sfm.files[i].extension = spExtensions.getFileExtension(sfm.files[i].FileName, false);
+                sfm.files[i].extension = spEnv.$pa.spCommon.getFileExtension(sfm.files[i].FileName, false);
                 sfm.files[i].exactURL = window.location.origin + sfm.files[i].ServerRelativeUrl;
             }
 
@@ -709,7 +712,7 @@ spEnv.$pa.spCRUD = (function () {
 
         $('#tree_size_' + m.source.toLowerCase()).jstree();
 
-        spEnv.$pa.spQuery.genTable({
+        spQuery.spQuery.genTable({
             tableName: m.source.toLowerCase(),
             tableID: m.source.toLowerCase(),
             tableSelector: '#' + m.source.toLowerCase(),
@@ -969,13 +972,13 @@ spEnv.$pa.spCRUD = (function () {
             }
         }
 
-        var fillinObjects = _.filter(spEnv.$pa.spCRUD.data().objects[m.source].d.results, {
+        var fillinObjects = _.filter(spCRUD.data().objects[m.source].d.results, {
             FillInChoice: true
         });
 
         if (fillinObjects) {
             //@ts-ignore
-            var tempObject = _.cloneDeep(spEnv.$pa.spCRUD.data().objects[m.source], true);
+            var tempObject = _.cloneDeep(spCRUD.data().objects[m.source], true);
             tempObject.d.results = fillinObjects; //fillinObjects.length > 0 ? fillinObjects : tempObject.d.results;
 
             for (var fi = 0; fi < fillinObjects.length; fi++) {
@@ -987,14 +990,14 @@ spEnv.$pa.spCRUD = (function () {
             var LookupData = $(this).data();
             var currentValue = $(this).val();
 
-            var thisLookupContainer = spEnv.$pa.spCRUD.lookupDataPoints()[LookupData.owner].lists;
+            var thisLookupContainer = spCRUD.lookupDataPoints()[LookupData.owner].lists;
 
             var childDropDown = _.find(thisLookupContainer, {
                 owner: LookupData.child
             });
 
             if (childDropDown) {
-                var theChildList = spEnv.$pa.spCRUD.lookupDataPoints()[LookupData.owner][childDropDown.guid];
+                var theChildList = spCRUD.lookupDataPoints()[LookupData.owner][childDropDown.guid];
 
                 if (theChildList && theChildList.response && theChildList.response.d && theChildList.response.d.results) {
                     var thisData = theChildList.response.d.results;
@@ -1039,12 +1042,12 @@ spEnv.$pa.spCRUD = (function () {
 
         $('.btn.save-data').unbind('click', saveModalForm);
         $('.btn.save-data').bind('click', saveModalForm);
-        $('.btn.clear-data').unbind('click', spEnv.$pa.spCRUD.clearData);
-        $('.btn.clear-data').bind('click', spEnv.$pa.spCRUD.clearData);
+        $('.btn.clear-data').unbind('click', spCRUD.clearData);
+        $('.btn.clear-data').bind('click', spCRUD.clearData);
         $('.btn.delete-data').unbind('click', saveModalForm);
         $('.btn.delete-data').bind('click', saveModalForm);
-        $('.sp-fill-in').unbind('click', spEnv.$pa.spCRUD.loadFillinModal);
-        $('.sp-fill-in').bind('click', spEnv.$pa.spCRUD.loadFillinModal);
+        $('.sp-fill-in').unbind('click', spCRUD.loadFillinModal);
+        $('.sp-fill-in').bind('click', spCRUD.loadFillinModal);
 
         if (m.relationships && m.relationships.length > 0) {
             for (var rel = 0; rel < m.relationships.length; rel++) {
@@ -1211,23 +1214,23 @@ spEnv.$pa.spCRUD = (function () {
     function reloadEditForm() {
         var foundRow = [];
 
-        if (spEnv.$pa.spCRUD.data().lastSave.action == "save") {
-            var allAvailableData = spEnv.mGlobal.page[spEnv.$pa.spCRUD.data().lastSave.owner].currentJsonData.fullData;
+        if (spCRUD.data().lastSave.action == "save") {
+            var allAvailableData = spEnv.mGlobal.page[spCRUD.data().lastSave.owner].currentJsonData.fullData;
 
 
-            if (spEnv.$pa.spCRUD.data().lastSave.templateType == '100') {
+            if (spCRUD.data().lastSave.templateType == '100') {
                 foundRow = _.filter(allAvailableData, function (f) {
-                    return f.ID == spEnv.$pa.spCRUD.data().lastSave.mainSaveData.ID;
+                    return f.ID == spCRUD.data().lastSave.mainSaveData.ID;
                 });
-            } else if (spEnv.$pa.spCRUD.data().lastSave.templateType == '101') {
+            } else if (spCRUD.data().lastSave.templateType == '101') {
                 foundRow = _.filter(allAvailableData, function (f) {
-                    return f.FileLeafRef == spEnv.$pa.spCRUD.data().lastSave.mainSaveData.Name;
+                    return f.FileLeafRef == spCRUD.data().lastSave.mainSaveData.Name;
                 });
             }
         }
 
         var thisData = {
-            owner: spEnv.$pa.spCRUD.data().lastSave.owner,
+            owner: spCRUD.data().lastSave.owner,
             action: "edit",
             dataPresent : true,
             actionData : undefined
@@ -1285,7 +1288,7 @@ spEnv.$pa.spCRUD = (function () {
             itemQueryStruct.itemCall = true;
         }
 
-        actionURL += "?" + spEnv.$pa.spQuery.getItemQuery(itemQueryStruct);
+        actionURL += "?" + spQuery.spQuery.getItemQuery(itemQueryStruct);
         return actionURL;
     }
 
@@ -1914,9 +1917,9 @@ spEnv.$pa.spCRUD = (function () {
                                             //     },
                                             async: false,
                                             //data : { 'logonName': theseValues[u].Key },
-                                            url: spEnv.$pa.spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
-                                            //url: spEnv.$pa.spCRUD.data().objects[parentData.owner].path + "/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'" 
-                                            //url: spEnv.$pa.spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
+                                            url: spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
+                                            //url: spCRUD.data().objects[parentData.owner].path + "/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'" 
+                                            //url: spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
                                         });
 
                                         if (thisUser && thisUser.d) {
@@ -2227,7 +2230,9 @@ spEnv.$pa.spCRUD = (function () {
                         headers = updateHeader(headers);
 
                         if (fileObjects && fileObjects.length > 0) {
-                            if (fileObjects[0].name.toLowerCase() == spEnv.$pa.spCRUD.currentRecord().FileLeafRef.toLowerCase()) {
+                            var currentRecord = spCRUD.currentRecord()
+
+                            if (fileObjects[0].name.toLowerCase() == currentRecord.FileLeafRef.toLowerCase()) {
                                 triggerDocumentLibraryUpload({
                                     parentObject: parentObject,
                                     overwrite: true,
@@ -2696,7 +2701,7 @@ spEnv.$pa.spCRUD = (function () {
             data.pickerLoaded = typeof data.pickerLoaded == "boolean" ? data.pickerLoaded : false;
 
             if (data.pickerLoaded == false) {
-                spEnv.$pa.spCRUD.initializePeoplePicker(data);
+                spCRUD.initializePeoplePicker(data);
             }
 
             $(element).data('pickerLoaded', true);
@@ -2796,7 +2801,7 @@ spEnv.$pa.spCRUD = (function () {
         getUserId: function (m: any) {
             return getUserId(m);
         },
-        data: function (m: any) {
+        data: function () {
             return thisApp;
         },
         getStruct: function (m: any) {

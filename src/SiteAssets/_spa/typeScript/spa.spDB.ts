@@ -1,16 +1,12 @@
-//requires jquery.spCommon.js
-//requires jquery.spAsyncQueue.js
 /*jshint scripturl:true*/
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import * as Handlebars from 'handlebars';
-import * as moment from 'moment';
 import * as toastr from "toastr";
 import 'bootstrap';
 import * as spEnv from "./spa.spEnv";
+import * as spAsync from "./spa.spAsyncQueue";
 import * as spLoader from "./theLoader";
 import * as spPrompt from "./spa.spPrompt";
-// import * as spExtensions from "./handlebars-helper";
 
 export var thisLists: SharePointListStruct[] = [];
 export var thisDataLists: any[] = [];
@@ -301,7 +297,7 @@ export var spDB = (function () {
     }
 
     function AddViewColumn(m: any) {
-        spEnv.$pa.spAsyncQueue.call({
+        spAsync.spAsyncQueue.call({
             // _spPageContextInfo.webAbsoluteUrl - will give absolute URL of the site where you are running the code.
             // You can replace this with other site URL where you want to apply the function
 
@@ -336,7 +332,7 @@ export var spDB = (function () {
         //<Where><Eq><FieldRef Name=\"Location\" /><Value Type=\"Text\">India</Value></Eq></Where>
         var viewQuery = "<OrderBy><FieldRef Name=\"Created\" /></OrderBy>";
 
-        spEnv.$pa.spAsyncQueue.call({
+        spAsync.spAsyncQueue.call({
             // _spPageContextInfo.webAbsoluteUrl - will give absolute URL of the site where you are running the code.
             // You can replace this with other site URL where you want to apply the function
 
@@ -401,7 +397,7 @@ export var spDB = (function () {
                 type: 'danger'
             }));
         };
-        spEnv.$pa.spAsyncQueue.call(m);
+        spAsync.spAsyncQueue.call(m);
     }
 
     function createList(m: any) {
@@ -528,7 +524,7 @@ export var spDB = (function () {
             }
         }
 
-        if (PendingRequests.length > 0 && spEnv.$pa.spAsyncQueue.queue().length == 0) {
+        if (PendingRequests.length > 0 && spAsync.spAsyncQueue.queue().length == 0) {
             spLoader.theLoader.show({
                 id: 'async-loader'
             });

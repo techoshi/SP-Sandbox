@@ -1,4 +1,3 @@
-import * as spEnv from "../../spa.spEnv";
 import * as spDB from "../../spa.spDB";
 
 function getStatusData() {

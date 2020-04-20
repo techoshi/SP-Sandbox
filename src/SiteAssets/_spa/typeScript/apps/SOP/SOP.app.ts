@@ -1,6 +1,5 @@
 import * as $ from "jquery";
-import * as spEnv from "../../spa.spEnv";
-import "../../spa.spCRUD";
+import * as spCRUD from"../../spa.spCRUD";
 
 var Offices = <spaLoadListStruct>{};
 {
@@ -90,9 +89,9 @@ var spLists = [
 
 $(document).ready(function () {
 
-    spEnv.$pa.spCRUD.clear({});
+    spCRUD.spCRUD.clear({});
 
-    spEnv.$pa.spCRUD.getList({
+    spCRUD.spCRUD.getList({
         objects: spLists
     });
 });

@@ -7,15 +7,7 @@ import "jquery-ui-bundle"
 import 'bootstrap';
 import 'toastr'
 import "../styles/project.css"
-import 'datatables.net';
-import 'datatables.net-bs4';
-import 'datatables.net-autofill';
-import 'datatables.net-buttons';
-import 'datatables.net-fixedheader';
-import 'datatables.net-keytable';
-import 'datatables.net-responsive';
-import 'datatables.net-rowgroup';
-import 'datatables.net-select';
+
 
 import "./polyfills";
 import "./dt-helper"

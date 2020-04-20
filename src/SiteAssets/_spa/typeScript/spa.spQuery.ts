@@ -1,24 +1,21 @@
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import * as Handlebars from 'handlebars';
 import * as moment from 'moment';
-// import 'bootstrap';
-// import 'datatables.net';
-// import 'datatables.net-bs4';
-// import 'datatables.net-autofill';
-// import 'datatables.net-buttons';
-// import 'datatables.net-fixedheader';
-// import 'datatables.net-keytable';
-// import 'datatables.net-responsive';
-// import 'datatables.net-rowgroup';
-// import 'datatables.net-select';
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'datatables.net-autofill';
+import 'datatables.net-buttons';
+import 'datatables.net-fixedheader';
+import 'datatables.net-keytable';
+import 'datatables.net-responsive';
+import 'datatables.net-rowgroup';
+import 'datatables.net-select';
 import * as spEnv from "./spa.spEnv";
+import * as spCRUD from "./spa.spCRUD";
 import * as spLoader from "./theLoader";
 import * as spData from "./dt-helper";
-import * as spPrompt from "./spa.spPrompt";
-import * as spExtensions from "./handlebars-helper";
 
-spEnv.$pa.spQuery = (function () {
+export var spQuery = (function () {
 
     var defaultPageSize = 50;
 
@@ -606,9 +603,9 @@ spEnv.$pa.spQuery = (function () {
             $('.dataTable:visible').find('#' + m.tableID + '_wrapper .dataTables_scrollHeadInner .table:hidden, #' + m.tableID + '_wrapper .dataTables_scrollHeadInner:hidden, .dataTable').css('width', '100%');
         }, 300);
 
-        var rootObject = spEnv.$pa.spCRUD.data();
+        var rootObject = spCRUD.spCRUD.data();
         if (rootObject.lastSave && rootObject.lastSave.action == "save") {
-            spEnv.$pa.spCRUD.reloadEditForm();
+            spCRUD.spCRUD.reloadEditForm();
         }
     }
 

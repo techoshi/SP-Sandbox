@@ -1,11 +1,9 @@
 /*jshint scripturl:true*/
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import * as spEnv from "./spa.spEnv";
 import * as spLoader from "./theLoader";
 
-
-spEnv.$pa.spAsyncQueue = (function () {
+export var spAsyncQueue = (function () {
 
     var PendingRequests = [];
     var waitingForRequest = true;
