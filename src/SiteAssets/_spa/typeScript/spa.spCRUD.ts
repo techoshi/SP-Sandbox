@@ -115,31 +115,32 @@ spEnv.$pa.spCRUD = (function () {
 
         spEnv.$pa.spCommon.getUserPermissions({
             urls: _.uniq(_.map(theseLists, 'path')),
-            accountName: _spPageContextInfo.userLoginName
-        });
-
-        var waitForPermissions = setInterval(function () {
-            if (theseLists && spEnv.spPermissions.loaded) {
-                clearInterval(waitForPermissions);
-                for (var i = 0; i < theseLists.length; i++) {
-                    if (theseLists[i].loaded != true) {
-                        theseLists[i].loaded = false;
-
-                        var expectedObject = theseLists[i];
-
-                        thisApp.objects[theseLists[i].source] = expectedObject;
-                        if (spEnv.$pa.spCommon.checkUserPermission({
-                            path: expectedObject.path,
-                            privilege: "viewListItems"
-                        }) && (expectedObject.config != true || settings.loadConfigs == true)) {
-                            expectedObject.loaded = true;
-                            loadTabStructure(expectedObject);
-                            getListMeta(expectedObject);
+            accountName: _spPageContextInfo.userLoginName,
+            done : function() {
+                var waitForPermissions = setInterval(function () {
+                    if (theseLists && spEnv.spPermissions.loaded) {
+                        clearInterval(waitForPermissions);
+                        for (var i = 0; i < theseLists.length; i++) {
+                            if (theseLists[i].loaded != true) {
+                                theseLists[i].loaded = false;
+        
+                                var expectedObject = theseLists[i];
+        
+                                thisApp.objects[theseLists[i].source] = expectedObject;
+                                if (spEnv.$pa.spCommon.checkUserPermission({
+                                    path: expectedObject.path,
+                                    privilege: "viewListItems"
+                                }) && (expectedObject.config != true || settings.loadConfigs == true)) {
+                                    expectedObject.loaded = true;
+                                    loadTabStructure(expectedObject);
+                                    getListMeta(expectedObject);
+                                }
+                            }
                         }
                     }
-                }
+                }, 50);
             }
-        }, 50);
+        });        
     }
 
     function getListMeta(m: any) {

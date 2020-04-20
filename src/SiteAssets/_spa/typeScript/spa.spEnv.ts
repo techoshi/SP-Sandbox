@@ -143,3 +143,4 @@ export var $pa = {
 
 require("./spa.spCommon");
 require("./spa.spEmail");
+require("./spa.spAsyncQueue");

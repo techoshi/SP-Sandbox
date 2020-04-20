@@ -261,34 +261,46 @@ spEnv.$pa.spCommon = (function () {
 				var ajaxStruct = {
 					url : m.urls[i] + "/_api/web/getusereffectivepermissions(@u)?@u='" + encodeURIComponent("i:0#.f|membership|" + m.accountName) + "'",
 					method : 'GET',
-					async: false,
+					async: true,
 					done : function (a:any) { 
+
+                        var returnedData = a;
+				
+                        var permissions = new SP.BasePermissions();
+                        permissions.initPropertiesFromJson(returnedData.d.GetUserEffectivePermissions);
+                        
+                        var permLevels = [];
+                        
+                        //@ts-ignore
+                        for(var permLevelName in SP.PermissionKind.prototype) {
+                            if (SP.PermissionKind.hasOwnProperty(permLevelName)) {
+                               //@ts-ignore
+                               var permLevel = SP.PermissionKind.parse(permLevelName);
+                               if(permissions.has(permLevel)){
+                                  permLevels.push(permLevelName);
+                                }
+                            }     
+                        }
+                        site.privileges = permLevels; 
+                        
+                        spEnv.spPermissions.site.push(site);
 					}
-				};
-				
-				var returnedData = spEnv.$pa.spCommon.ajax(ajaxStruct);
-				
-				var permissions = new SP.BasePermissions();
-		        permissions.initPropertiesFromJson(returnedData.d.GetUserEffectivePermissions);
-		        
-		        var permLevels = [];
-                
-                //@ts-ignore
-		        for(var permLevelName in SP.PermissionKind.prototype) {
-		            if (SP.PermissionKind.hasOwnProperty(permLevelName)) {
-                       //@ts-ignore
-		               var permLevel = SP.PermissionKind.parse(permLevelName);
-		               if(permissions.has(permLevel)){
-		                  permLevels.push(permLevelName);
-		                }
-		            }     
-		        }
-		        site.privileges = permLevels; 
-		        
-		        spEnv.spPermissions.site.push(site);
-			}
+                };
+                spEnv.$pa.spAsyncQueue.call(ajaxStruct);
+            }
 			
-			spEnv.spPermissions.loaded = true;
+            spEnv.spPermissions.loaded = true;
+                        
+            if(typeof m.done == "function")
+            {
+                var permInterval = setInterval(function(){
+                    if(spEnv.$pa.spAsyncQueue.queue().length == 0)
+                    {
+                        clearInterval(permInterval);
+                        m.done();
+                    }
+                }, 50);                
+            }
 		},
 		checkUserPermission : function (m:any)
 		{
