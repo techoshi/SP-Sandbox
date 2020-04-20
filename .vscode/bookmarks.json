@@ -88,5 +88,15 @@
 				"label": ""
 			}
 		]
+	},
+	{
+		"path": "$ROOTPATH$\\src\\SiteAssets\\_spa\\typeScript\\spa.spCRUD.ts",
+		"bookmarks": [
+			{
+				"line": 765,
+				"column": 18,
+				"label": ""
+			}
+		]
 	}
 ]
