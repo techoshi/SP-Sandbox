@@ -31,7 +31,7 @@ var ContractorsList = {
 			type: 'FieldLookup',
 			Title: 'ContractCN',
 			LookupListId: {
-				listName: "Contracts"
+				listName: ContractList.Title
 			} as any,
 			AllowMultipleValues: false,
 			LookupFieldName: 'ContractCN'
@@ -60,7 +60,7 @@ var ProjectsList = {
 		type: 'FieldLookup',
 		Title: 'ContractCN',
 		LookupListId: {
-			listName: "Contracts"
+			listName: ContractList.Title
 		},
 		AllowMultipleValues: false,
 		LookupFieldName: 'ContractCN'

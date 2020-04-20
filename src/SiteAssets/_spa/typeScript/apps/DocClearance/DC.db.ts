@@ -83,7 +83,7 @@ var MainList = {
 		type: 'FieldLookup',
 		Title: 'Priority',
 		LookupListId: {
-			listName: "P11"
+			listName: PrioritiesList.Title
 		},
 		AllowMultipleValues: false,
 		LookupFieldName: 'Priority'
@@ -92,7 +92,7 @@ var MainList = {
 	// 	type: 'FieldLookup',
 	// 	Title: 'WorkflowType',
 	// 	LookupListId: {
-	// 		listName: "W11"
+	// 		listName: WorkflowList.Title
 	// 	},
 	// 	AllowMultipleValues: false,
 	// 	LookupFieldName: 'WorkflowType'
@@ -101,7 +101,7 @@ var MainList = {
 		type: 'FieldLookup',
 		Title: 'Source',
 		LookupListId: {
-			listName: "S11"
+			listName: SourcesList.Title
 		},
 		AllowMultipleValues: false,
 		LookupFieldName: 'Source'
@@ -110,7 +110,7 @@ var MainList = {
 		type: 'FieldLookup',
 		Title: 'Marking',
 		LookupListId: {
-			listName: "M11"
+			listName: MarkingsList.Title
 		},
 		AllowMultipleValues: false,
 		LookupFieldName: 'Marking'
@@ -139,7 +139,7 @@ var WorkList = {
 			type: 'FieldLookup',
 			Title: 'DCMain',
 			LookupListId: {
-				listName: "DCMain"
+				listName: MainList.Title
 			},
 			AllowMultipleValues: false,
 			LookupFieldName: 'Title'
@@ -148,7 +148,7 @@ var WorkList = {
 			type: 'FieldLookup',
 			Title: 'RoleType',
 			LookupListId: {
-				listName: "UT11"
+				listName: UserTypes.Title
 			},
 			AllowMultipleValues: false,
 			LookupFieldName: 'RoleType'
@@ -162,7 +162,7 @@ var WorkList = {
 			type: 'FieldLookup',
 			Title: 'Status',
 			LookupListId: {
-				listName: "ST11"
+				listName: DocClearanceList.Title
 			},
 			AllowMultipleValues: false,
 			LookupFieldName: 'Status'
@@ -183,7 +183,7 @@ var NoteList = {
 			type: 'FieldLookup',
 			Title: 'DCMain',
 			LookupListId: {
-				listName: "DCMain"
+				listName: MainList.Title
 			},
 			AllowMultipleValues: false,
 			LookupFieldName: 'Title'
