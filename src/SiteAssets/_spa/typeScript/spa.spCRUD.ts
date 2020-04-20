@@ -838,10 +838,10 @@ spEnv.$pa.spCRUD = (function () {
 
                             if (hasChild) {
                                 if (childObject.html == undefined) {
-                                    //childObjectRoot = JSON.parse(JSON.stringify(thisApp.objects[childObject.listName.toLowerCase()]));
-                                    //childObject.d = {};
+                                                                        
                                     childObject.loadActionButtons = false;
 
+                                    childObject.d = typeof childObject.d == "object" ? childObject.d : {};
                                     childObject.d.results = _.filter(childObject.d.results, updateChildResultsMethod);
 
                                     childObject = markHiddenObjects(childObject);
@@ -2866,3 +2866,11 @@ spEnv.$pa.spCRUD = (function () {
         }
     };
 })();
+
+
+// spEnv.$pa.spEmail.send({
+//     from: "risi@eminent-it.company",
+//     to: "risi@eminent-it.company",
+//     body : "Test body",
+//     subject : "Test"
+// });
