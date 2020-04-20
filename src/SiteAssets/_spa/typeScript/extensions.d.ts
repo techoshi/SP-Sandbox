@@ -49,3 +49,29 @@ interface SharePointListStruct {
         }
     }[];
 }
+
+interface spaLoadListStruct {
+    name : string;
+    tabTitle : string;
+    path : string;
+    search: string[],
+    singular : string;
+    columns: {
+        visible : string[],
+        hidden : string[],
+        readOnly: string[]
+    },
+    table : any,
+    children : spaLoadListStruct[],
+    hidden: boolean,
+    sectionName: string,
+    condition: string,
+    repeatable : any,
+    metaDataVisible : boolean,
+    wholeForm : boolean,
+    dataEditable : boolean,
+    form : any,
+    config : boolean,
+    availableParent : string[],
+    relationships : any[]
+}
