@@ -83,7 +83,7 @@ spEnv.$pa.spCRUD = (function () {
         });
     }
 
-    function initObjectParams(e: any) {
+    function initObjectParams(e: spaLoadListStruct) {
         e.thisVar = e.thisVar ? e.thisVar : e.name;
         e.name = e.name.toLowerCase();
         e.thisObjectLower = e.name;

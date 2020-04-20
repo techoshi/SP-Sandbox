@@ -74,4 +74,13 @@ interface spaLoadListStruct {
     config : boolean,
     availableParent : string[],
     relationships : any[]
+
+    thisVar: string;
+    thisObjectLower: string;
+    owner: string;
+    source : string;
+    loaded: boolean;
+    title: string;
+    spType: string;
+    loadActionButtons: boolean;
 }
