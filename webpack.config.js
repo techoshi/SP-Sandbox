@@ -9,6 +9,12 @@ module.exports = {
         "DocumentClearance.Installer": [
             "./src/SiteAssets/_spa/typeScript/apps/DocClearance/DC.db.ts"
         ],
+        "PastPerformance.App": [            
+            "./src/SiteAssets/_spa/typeScript/apps/PastPerformance/PP.app.ts",
+        ],
+        "PastPerformance.Installer": [
+            "./src/SiteAssets/_spa/typeScript/apps/PastPerformance/PP.db.ts"
+        ],
     },
     module: {
         rules: [
