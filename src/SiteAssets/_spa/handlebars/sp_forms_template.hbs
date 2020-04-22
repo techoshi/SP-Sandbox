@@ -56,7 +56,7 @@
                 {{#switch TypeAsString}} 
                     {{#case "Text" "Choice" "MultiChoice" "Lookup" "Note" "UserMulti" "Attachments" "File" "User" "DateTime" "Number" "Currency"}}     
                          {{#switch Title}} 
-                            {{#case "Name" "Title" "zSequence" "zActive"}}   
+                            {{#case "Name" "zSequence" "zActive"}}   
                             {{/case}}
                             {{#default}} 
                                 <label for="{{Title}}" style="width: 100%; 
