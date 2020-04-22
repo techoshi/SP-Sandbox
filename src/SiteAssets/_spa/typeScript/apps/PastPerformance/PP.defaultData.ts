@@ -5,26 +5,27 @@ function getPrimes() {
         name: 'PC',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
-        data: [{
-            "Title": "Prime",
-            "PrimeContractor": "Eminent IT",
-        },
-        {
-            "Title": "Prime",
-            "PrimeContractor": "Lintech Global",
-        },
-        {
-            "Title": "Prime",
-            "PrimeContractor": "CACI",
-        },
-        {
-            "Title": "Prime",
-            "PrimeContractor": "Buchanon & Edwards",
-        },
-        {
-            "Title": "Prime",
-            "PrimeContractor": "Lisa Consulting",
-        }
+        data: [
+            {
+                "Title": "Prime",
+                "PrimeContractor": "Eminent IT",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "Lintech Global",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "CACI",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "Buchanon & Edwards",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "Lisa Consulting",
+            }
         ]
     };
 }
