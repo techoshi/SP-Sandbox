@@ -145,7 +145,7 @@ iGlobal.multiselect.css = function (model: any) {
     }
 };
 
-iGlobal.multiselect.binds = function (model) {
+iGlobal.multiselect.binds = function (model: any) {
 
     $(model.id + ' .dropdown-list').resizable();
 
@@ -300,7 +300,7 @@ iGlobal.pager.init = function (model) {
     iGlobal.pager.navExtentions(model);
     //iGlobal.pager.append(model);
 
-    $(model.divID + '_wrapper .col-sm-6:eq(0) select.form-control:first').addClass('btn-default iris-pager-nav-btn ').removeClass('custom-select custom-select-sm form-control-sm').css({ 'border-right': 0 });
+    $(model.divID + '_wrapper .col-sm-6:eq(0) select.form-control:first').addClass('iris-pager-nav-btn').removeClass('form-control btn custom-select custom-select-sm form-control-sm').css({ 'border-right': 0 });
     $(model.divID + '_info').parent().parent().hide();
 };
 
@@ -367,36 +367,15 @@ iGlobal.pager.pageState = function (model) {
 iGlobal.pager.html = function () {
 
     if (iGlobal.pager.btnStatus == '' || iGlobal.pager.btnStatus == undefined || iGlobal.pager.btnStatus == null)
-        iGlobal.pager.btnGoto = '<select data-owner="' + iGlobal.pager.id + '" data-cmd="goto" name="' + iGlobal.pager.id + '_pageSelect" aria-controls="' + iGlobal.pager.id + '" class="form-control btn btn-default iris-pager-nav-select iris-pager-nav-btn" title="Current Page" style="width: 70px;" ' + iGlobal.pager.disPageSelect + '>' + iGlobal.pager.pageHtml + '</select>';
+        iGlobal.pager.btnGoto = '<select data-owner="' + iGlobal.pager.id + '" data-cmd="goto" name="' + iGlobal.pager.id + '_pageSelect" aria-controls="' + iGlobal.pager.id + '" class="iris-pager-nav-select iris-pager-nav-btn" title="Current Page" style="width: 70px;" ' + iGlobal.pager.disPageSelect + '>' + iGlobal.pager.pageHtml + '</select>';
     else {
 
-        iGlobal.pager.btnGoto = '<select data-owner="' + iGlobal.pager.id + '" data-cmd="goto" name="' + iGlobal.pager.id + '_pageSelect" aria-controls="' + iGlobal.pager.id + '" class="form-control btn btn-default iris-pager-nav-select iris-pager-nav-btn" title="Current Page" style="width: 70px;"' + iGlobal.pager.disPageSelect + '>' + iGlobal.pager.pageHtml + '</select>';
+        iGlobal.pager.btnGoto = '<select data-owner="' + iGlobal.pager.id + '" data-cmd="goto" name="' + iGlobal.pager.id + '_pageSelect" aria-controls="' + iGlobal.pager.id + '" class="iris-pager-nav-select iris-pager-nav-btn" title="Current Page" style="width: 70px;" ' + iGlobal.pager.disPageSelect + '>' + iGlobal.pager.pageHtml + '</select>';
     }
 
-    iGlobal.pager.navHtml =
-        '<a type="button" data-owner="' + iGlobal.pager.id + '" data-cmd="snap_left" name="btnScrollSnapLeft" id="' + iGlobal.pager.id + '_btnScrollSnapLeft" class="btn btn-default iris-pager-nav" style="" title="Snap Table Left">' +
-        '<i class="mdi mdi-format-horizontal-align-left"></i>' +
-        '</a>' +
-        '<a type="button" data-owner="' + iGlobal.pager.id + '" data-cmd="first" name="btnPageFirst" id="' + iGlobal.pager.id + '_btnPageFirst" class="btn btn-default iris-pager-nav iris-pager-nav-btn" style="" title="First Page" ' + iGlobal.pager.btnFirst + '>' +
-        //'<i class="fa fa-fast-backward"></i>' +
-        '<i class="mdi mdi-page-first"></i>' +
-        '</a>' +
-        '<a type="button" data-owner="' + iGlobal.pager.id + '" data-cmd="previous" name="btnPagePrev" id="' + iGlobal.pager.id + '_btnPagePrev" class="btn btn-default iris-pager-nav iris-pager-nav-btn" style="" title="Previous Page" ' + iGlobal.pager.btnPrev + '>' +
-        //'<i class="fa fa-backward"></i>' +
-        '<i class="mdi mdi-chevron-left"></i>' +
-        '</a>' +
-        '<a type="button" data-owner="' + iGlobal.pager.id + '" data-cmd="next" name="btnPageNext" id="' + iGlobal.pager.id + '_btnPageNext" class="btn btn-default iris-pager-nav iris-pager-nav-btn" style="border:" title="Next Page" ' + iGlobal.pager.btnNext + '>' +
-        //'<i class="fa fa-forward"></i>' +
-        '<i class="mdi mdi-chevron-right"></i>' +
-        '</a>' +
-        '<a type="button" data-owner="' + iGlobal.pager.id + '" data-cmd="last" name="btnPageLast" id="' + iGlobal.pager.id + '_btnPageLast" class="btn btn-default iris-pager-nav iris-pager-nav-btn" style="" title="Last Page" ' + iGlobal.pager.btnLast + '>' +
-        //'<i class="fa fa-fast-forward"></i>' +
-        '<i class="mdi mdi-page-last"></i>' +
-        '</a>' +
-        '<a type="button" data-owner="' + iGlobal.pager.id + '" data-cmd="snap_right" name="btnScrollSnapRight" id="' + iGlobal.pager.id + '_btnScrollSnapRight" class="btn btn-default iris-pager-nav" style="" title="Snap Table Right">' +
-        '<i class="mdi mdi-format-horizontal-align-right"></i>' +
-        '</a>' +
-        iGlobal.pager.btnGoto;
+    iGlobal.pager.navHtml = spEnv.$pa.env.datatableNavigation(iGlobal);
+     
+    iGlobal.pager.navHtml += iGlobal.pager.btnGoto;
 };
 
 iGlobal.pager.navExtentions = function (model) {
@@ -412,10 +391,10 @@ iGlobal.pager.navExtentions = function (model) {
     }
 
     $(model.divID + '_wrapper .iris-pager').remove();
-    $(model.divID + '_wrapper .row:eq(0)').children().prop('class', 'col-sm-6');
+    //$(model.divID + '_wrapper .row:eq(0)').children().prop('class', 'col-sm-6');
     $(model.divID + '_wrapper .row:eq(0) .col-sm-6:eq(0)').append(
         '<div id="' + iGlobal.pager.id + '_pager" class="iris-pager">' +
-        '<div class="btn-group iris-pager" style="padding-bottom: 3px; padding-left: 0px; padding-right: 0px; display: inline-block !important">' +
+        '<div class="btn-group iris-pager" style="">' +
         iGlobal.pager.navHtml +
         iGlobal.pager.ExtensionHTML +
         '</div>' +

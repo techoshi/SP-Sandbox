@@ -325,6 +325,7 @@ spEnv.$pa.env.baseForm = require("../handlebars/sp_forms_template.hbs");
 spEnv.$pa.env.deleteItem = require("../handlebars/sp_delete_item.hbs");
 spEnv.$pa.env.baseModal = require("../handlebars/sp-modal-template.hbs");
 spEnv.$pa.env.datatable_refresh_html = require("../handlebars/datatable_refresh_html.hbs");
+spEnv.$pa.env.datatableNavigation = require("../handlebars/datatable_nav.hbs");
 spEnv.$pa.env.spTableTemplate = require("../handlebars/sp_table_template.hbs");
 spEnv.$pa.env.spJsTreeTemplate = require("../handlebars/sp_jstree_template.hbs");
 spEnv.$pa.env.spSearchCondition = require("../handlebars/sp-search-condition.hbs");

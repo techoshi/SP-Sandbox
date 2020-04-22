@@ -671,7 +671,12 @@ export var spQuery = (function () {
                         }, 1000));
 
                     $('#' + m.tableName + ' input[type="search"]').addClass('iris-pager-nav');
-                    $('#' + m.tableName + '_filter').append(spEnv.$pa.env.datatable_refresh_html({
+                    var thisParent = $('#' + m.tableName + '_filter').parent();
+                    $(thisParent).addClass('iris-text-align-right');
+                    $('#' + m.tableName + '_filter').addClass('iris-inline-block');
+                    $('#' + m.tableName + '_filter').parent('div').append('<div id="' + m.tableName + '_right_actions" class="iris-right-actions"></div>')
+                    
+                    $('#' + m.tableName + '_right_actions').append(spEnv.$pa.env.datatable_refresh_html({
                         owner: m.tableName
                     }));
 
@@ -679,7 +684,7 @@ export var spQuery = (function () {
                     $('.actionRefresh').bind('click', refreshServerData);
                 },
                 "fnDrawCallback": function (oSettings, json) {
-
+                                      
                     $('#' + m.tableName + '_wrapper .dataTables_scrollHead th').each(function (th, thElement) {
                         var thisElementData = $(thElement).data();
                         $(thElement).html(_.startCase($(thElement).html()));

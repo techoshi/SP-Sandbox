@@ -2,9 +2,28 @@
     float: left;
     text-align: right;
 }
+.iris-text-align-right
+{
+    text-align: right;
+}
+
+.iris-inline-block
+{
+    display: inline-block;
+}
+
+.iris-inline-block input{
+    height : 35px;
+}
 
 .iris-pager select {
     border-radius: 0;
+}
+
+.iris-right-actions
+{
+    display: inline-block;
+    vertical-align: top;
 }
 
 .iris-pager-nav,
@@ -12,6 +31,15 @@
     border-radius: 0;
     -webkit-appearance: none;
     height: 35px;
+    display: inline-block;
+    margin-left: -1px;
+    padding: 7px 14px;
+    border: 1px solid #ced4da;
+}
+
+a.iris-pager-nav, a.iris-pager-nav-btn {
+    text-align: center;
+    cursor: pointer;
 }
 
 /* a.iris-pager-nav-btn,

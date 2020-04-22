@@ -113,6 +113,7 @@ export var $pa = {
 		deleteItem: undefined as any,
 		baseModal: undefined as any,
 		datatable_refresh_html: undefined as any,
+		datatableNavigation: undefined as any,
 		spTableTemplate: undefined as any,
 		spJsTreeTemplate: undefined as any,
 		spSearchCondition: undefined as any,
