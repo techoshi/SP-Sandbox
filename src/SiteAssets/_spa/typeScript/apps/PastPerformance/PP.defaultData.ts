@@ -25,6 +25,26 @@ function getPrimes() {
             {
                 "Title": "Prime",
                 "PrimeContractor": "Lisa Consulting",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "ISHPI",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "QSMI",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "Celtic Technologies",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "ECS",
+            },
+            {
+                "Title": "Prime",
+                "PrimeContractor": "Dimensional Concepts",
             }
         ]
     };
