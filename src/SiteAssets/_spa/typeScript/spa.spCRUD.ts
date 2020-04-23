@@ -1666,6 +1666,8 @@ export var spCRUD = (function () {
 
                 _.merge(thisApp.objects[m.source.toLowerCase()], a);
 
+                globalThis.spaObjects = thisApp.objects;
+
                 var hasBootstrapGridOverride = false;
                 var bootstrapGridOverride;
 
