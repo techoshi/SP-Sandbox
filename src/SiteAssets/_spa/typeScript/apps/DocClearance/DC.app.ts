@@ -1,5 +1,11 @@
 import * as $ from "jquery";
-import * as spCRUD from"../../spa.spCRUD";
+import * as spa from "../../spa.spEnv";
+import * as spCRUD from "../../spa.spCRUD";
+import * as toastr from "toastr"; 
+
+var appTemplate = {
+    sendToPerson: require("./templates/sendToPerson.hbs")
+};
 
 var DcMainWork = <spaLoadListStruct>{};
 {
@@ -7,10 +13,30 @@ var DcMainWork = <spaLoadListStruct>{};
     DcMainWork.tabTitle = "Document Clearance Flow";
     DcMainWork.sectionName = "Approval/Review Area";
     DcMainWork.condition = "DCMain eq {{ID}}";
-    DcMainWork.repeatable = { enable: true, hasSequence: true, hasActive: true };
+    var repeatableWork = <spaRepeatable>{};
+    {
+        repeatableWork.enable = true;
+        repeatableWork.hasSequence = true;
+        repeatableWork.hasActive = true,
+        repeatableWork.overloads = [
+            {
+                html: appTemplate.sendToPerson(),
+                bind: function() {
+
+                    function thisFunction() { toastr.success('Clicked'); };
+
+                    //$('.modal[data-owner="dcmain"] .send-to-person').unbind('click', thisFunction);
+                    //$('.modal[data-owner="dcmain"] .send-to-person').bind('click', thisFunction);     
+                    $('.modal[data-owner="dcmain"]').off('click', '.send-to-person', thisFunction);
+                    $('.modal[data-owner="dcmain"]').on('click', '.send-to-person', thisFunction)
+                }
+            } as spaRepeatableOverload
+        ]
+    }
+    DcMainWork.repeatable = repeatableWork;
     DcMainWork.wholeForm = false;
     DcMainWork.columns = {
-        visible: ["RoleType", "Participant", "Status", "DateOfDecision"],
+        visible: ["RoleType", "RoleUser", "Participant", "Status", "DateOfDecision"],
         hidden: ["Title", "DCMain", "Sequence"],
         readOnly: ["DateOfDecision"]
     };
@@ -40,7 +66,12 @@ var DCMainNotes = <spaLoadListStruct>{};
     DCMainNotes.sectionName = "Notes";
     DCMainNotes.singular = "Note Entry";
     DCMainNotes.condition = "DCMain eq {{ID}}";
-    DCMainNotes.repeatable = { enable: true, hasSequence: false };
+    var repeatableNote = <spaRepeatable>{};
+    {
+        repeatableNote.enable = true;
+        repeatableNote.hasSequence = false;
+    }
+    DCMainNotes.repeatable = repeatableNote;
     DCMainNotes.metaDataVisible = true;
     DCMainNotes.wholeForm = false;
     DCMainNotes.availableParent = ["edit"];
@@ -48,7 +79,7 @@ var DCMainNotes = <spaLoadListStruct>{};
     DCMainNotes.columns = {
         visible: ["NoteEntry"],
         hidden: ["Title", "DCMain", "Sequence", "CurrentStatus"],
-        readOnly : []
+        readOnly: []
     };
     DCMainNotes.form = {
         columns: [{
@@ -169,6 +200,15 @@ var RoleTypes = <spaLoadListStruct>{};
     RoleTypes.config = true;
 };
 
+var Participants = <spaLoadListStruct>{};
+{
+    Participants.name = "RU11";
+    Participants.tabTitle = "Role Users";
+    Participants.search = [""];
+    Participants.singular = "Role User";
+    Participants.config = true;
+};
+
 var spLists = [
     DCMain,
     Priorities,
@@ -177,7 +217,8 @@ var spLists = [
     PortfolioCat,
     LeadPortfolio,
     DocStatus,
-    RoleTypes
+    RoleTypes,
+    Participants
 ]
 
 $(document).ready(function () {

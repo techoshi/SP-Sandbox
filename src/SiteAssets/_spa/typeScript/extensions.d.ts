@@ -50,7 +50,20 @@ interface SharePointListStruct {
     }[];
 }
 
+interface spaRepeatableOverload {
+    html : string,
+    bind : any
+}
+
+interface spaRepeatable {
+    enable: boolean,
+    hasSequence: boolean,
+    hasActive: boolean,
+    overloads: spaRepeatableOverload[]
+}
+
 interface spaLoadListStruct {
+    id: string;
     name : string;
     tabTitle : string;
     path : string;
@@ -66,7 +79,7 @@ interface spaLoadListStruct {
     hidden: boolean,
     sectionName: string,
     condition: string,
-    repeatable : any,
+    repeatable : spaRepeatable,
     metaDataVisible : boolean,
     wholeForm : boolean,
     dataEditable : boolean,
@@ -75,6 +88,14 @@ interface spaLoadListStruct {
     availableParent : string[],
     relationships : any[]
     formType : string;
+    action: string;
+    selectedRow : any;
+    actionData : any;
+    lastSelectedRecord : any;
+    baseTemplate : any;
+    formSelector: any;
+    queryFilter : any;
+    dataPresent: any;
     
     thisVar: string;
     thisObjectLower: string;
@@ -84,4 +105,5 @@ interface spaLoadListStruct {
     title: string;
     spType: string;
     loadActionButtons: boolean;
+    
 }

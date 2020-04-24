@@ -13,23 +13,42 @@ var DocClearanceList = {
 	}
 	]
 } as SharePointListStruct;
-var UserTypes = {
+var RoleTypes = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'UT11',
 	type: "Generic List",
 	Description: 'Document Clearance User Types',
-	Columns: [{
-		type: 'FieldText',
-		Title: 'RoleType',
-		MaxLength: 100
-	},
-	{
-		type: 'FieldUser',
-		Title: 'DefaultUser',
-		AllowMultipleValues: false
-	}
+	Columns: [
+		{
+			type: 'FieldText',
+			Title: 'RoleType',
+			MaxLength: 100
+		}
 	]
 } as SharePointListStruct;
+
+var Participants = {
+	url: _spPageContextInfo.webAbsoluteUrl,
+	Title: 'RU11',
+	type: "Generic List",
+	Description: 'Document Clearance User Types',
+	Columns: [
+		{
+			type: 'FieldLookup',
+			Title: 'RoleType',
+			LookupListId: {
+				listName: RoleTypes.Title
+			},
+			AllowMultipleValues: false,
+			LookupFieldName: 'RoleType'
+		},
+		{
+			type: 'FieldUser',
+			Title: 'Participant'
+		}
+	]
+} as SharePointListStruct;	
+
 var WorkflowList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'W11',
@@ -132,7 +151,7 @@ var WorkList = {
 	Title: 'WORK',
 	type: "Generic List",
 	Description: 'Document Clearance WorkFlow',
-	hasSequence : true,
+	hasSequence: true,
 	hasActive: true,
 	Columns: [
 		{
@@ -148,15 +167,19 @@ var WorkList = {
 			type: 'FieldLookup',
 			Title: 'RoleType',
 			LookupListId: {
-				listName: UserTypes.Title
+				listName: RoleTypes.Title
 			},
 			AllowMultipleValues: false,
 			LookupFieldName: 'RoleType'
 		},
 		{
-			type: 'FieldUser',
+			type: 'FieldLookup',
 			Title: 'Participant',
+			LookupListId: {
+				listName: Participants.Title
+			},
 			AllowMultipleValues: false,
+			LookupFieldName: 'Participant'
 		},
 		{
 			type: 'FieldLookup',
@@ -204,7 +227,8 @@ var NoteList = {
 } as SharePointListStruct;
 
 spDB.thisLists.push(DocClearanceList);
-spDB.thisLists.push(UserTypes);
+spDB.thisLists.push(RoleTypes);
+spDB.thisLists.push(Participants);
 spDB.thisLists.push(WorkflowList);
 spDB.thisLists.push(PrioritiesList);
 spDB.thisLists.push(SourcesList);
