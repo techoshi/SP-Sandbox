@@ -29,7 +29,7 @@ export var spCRUD = (function () {
                 ID : undefined,
                 Name: undefined
             },
-            action: "",
+            action: { action : undefined, loaded : false},
             owner: "",
             templateType: "0",
         }
@@ -37,7 +37,22 @@ export var spCRUD = (function () {
 
     var clearLastSave = function () {
         for (var prop in thisApp.lastSave) {
-            thisApp.lastSave[prop] = undefined;
+            if(typeof thisApp.lastSave[prop] != "object")
+            { 
+                thisApp.lastSave[prop] = undefined;
+            }
+            else{
+                if(Array.isArray(thisApp.lastSave[prop]))
+                {
+                    thisApp.lastSave[prop] = [];
+                }
+                else{
+                    for (var prop2 in thisApp.lastSave[prop])
+                    {
+                        thisApp.lastSave[prop2] = undefined;
+                    }
+                }                
+            }
         }
     };
 
@@ -1214,15 +1229,14 @@ export var spCRUD = (function () {
     function reloadEditForm() {
         var foundRow = [];
 
-        if (spCRUD.data().lastSave.action == "save") {
+        if (spCRUD.data().lastSave.action.action == "save" && spCRUD.data().lastSave.action.loaded == false) {
             var allAvailableData = spEnv.mGlobal.page[spCRUD.data().lastSave.owner].currentJsonData.fullData;
 
-
-            if (spCRUD.data().lastSave.templateType == '100') {
+            if (spCRUD.data().lastSave.templateType == "100") {
                 foundRow = _.filter(allAvailableData, function (f) {
                     return f.ID == spCRUD.data().lastSave.mainSaveData.ID;
                 });
-            } else if (spCRUD.data().lastSave.templateType == '101') {
+            } else if (spCRUD.data().lastSave.templateType == "101") {
                 foundRow = _.filter(allAvailableData, function (f) {
                     return f.FileLeafRef == spCRUD.data().lastSave.mainSaveData.Name;
                 });
@@ -1428,7 +1442,7 @@ export var spCRUD = (function () {
         });
     }
 
-    function loadFormData(m: any) {
+    function loadFormData(m: spaLoadListStruct) {
         var action = m.action;
         var owner = m.owner;
 
@@ -1496,7 +1510,7 @@ export var spCRUD = (function () {
                         });
                     }
 
-                    if (m.children) {
+                    if (m.children && Array.isArray(m.children) && m.children.length > 0) {
                         var callChildAjax = function (cm) {
                             var loadChildObject = function (a) {
 
@@ -1536,10 +1550,13 @@ export var spCRUD = (function () {
                                 done: loadChildObject
                             });
                         };
-
+                        
                         for (var index = 0; index < m.children.length; index++) {
                             var thisChild = m.children[index];
                             var parentID = m.lastSelectedRecord.d.ID;
+                            
+                            
+                                                      
 
                             if (thisChild.condition) {
                                 var ConditionHB = spEnv.$pa.spCommon.addHandlebar(thisChild.condition);
@@ -1556,6 +1573,18 @@ export var spCRUD = (function () {
 
                             }
 
+                            if(thisChild.repeatable.overloads && Array.isArray(thisChild.repeatable.overloads) && thisChild.repeatable.overloads.length > 0)
+                            {
+                                for (let index = 0; index < thisChild.repeatable.overloads.length; index++) {
+                                    const element = thisChild.repeatable.overloads[index];
+                                    
+                                    if(typeof element.bind == "function")
+                                    {
+                                        element.bind();
+                                    }
+    
+                                } 
+                            }
                         }
                     }
 
@@ -2093,7 +2122,7 @@ export var spCRUD = (function () {
                             var returnedData = r.d;
                             thisApp.lastSave.mainSaveData = r.d;
                             thisApp.lastSave.owner = thisData.owner;
-                            thisApp.lastSave.action = thisActionType.toLowerCase();
+                            thisApp.lastSave.action = { action : thisActionType.toLowerCase(), loaded : false };
                             thisApp.lastSave.templateType = baseTemplate;
 
                             setTimeout(function () {
@@ -2185,7 +2214,7 @@ export var spCRUD = (function () {
                             done: function (r2: any) {
                                 thisApp.lastSave.mainSaveData = r2.d;
                                 thisApp.lastSave.owner = parentObject.owner;
-                                thisApp.lastSave.action = thisActionType.toLowerCase();
+                                thisApp.lastSave.action = { action : thisActionType.toLowerCase(), loaded : false };
                                 thisApp.lastSave.templateType = baseTemplate;
 
                                 switch (thisActionType.toLowerCase()) {

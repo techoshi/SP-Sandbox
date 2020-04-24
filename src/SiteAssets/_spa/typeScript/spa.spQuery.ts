@@ -604,7 +604,8 @@ export var spQuery = (function () {
         }, 300);
 
         var rootObject = spCRUD.spCRUD.data();
-        if (rootObject.lastSave && rootObject.lastSave.action == "save") {
+        if (rootObject.lastSave && (rootObject.lastSave.action && rootObject.lastSave.action.action != undefined && rootObject.lastSave.action.action == "save") && rootObject.lastSave.action.loaded == false) {
+            rootObject.lastSave.action.loaded = true;
             spCRUD.spCRUD.reloadEditForm();
         }
     }
@@ -684,7 +685,7 @@ export var spQuery = (function () {
                     $('.actionRefresh').bind('click', refreshServerData);
                 },
                 "fnDrawCallback": function (oSettings, json) {
-                                      
+
                     $('#' + m.tableName + '_wrapper .dataTables_scrollHead th').each(function (th, thElement) {
                         var thisElementData = $(thElement).data();
                         $(thElement).html(_.startCase($(thElement).html()));
