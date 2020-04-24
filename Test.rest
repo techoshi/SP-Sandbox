@@ -1,4 +1,6 @@
 @contentType = application/json
-https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('wkfl')/items
+//https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('wkfl')/items?$skiptoken=Paged%3DTRUE%26p_ID%3D0&$top=5000&$select=GUID,ID,Title,DateOfDecision,ContentType,Attachments,AttachmentFiles,DCMain/Id,DCMain/Title,RoleType/Id,RoleType/RoleType,Role/Id,Role/EMail,Role/FirstName,Role/LastName,Role/WorkPhone,Role/Office,Role/Department,Role/JobTitle,Role/Title,Role/SipAddress,Role/Name,Status/Id,Status/Status&$expand=AttachmentFiles,DCMain,RoleType,Role,Status&$orderBy=Attachments%20asc&$filter=DCMain%20eq%202
+https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('work')/items?$skiptoken=Paged%3DTRUE%26p_ID%3D0&$top=5000&$select=GUID,ID,Modified,Title,DateOfDecision,zSequence,zActive,ContentType,Attachments,AttachmentFiles,Editor/Title,DCMain/Id,DCMain/Title,RoleType/Id,RoleType/RoleType,Status/Id,Status/Status&$expand=AttachmentFiles,Editor,DCMain,RoleType,Status&$orderBy=Attachments%20asc&draw=1&start=0&length=50&search%5Bvalue%5D=&search%5Bregex%5D=false&_=1587674557622
 Content-Type: {{contentType}}
 accept: application/json
+
