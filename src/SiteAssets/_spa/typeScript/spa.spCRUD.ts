@@ -1230,7 +1230,7 @@ export var spCRUD = (function () {
     function reloadEditForm() {
         var foundRow = [];
 
-        if (spCRUD.data().lastSave.action.action == "save" && spCRUD.data().lastSave.action.loaded == false) {
+        if (spCRUD.data().lastSave.action.action == "save") {
             var allAvailableData = spEnv.mGlobal.page[spCRUD.data().lastSave.owner].currentJsonData.fullData;
 
             if (spCRUD.data().lastSave.templateType == "100") {
@@ -1940,8 +1940,9 @@ export var spCRUD = (function () {
                                         ids.push(theseValues[u].EntityData.SPGroupID);
                                         break;
                                     case "User":
-                                        var thisUser = spCommon.spCommon.ajax({
+                                        var thisUser = spCommon.spAjax({
                                             //source: f.thisData.owner,
+                                            d: undefined,
                                             method: 'GET',
                                             // headers: {
                                             //     "X-HTTP-Method": "PUT",
@@ -1954,8 +1955,8 @@ export var spCRUD = (function () {
                                             //url: spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
                                         });
 
-                                        if (thisUser && thisUser.d) {
-                                            ids.push(thisUser.d.Id);
+                                        if (thisUser && thisUser['d']) {
+                                            ids.push(thisUser['d'].Id);
                                         } else {
                                             toastr.info('User ' + theseValues[u].DisplayText + ' was not found!');
                                         }
