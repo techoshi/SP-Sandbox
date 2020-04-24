@@ -31,7 +31,8 @@ module.exports = {
                         helperDirs: path.resolve(__dirname, "./src/SiteAssets/_spa/handlebars", "helpers"),
                         partialDirs: [
                             path.join(__dirname, "./src/SiteAssets/_spa/handlebars", "partials"),
-                            path.join(__dirname, "./src/SiteAssets/_spa/handlebars", "formObjects")
+                            path.join(__dirname, "./src/SiteAssets/_spa/handlebars", "formObjects"),
+                            path.join(__dirname, "./src/SiteAssets/_spa/apps/DocClearance", "templates")
                         ]
                     }
                 }],
