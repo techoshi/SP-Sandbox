@@ -6,6 +6,7 @@ import * as toastr from "toastr";
 import 'bootstrap';
 import 'jstree';
 import * as spEnv from "./spa.spEnv";
+import * as spCommon from "./spa.spCommon";
 import * as spQuery from "./spa.spQuery";
 import * as spLoader from "./theLoader";
 import * as spPrompt from "./spa.spPrompt";
@@ -131,7 +132,7 @@ export var spCRUD = (function () {
 
         settings.hashidden = _.filter(theseLists, { loaded: false, hidden: true }).length > 0 ? true : false;
 
-        spEnv.$pa.spCommon.getUserPermissions({
+        spCommon.spCommon.getUserPermissions({
             urls: _.uniq(_.map(theseLists, 'path')),
             accountName: _spPageContextInfo.userLoginName,
             done : function() {
@@ -145,7 +146,7 @@ export var spCRUD = (function () {
                                 var expectedObject = theseLists[i];
         
                                 thisApp.objects[theseLists[i].source] = expectedObject;
-                                if (spEnv.$pa.spCommon.checkUserPermission({
+                                if (spCommon.spCommon.checkUserPermission({
                                     path: expectedObject.path,
                                     privilege: "viewListItems"
                                 }) && (expectedObject.config != true || settings.loadConfigs == true)) {
@@ -171,7 +172,7 @@ export var spCRUD = (function () {
                     thisApp.objects[m.source].id = thisApp.objects[m.source].listData.Id;
 
                     var ajaxCallStructure = getCallStructure(m);
-                    spEnv.$pa.spCommon.ajax(ajaxCallStructure);
+                    spCommon.spCommon.ajax(ajaxCallStructure);
                 }
             },
             fail: function (a: any) {
@@ -182,7 +183,7 @@ export var spCRUD = (function () {
             }
         };
 
-        spEnv.$pa.spCommon.ajax(thisAjax);
+        spCommon.spCommon.ajax(thisAjax);
     }
 
     function getCallStructure(m: any) {
@@ -307,7 +308,7 @@ export var spCRUD = (function () {
                     return false;
                 }
 
-                spEnv.$pa.spCommon.ajax({
+                spCommon.spCommon.ajax({
                     source: m.source,
                     method: 'GET',
                     async: false,
@@ -331,7 +332,7 @@ export var spCRUD = (function () {
                 a: lookupDataPoints[m.owner][m.listGuid].response
             });
         } else {
-            spEnv.$pa.spCommon.ajax({
+            spCommon.spCommon.ajax({
                 source: m.parentObject.source,
                 method: 'GET',
                 url: m.parentObject.path + "/_api/web/lists(guid'" + m.listGuid + "')/items",
@@ -408,7 +409,7 @@ export var spCRUD = (function () {
         var newFileArray = [];
         for (var i = 0; i < sfm.files.length; i++) {
             if (sfm.files[i].size == undefined) {
-                sfm.files[i].extension = spEnv.$pa.spCommon.getFileExtension(sfm.files[i].FileName, false);
+                sfm.files[i].extension = spCommon.spCommon.getFileExtension(sfm.files[i].FileName, false);
                 sfm.files[i].exactURL = window.location.origin + sfm.files[i].ServerRelativeUrl;
             }
 
@@ -447,7 +448,7 @@ export var spCRUD = (function () {
 
         var checkExtension = function (m: any) {
             if (m.allowedExtensions.length > 0) {
-                var thisExtension = spEnv.$pa.spCommon.getExtension(m.file.name);
+                var thisExtension = spCommon.spCommon.getExtension(m.file.name);
 
                 var addFile = m.allowedExtensions.indexOf(thisExtension.toLowerCase()) > -1;
 
@@ -1494,7 +1495,7 @@ export var spCRUD = (function () {
                         $('.Delete-Attachment-File').unbind('click', deleteItemAttachmentPrompt);
                         $('.Delete-Attachment-File').bind('click', deleteItemAttachmentPrompt);
                     } else {
-                        var relativeFilePath = spEnv.$pa.spCommon.getRelativeURL({
+                        var relativeFilePath = spCommon.spCommon.getRelativeURL({
                             url: returnedData.EncodedAbsUrl
                         });
                         var attachments2 = [{
@@ -1543,7 +1544,7 @@ export var spCRUD = (function () {
                                 }
                             };
 
-                            spEnv.$pa.spCommon.ajax({
+                            spCommon.spCommon.ajax({
                                 source: cm.thisChild.owner,
                                 method: 'GET',
                                 url: cm.url,
@@ -1559,7 +1560,7 @@ export var spCRUD = (function () {
                                                       
 
                             if (thisChild.condition) {
-                                var ConditionHB = spEnv.$pa.spCommon.addHandlebar(thisChild.condition);
+                                var ConditionHB = spCommon.spCommon.addHandlebar(thisChild.condition);
 
                                 thisChild.queryFilter = ConditionHB({ ID: parentID });
                                 var thisQuery = getQueryForObject(thisChild);
@@ -1592,7 +1593,7 @@ export var spCRUD = (function () {
                 };
 
                 if (getDataForType.indexOf(action) > -1 && m.dataPresent) {
-                    spEnv.$pa.spCommon.ajax({
+                    spCommon.spCommon.ajax({
                         source: m.owner,
                         method: 'GET',
                         url: m.path + "/_api/" + actionURL + "",
@@ -1646,7 +1647,7 @@ export var spCRUD = (function () {
                 }
             };
 
-            spEnv.$pa.spCommon.ajax(crudRequest2);
+            spCommon.spCommon.ajax(crudRequest2);
         }
     }
 
@@ -1939,7 +1940,7 @@ export var spCRUD = (function () {
                                         ids.push(theseValues[u].EntityData.SPGroupID);
                                         break;
                                     case "User":
-                                        var thisUser = spEnv.$pa.spCommon.ajax({
+                                        var thisUser = spCommon.spCommon.ajax({
                                             //source: f.thisData.owner,
                                             method: 'GET',
                                             // headers: {
@@ -2191,7 +2192,7 @@ export var spCRUD = (function () {
                     closeModalRefreshData(m);                                      
                 };
 
-                spEnv.$pa.spCommon.ajax(crudRequest2);
+                spCommon.spCommon.ajax(crudRequest2);
             } else if (baseTemplate == '101') {
                 switch (thisActionType.toLowerCase()) {
                     default:
@@ -2246,7 +2247,7 @@ export var spCRUD = (function () {
                                             }
                                         };
 
-                                        spEnv.$pa.spCommon.ajax(crudRequest2);
+                                        spCommon.spCommon.ajax(crudRequest2);
 
                                         break;
                                     case 'update':
@@ -2309,7 +2310,7 @@ export var spCRUD = (function () {
                                                     }
                                                 };
 
-                                                spEnv.$pa.spCommon.ajax(crudRequest2);
+                                                spCommon.spCommon.ajax(crudRequest2);
 
                                                 break;
                                         }
@@ -2363,7 +2364,7 @@ export var spCRUD = (function () {
                                             }
                                         };
 
-                                        spEnv.$pa.spCommon.ajax(crudChildRequest);
+                                        spCommon.spCommon.ajax(crudChildRequest);
                                     }
                                 },
                                 done: function (a: any) {
@@ -2374,7 +2375,7 @@ export var spCRUD = (function () {
                                 }
                             };
 
-                            spEnv.$pa.spCommon.ajax(crudRequest21);
+                            spCommon.spCommon.ajax(crudRequest21);
                         }
 
                         break;
@@ -2408,7 +2409,7 @@ export var spCRUD = (function () {
 
                         closeModalRefreshData(m);                        
 
-                        spEnv.$pa.spCommon.ajax(crudRequest3);
+                        spCommon.spCommon.ajax(crudRequest3);
 
                         break;
                 }
@@ -2460,7 +2461,7 @@ export var spCRUD = (function () {
                         processQueue();
                     };
 
-                    spEnv.$pa.spCommon.ajax(tempList[0].xhrRequest);
+                    spCommon.spCommon.ajax(tempList[0].xhrRequest);
                 });
             }
         }
@@ -2507,7 +2508,7 @@ export var spCRUD = (function () {
                         processQueue();
                     };
 
-                    spEnv.$pa.spCommon.ajax(tempList[0].xhrRequest);
+                    spCommon.spCommon.ajax(tempList[0].xhrRequest);
                 });
             }
         }
@@ -2571,7 +2572,7 @@ export var spCRUD = (function () {
             },
         };
 
-        //spEnv.$pa.spCommon.ajax(uploadFileXHR);	        				
+        //spCommon.spCommon.ajax(uploadFileXHR);	        				
         //});
         return {
             xhrRequest: uploadFileXHR,
@@ -2862,7 +2863,7 @@ export var spCRUD = (function () {
 
                 theseLists = newObjectOrder;
                 loadLists();
-                //spEnv.$pa.spCommon.theList(m);
+                //spCommon.spCommon.theList(m);
                 setTimeout(function () {
                     spLoader.theLoader.hide({
                         id: 'initiateApp'

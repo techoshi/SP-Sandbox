@@ -1,4 +1,4 @@
-import * as spEnv from "./spa.spEnv";
+import * as spCommon from "./spa.spCommon";
 
 export var spEmail = (function () {
     function sendEmail(m: any) {
@@ -33,7 +33,7 @@ export var spEmail = (function () {
             }
         }
 
-        spEnv.$pa.spCommon.ajax(ajaxEmailStruct);        
+        spCommon.spCommon.ajax(ajaxEmailStruct);        
     }
 
     return {

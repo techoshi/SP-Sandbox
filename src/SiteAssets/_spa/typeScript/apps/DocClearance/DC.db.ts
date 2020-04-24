@@ -43,7 +43,7 @@ var Participants = {
 			LookupFieldName: 'RoleType'
 		},
 		{
-			type: 'FieldUser',
+			type: 'FieldText',
 			Title: 'Participant'
 		}
 	]

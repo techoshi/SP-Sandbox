@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import * as toastr from "toastr";
 import 'bootstrap';
 import * as spEnv from "./spa.spEnv";
+import * as spCommon from "./spa.spCommon";
 import * as spAsync from "./spa.spAsyncQueue";
 import * as spLoader from "./theLoader";
 import * as spPrompt from "./spa.spPrompt";
@@ -268,7 +269,7 @@ export var spDB = (function () {
     }
 
     function goDelete(m: any) {
-        spEnv.$pa.spCommon.ajax({
+        spCommon.spCommon.ajax({
             url: m.url + "/_api/web/lists/GetByTitle('" + m.Title + "')",
             method: 'POST',
             original: m,
@@ -424,7 +425,7 @@ export var spDB = (function () {
             if (m.url && m.Title && m.Description) {
                 list[m.Title] = {};
 
-                spEnv.$pa.spCommon.ajax({
+                spCommon.spCommon.ajax({
                     url: m.url + "/_api/web/lists",
                     method: 'POST',
                     original: m,
@@ -603,7 +604,7 @@ export var spDB = (function () {
                         done: crudRequestDone
                     };
 
-                    spEnv.$pa.spCommon.ajax(crudRequest);
+                    spCommon.spCommon.ajax(crudRequest);
                 }
             }
         }

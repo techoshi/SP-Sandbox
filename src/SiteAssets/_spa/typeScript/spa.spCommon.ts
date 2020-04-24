@@ -8,7 +8,7 @@ import * as spPrompt from "./spa.spPrompt";
 import * as spLoader from "./theLoader";
 import * as toastr from "toastr"; 
 
-spEnv.$pa.spCommon = (function () {
+export var spCommon = (function () {
     var thisSite = {
         objects: {} as any
     };
@@ -163,7 +163,7 @@ spEnv.$pa.spCommon = (function () {
             }
         };
 
-        spEnv.$pa.spCommon.ajax(thisAjax);
+        spCommon.ajax(thisAjax);
     }
     
     return {
