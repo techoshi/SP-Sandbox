@@ -1,6 +1,6 @@
 <li class="li-child-form">
   <hr />
-  <div class="remove-a-child-form">
+  <div class="a-child-form-remove">
     <a
       href="javascript:void(0)"
       name="DeleteChildEntry"
@@ -41,7 +41,7 @@
     {{/switch}}
   {{/if}}
   {{#if repeatable.hasSequence}}
-    <div class="reorder-a-child-form">
+    <div class="a-child-form-reorder">
       <div style="width: 20px; float: left;">
         <a href="javascript:void(0)">
           <i class="fa fa-caret-up move-child-up"></i>
@@ -52,11 +52,9 @@
       </div>
     </div>
   {{/if}}
-  {{#if repeatable.hasActive}}
-    <div class="active-a-child-form">
-      <div style="width: 20px; float: left; margin-top: 28px;">
-        <a href="javascript:void(0);"><i class="fa fa-circle-o"></i></a>
-      </div>
+  {{#repeatable.overloads}}
+    <div class="a-child-form-action">
+      {{{html}}}
     </div>
-  {{/if}}
+  {{/repeatable.overloads}}  
 </li>

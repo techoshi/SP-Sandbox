@@ -22,26 +22,35 @@
     width: 100%;
 }
 
-.remove-a-child-form
-{
-    height: 43px;
-    float: left;
-    padding-top: 20px;
-    padding-right: 12px;
-}
-
-.reorder-a-child-form
-{
-    height: 43px;
-    float: left;
-    padding-top: 15px;
-}
-
 .a-child-form
 {
-    min-width: 90%;
-    float: left;
+    width: 85%;
+    display: inline-block;
+    vertical-align: top;
 }
+
+.a-child-form-remove
+{
+    display: inline-block;
+    padding-top: 25px;
+    padding-right: 12px;
+    vertical-align: top;
+}
+
+.a-child-form-action
+{
+    display: inline-block;
+    vertical-align: top;
+}
+
+.a-child-form-reorder
+{
+    padding-top: 25px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+
 
 .card-header {
     padding: 0.25rem 0.25rem;
