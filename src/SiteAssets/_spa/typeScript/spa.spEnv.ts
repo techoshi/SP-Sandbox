@@ -134,6 +134,29 @@ export var $pa = {
 	spAsyncQueue: undefined as any
 }
 
+$pa.env.tabBody = require("../handlebars/sp_tab_container.hbs");
+$pa.env.fileAttachment = require("../handlebars/sp_file_attachment.hbs");
+$pa.env.fileInventory = require("../handlebars/sp_file_inventory_template.hbs");
+$pa.env.tabTemplate = require("../handlebars/tabs-template.hbs");
+$pa.env.anchorList = require("../handlebars/list-anchor-items-template.hbs");
+$pa.env.baseForm = require("../handlebars/sp_forms_template.hbs"); 
+$pa.env.deleteItem = require("../handlebars/sp_delete_item.hbs");
+$pa.env.baseModal = require("../handlebars/sp-modal-template.hbs");
+$pa.env.datatable_refresh_html = require("../handlebars/datatable_refresh_html.hbs");
+$pa.env.datatableNavigation = require("../handlebars/datatable_nav.hbs");
+$pa.env.spTableTemplate = require("../handlebars/sp_table_template.hbs");
+$pa.env.spJsTreeTemplate = require("../handlebars/sp_jstree_template.hbs");
+$pa.env.spSearchCondition = require("../handlebars/sp-search-condition.hbs");
+$pa.env.fillinModal = require("../handlebars/sp-modal-fillin-template.hbs");
+$pa.env.promptModal = require("../handlebars/prompt-modal-template.hbs");
+$pa.env.spDropDownOptions = require("../handlebars/sp-lookup-dropdown.hbs");
+$pa.env.bootstrapAlert = require("../handlebars/bootstrap-alert.hbs");
+$pa.env.spaAccordion = require("../handlebars/spa_accordion.hbs");
+$pa.env.spaAccordionCard = require("../handlebars/spa_accordion_card.hbs");
+$pa.env.spaChildFormRow = require("../handlebars/spa-child-form-row.hbs");
+$pa.env.thisNavLiTemplate = require("../handlebars/bootstrap-nav-li.hbs");
+$pa.env.thisNavDivTemplate = require("../handlebars/bootstrap-nav-div.hbs");
+
 require("./spa.spCommon");
 require("./spa.spEmail");
 require("./spa.spAsyncQueue");

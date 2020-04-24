@@ -315,30 +315,6 @@ spEnv.$pa.spCommon = (function () {
     }
 })();
 
-
-spEnv.$pa.env.tabBody = require("../handlebars/sp_tab_container.hbs");
-spEnv.$pa.env.fileAttachment = require("../handlebars/sp_file_attachment.hbs");
-spEnv.$pa.env.fileInventory = require("../handlebars/sp_file_inventory_template.hbs");
-spEnv.$pa.env.tabTemplate = require("../handlebars/tabs-template.hbs");
-spEnv.$pa.env.anchorList = require("../handlebars/list-anchor-items-template.hbs");
-spEnv.$pa.env.baseForm = require("../handlebars/sp_forms_template.hbs"); 
-spEnv.$pa.env.deleteItem = require("../handlebars/sp_delete_item.hbs");
-spEnv.$pa.env.baseModal = require("../handlebars/sp-modal-template.hbs");
-spEnv.$pa.env.datatable_refresh_html = require("../handlebars/datatable_refresh_html.hbs");
-spEnv.$pa.env.datatableNavigation = require("../handlebars/datatable_nav.hbs");
-spEnv.$pa.env.spTableTemplate = require("../handlebars/sp_table_template.hbs");
-spEnv.$pa.env.spJsTreeTemplate = require("../handlebars/sp_jstree_template.hbs");
-spEnv.$pa.env.spSearchCondition = require("../handlebars/sp-search-condition.hbs");
-spEnv.$pa.env.fillinModal = require("../handlebars/sp-modal-fillin-template.hbs");
-spEnv.$pa.env.promptModal = require("../handlebars/prompt-modal-template.hbs");
-spEnv.$pa.env.spDropDownOptions = require("../handlebars/sp-lookup-dropdown.hbs");
-spEnv.$pa.env.bootstrapAlert = require("../handlebars/bootstrap-alert.hbs");
-spEnv.$pa.env.spaAccordion = require("../handlebars/spa_accordion.hbs");
-spEnv.$pa.env.spaAccordionCard = require("../handlebars/spa_accordion_card.hbs");
-spEnv.$pa.env.spaChildFormRow = require("../handlebars/spa-child-form-row.hbs");
-spEnv.$pa.env.thisNavLiTemplate = require("../handlebars/bootstrap-nav-li.hbs");
-spEnv.$pa.env.thisNavDivTemplate = require("../handlebars/bootstrap-nav-div.hbs");
-
 if($('#DeltaPlaceHolderMain').length == 0)
 {
     $('#DeltaPlaceHolderMain')
