@@ -1,3 +1,4 @@
+
 <textarea id="{{uiID}}" type="text" class="form-control spa-textarea" 
     name="{{@root.name}}.{{Title}}" 
     data-entity="{{EntityPropertyName}}" 
@@ -8,3 +9,6 @@
     value="{{DefaultValue}}" 
     {{#if Required}}required{{/if}}
 />
+{{#if readOnly}}
+<label for="{{uiID}}" style="display: none;" name= /></label>
+{{/if}}
