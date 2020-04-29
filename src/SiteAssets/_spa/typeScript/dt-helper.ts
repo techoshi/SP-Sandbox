@@ -288,7 +288,15 @@ iGlobal.pager.init = function (model) {
     iGlobal.pager.recordType = model.recordType == '' || model.recordType == undefined || model.recordType == null ? 'rows' : model.recordType;
     iGlobal.pager.id = model.divID.substring(1, model.divID.length);
     iGlobal.pager.total = model.currentJsonData.recordsFiltered != undefined ? model.currentJsonData.recordsFiltered : 0;
-    iGlobal.pager.stop = model.params.length != undefined ? model.params.start + model.params.length : 0;
+
+    var truLength = 0;
+
+    if(model.currentJsonData && model.currentJsonData.data)
+    {
+        truLength = model.currentJsonData.data.length > model.params.length ? model.params.length : model.currentJsonData.data.length
+    }
+    
+    iGlobal.pager.stop = model.params.length != undefined ? model.params.start +  truLength: 0;
     iGlobal.pager.start = iGlobal.pager.stop > 0 ? (model.params.start + 1) : 0;
     iGlobal.pager.isFirstPage = model.params.start === 0 ? true : false;
     iGlobal.pager.isLastPage = model.params.start + model.params.length >= iGlobal.pager.total + 1 ? true : false;
@@ -299,8 +307,8 @@ iGlobal.pager.init = function (model) {
     iGlobal.pager.html();
     iGlobal.pager.navExtentions(model);
     //iGlobal.pager.append(model);
-
-    $(model.divID + '_wrapper .col-sm-6:eq(0) select.form-control:first').addClass('iris-pager-nav-btn').removeClass('form-control btn custom-select custom-select-sm form-control-sm').css({ 'border-right': 0 });
+    $(model.divID + '_wrapper .col-md-6').addClass("col-sm-12 dt-action-bar");
+    $(model.divID + '_wrapper .col-md-6:eq(0) select.form-control:first').addClass('iris-pager-nav-btn col-sm-12').removeClass('form-control btn custom-select custom-select-sm form-control-sm').css({ 'border-right': 0 });
     $(model.divID + '_info').parent().parent().hide();
 };
 
@@ -391,8 +399,8 @@ iGlobal.pager.navExtentions = function (model) {
     }
 
     $(model.divID + '_wrapper .iris-pager').remove();
-    //$(model.divID + '_wrapper .row:eq(0)').children().prop('class', 'col-sm-6');
-    $(model.divID + '_wrapper .row:eq(0) .col-sm-6:eq(0)').append(
+    //$(model.divID + '_wrapper .row:eq(0)').children().prop('class', 'col-md-6');
+    $(model.divID + '_wrapper .row:eq(0) .col-md-6:eq(0)').append(
         '<div id="' + iGlobal.pager.id + '_pager" class="iris-pager">' +
         '<div class="btn-group iris-pager" style="">' +
         iGlobal.pager.navHtml +
