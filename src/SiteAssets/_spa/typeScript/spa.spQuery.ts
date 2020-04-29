@@ -852,7 +852,7 @@ export var spQuery = (function () {
                     type: "POST",
                     url: triggerFetch(m)
                 },
-                "dom": m.dom != undefined ? m.dom : "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "dom": m.dom != undefined ? m.dom : "<'row'<'col-md-6'l><'col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
                 "oLanguage": m.oLanguage != undefined ? m.oLanguage : {
                     "sLengthMenu": "_MENU_",
                     "sSearch": "_INPUT_",
