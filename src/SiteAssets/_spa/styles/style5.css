@@ -33,7 +33,7 @@
     height: 35px;
     display: inline-block;
     margin-left: -1px;
-    padding: 7px 14px;
+    padding: 7px 10px;
     border: 1px solid #ced4da;
 }
 
@@ -150,4 +150,9 @@ fieldset[disabled] .btn {
 .list-anchor-items a {
     color: black;
     width: 100%;
+}
+
+.dt-action-bar
+{
+    padding-bottom: 5px;
 }
