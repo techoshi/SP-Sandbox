@@ -27,10 +27,10 @@ export var spCRUD = (function () {
         objects: {},
         lastSave: {
             mainSaveData: {
-                ID : undefined,
+                ID: undefined,
                 Name: undefined
             },
-            action: { action : undefined, loaded : false},
+            action: { action: undefined, loaded: false },
             owner: "",
             templateType: "0",
         }
@@ -38,21 +38,18 @@ export var spCRUD = (function () {
 
     var clearLastSave = function () {
         for (var prop in thisApp.lastSave) {
-            if(typeof thisApp.lastSave[prop] != "object")
-            { 
+            if (typeof thisApp.lastSave[prop] != "object") {
                 thisApp.lastSave[prop] = undefined;
             }
-            else{
-                if(Array.isArray(thisApp.lastSave[prop]))
-                {
+            else {
+                if (Array.isArray(thisApp.lastSave[prop])) {
                     thisApp.lastSave[prop] = [];
                 }
-                else{
-                    for (var prop2 in thisApp.lastSave[prop])
-                    {
+                else {
+                    for (var prop2 in thisApp.lastSave[prop]) {
                         thisApp.lastSave[prop2] = undefined;
                     }
-                }                
+                }
             }
         }
     };
@@ -72,7 +69,7 @@ export var spCRUD = (function () {
     }
 
     var currentRecord = {
-        FileLeafRef : ""
+        FileLeafRef: ""
     };
 
     function addUiGuidsToItem(m: any) {
@@ -135,16 +132,16 @@ export var spCRUD = (function () {
         spCommon.spCommon.getUserPermissions({
             urls: _.uniq(_.map(theseLists, 'path')),
             accountName: _spPageContextInfo.userLoginName,
-            done : function() {
+            done: function () {
                 var waitForPermissions = setInterval(function () {
                     if (theseLists && spEnv.spPermissions.loaded) {
                         clearInterval(waitForPermissions);
                         for (var i = 0; i < theseLists.length; i++) {
                             if (theseLists[i].loaded != true) {
                                 theseLists[i].loaded = false;
-        
+
                                 var expectedObject = theseLists[i];
-        
+
                                 thisApp.objects[theseLists[i].source] = expectedObject;
                                 if (spCommon.spCommon.checkUserPermission({
                                     path: expectedObject.path,
@@ -159,7 +156,7 @@ export var spCRUD = (function () {
                     }
                 }, 50);
             }
-        });        
+        });
     }
 
     function getListMeta(m: any) {
@@ -364,7 +361,7 @@ export var spCRUD = (function () {
                             response: a,
                             owner: Title,
                             parentForm: m.parentObject.owner,
-                            lastupdate : Date.now()
+                            lastupdate: Date.now()
                         };
                     }
 
@@ -824,7 +821,7 @@ export var spCRUD = (function () {
         var childObjectRoot;
         var modalSelector = "#modal-" + m.action + '-' + m.source;
 
-        
+
 
         thisParentObject.formType = m.action;
         var mainFormContent;
@@ -862,7 +859,7 @@ export var spCRUD = (function () {
 
                             if (hasChild) {
                                 if (childObject.html == undefined) {
-                                                                        
+
                                     childObject.loadActionButtons = false;
 
                                     childObject.d = typeof childObject.d == "object" ? childObject.d : {};
@@ -901,9 +898,9 @@ export var spCRUD = (function () {
             });
         }
 
-        $('body').append(crudModal);               
+        $('body').append(crudModal);
 
-        
+
 
         $(modalSelector).on("click", ".move-child-up", function () {
             var thisLi = $(this).parents('li');
@@ -921,11 +918,11 @@ export var spCRUD = (function () {
             var thisItem = $(this);
             var thisItemData = $(thisItem).data();
             var parentObject = _.find(theseLists, function (o) { return o.source == thisItemData.source; });
-            var thisLI = $(this).parents('li.li-child-form');    
-            var thisForm = $(thisLI).find('.form-container');  
+            var thisLI = $(this).parents('li.li-child-form');
+            var thisForm = $(thisLI).find('.form-container');
             var thisFormID = $(thisForm).find('input[data-name="ID"]');
-            var hasValue = $(thisFormID).val() ? true : false;                                   
-            
+            var hasValue = $(thisFormID).val() ? true : false;
+
             spPrompt.promptDialog.prompt({
                 promptID: 'Delete-Object',
                 body: 'Are you sure you want to delete this item?',
@@ -939,7 +936,7 @@ export var spCRUD = (function () {
                     active: false,
                     close: true,
                     click: function () {
-    
+
                     }
                 },
                 {
@@ -947,28 +944,26 @@ export var spCRUD = (function () {
                     active: true,
                     close: true,
                     click: function () {
-                        if(hasValue)
-                        {
+                        if (hasValue) {
                             var thisFormRequest = {
-                                formObjects : {
-                                    ID : $(thisFormID).val()
+                                formObjects: {
+                                    ID: $(thisFormID).val()
                                 },
-                                caller : thisLI,
-                                action : "delete",
-                                source : thisItemData.source,
-                                callerType : "child"
-                            };   
+                                caller: thisLI,
+                                action: "delete",
+                                source: thisItemData.source,
+                                callerType: "child"
+                            };
 
                             saveForm(thisFormRequest);
                         }
-                        else
-                        {
+                        else {
                             $(thisLI).remove();
                         }
                         //$(this).parents('.modal').modal('close');
                         //$($(this).parents('.modal')).modal('hide');
                         //deleteItemAttachment(thisObjectData);
-    
+
                     }
                 }
                 ]
@@ -1080,11 +1075,10 @@ export var spCRUD = (function () {
 
         initFormObject(m);
 
-        disableReadOnlyFields({ selector : modalSelector });
+        disableReadOnlyFields({ selector: modalSelector });
     }
 
-    var disableReadOnlyFields = function(m: any)
-    {
+    var disableReadOnlyFields = function (m: any) {
         $(m.selector).find('[data-readonly="true"]').prop('readonly', true).prop('disabled', true).addClass('no-select object-disabled');
     }
 
@@ -1114,7 +1108,7 @@ export var spCRUD = (function () {
                 var thisParentObject = thisApp.objects[m.source];
 
                 var currentChild = _.find(thisParentObject.children, { name: m.ownersource });
-               
+
                 if (e.fromButton == "add") {
                     currentChild.formType = "create";
                 }
@@ -1153,7 +1147,7 @@ export var spCRUD = (function () {
             thisApp.objects[firstChild.source].action = firstChild.action;
 
             initFormObject(thisApp.objects[firstChild.source]);
-            disableReadOnlyFields({ selector : '#' + firstChild.container + ' ul' });
+            disableReadOnlyFields({ selector: '#' + firstChild.container + ' ul' });
 
             var allForms = $('#' + firstChild.container + ' ul li .form-container');
 
@@ -1178,7 +1172,7 @@ export var spCRUD = (function () {
                     }
                 });
             }
-        }       
+        }
     };
 
     function initFormObject(m: any) {
@@ -1251,8 +1245,8 @@ export var spCRUD = (function () {
         var thisData = {
             owner: spCRUD.data().lastSave.owner,
             action: "edit",
-            dataPresent : true,
-            actionData : undefined
+            dataPresent: true,
+            actionData: undefined
         };
 
         if (foundRow.length > 0) {
@@ -1429,7 +1423,7 @@ export var spCRUD = (function () {
 
         if (m.action == 'view' || m.dataEditable == false) {
             $(m.formSelector).find('input, select, textarea').prop('readonly', true).prop('disabled', true).addClass('no-select object-disabled');
-        }        
+        }
 
         //for (var mo = 0; mo < modalTypes.length; mo++) {
         //    var thisMo = modalTypes[mo];
@@ -1482,7 +1476,7 @@ export var spCRUD = (function () {
                     m.lastSelectedRecord = a;
 
                     loadDataToDom(m, returnedData);
-                    
+
                     if (m.baseTemplate != '101') {
                         var attachments = [];
                         if (returnedData.AttachmentFiles && returnedData.AttachmentFiles.results) {
@@ -1555,13 +1549,13 @@ export var spCRUD = (function () {
                                 done: loadChildObject
                             });
                         };
-                        
+
                         for (var index = 0; index < m.children.length; index++) {
                             var thisChild = m.children[index];
                             var parentID = m.lastSelectedRecord.d.ID;
-                            
-                            
-                                                      
+
+
+
 
                             if (thisChild.condition) {
                                 var ConditionHB = spCommon.spCommon.addHandlebar(thisChild.condition);
@@ -1578,17 +1572,15 @@ export var spCRUD = (function () {
 
                             }
 
-                            if(thisChild.repeatable.overloads && Array.isArray(thisChild.repeatable.overloads) && thisChild.repeatable.overloads.length > 0)
-                            {
+                            if (thisChild.repeatable.overloads && Array.isArray(thisChild.repeatable.overloads) && thisChild.repeatable.overloads.length > 0) {
                                 for (let index = 0; index < thisChild.repeatable.overloads.length; index++) {
                                     const element = thisChild.repeatable.overloads[index];
-                                    
-                                    if(typeof element.bind == "function")
-                                    {
+
+                                    if (typeof element.bind == "function") {
                                         element.bind();
                                     }
-    
-                                } 
+
+                                }
                             }
                         }
                     }
@@ -1889,7 +1881,7 @@ export var spCRUD = (function () {
                         case "textarea":
                         case "text":
                             if ($(element).hasClass('sp-calendar')) {
-                                var thisDate:String;
+                                var thisDate: String;
                                 var tempDate = $(element).val();
                                 if (tempDate) {
                                     thisDate = moment(tempDate, ["MM-DD-YYYY"]).format();
@@ -1914,9 +1906,9 @@ export var spCRUD = (function () {
                             break;
                         case "select-multiple":
                             var multiValue = $(element).val();
-                            var finalValue = { 
+                            var finalValue = {
                                 "__metadata": { "type": "Collection(Edm.String)" },
-                                results : multiValue ? multiValue : []
+                                results: multiValue ? multiValue : []
                             };
 
                             formObjects[thisCurrentObject] = finalValue;
@@ -2024,8 +2016,7 @@ export var spCRUD = (function () {
         return { url: thisUrl, headers: z.headers };
     }
 
-    function saveModalForm(m: any)
-    {
+    function saveModalForm(m: any) {
         m.thisData = $(m.currentTarget).data();
         m.caller = '#' + m.thisData.caller;
         m.action = m.thisData.action;
@@ -2038,10 +2029,10 @@ export var spCRUD = (function () {
 
         var thisData = m.thisData;
         var caller = m.caller;
-        
+
         var thisActionType = m.action;
         var parentObject = _.find(theseLists, function (o) { return o.source == m.source; });
-        
+
         var baseTemplate = parentObject.baseTemplate;
 
         var destinationURL = '';
@@ -2063,12 +2054,11 @@ export var spCRUD = (function () {
 
             destinationURL = postStruct.url;
             headers = postStruct.headers;
-            if(m.action != "delete")
-            {
+            if (m.action != "delete") {
                 var processedFormData = getFormData({ formSelector: caller, formObjects: formObjects, /*thisData: thisData,*/ thisObject: thisApp.objects[m.source] });
                 formObjects = processedFormData.formObjects;
                 fileObjects = processedFormData.fileObjects;
-            
+
                 var childForms = [];
 
                 $('.child-wrapper .card').each(function (c, childElement) {
@@ -2088,10 +2078,8 @@ export var spCRUD = (function () {
             }
         }
 
-        function closeModalRefreshData(s: any)
-        {
-            if(m.callerType == "modal")
-            {
+        function closeModalRefreshData(s: any) {
+            if (m.callerType == "modal") {
                 var callerId = s.caller;
                 $(callerId).parents('.modal').modal('hide');
 
@@ -2105,39 +2093,254 @@ export var spCRUD = (function () {
                 }, 200);
             }
 
-            if(m.callerType == "child")
-            {   
+            if (m.callerType == "child") {
                 $(m.caller).remove();
             }
         }
 
         if (destinationURL && !spEnv.inTestMode) {
+            saveFormWorker();
+        }
+
+        function saveFormWorker() {
             if (baseTemplate == '100') {
-                var crudRequest2 = {
+                crudGenericList();
+            }
+            else if (baseTemplate == '101') {
+                crudDocumentLibrary();
+            }
+        }
+
+        function crudDocumentLibrary() {
+            var saveDocumentLibraryWithFile = {
+                parentObject: parentObject,
+                overwrite: false,
+                fileObjects: fileObjects,
+                thisData: thisData,
+                fail: function (f2: any) {
+                    var matchedError = false;
+                    if (matchedError == false && f2.responseJSON.error.message.value.indexOf('already exists')) {
+                        toastr.error(f2.responseJSON.error.message.value.replace('i:0#.f|membership|', ''), 'File already exists!');
+                        matchedError = true;
+                    }
+                },
+                done: undefined
+            };
+            switch (thisActionType.toLowerCase()) {
+                default:
+                case 'save':
+                    saveDocumentLibraryNew(saveDocumentLibraryWithFile);
+                    break;
+                case 'update':
+                    saveDocumentLibraryUpdate(saveDocumentLibraryWithFile);
+                    break;
+                case 'delete':
+                    deleteDocumentLibraryItem();
+                    break;
+            }
+        }
+
+        function deleteDocumentLibraryItem() {
+            var crudRequest3 = {
+                headers: headers,
+                method: 'POST',
+                url: destinationURL,
+                data: undefined,
+                done: function (a: any) {
+                    toastr.success('File has been deleted successfully submitted.', 'File deleted!');
+                },
+                fail: function (r: any) {
+                    var matchedError = false;
+                    if (matchedError == false && r.responseJSON.error.message.value.indexOf('list is related to an item in the')) {
+                        toastr.warning('Item cannot be deleted due to child relationships.', 'Failed to delete!');
+                        matchedError = true;
+                    }
+                    if (matchedError == false && r.responseJSON.error.message.value.indexOf('Item does not exist')) {
+                        toastr.warning(r.responseJSON.error.message.value, 'Refresh Data Table!');
+                        matchedError = true;
+                    }
+                },
+                always: function (a: any) {
+                    closeModalRefreshData(m);
+                    clearLastSave();
+                }
+            };
+            
+            spCommon.spCommon.ajax(crudRequest3);
+        }
+
+        function saveDocumentLibraryUpdate(saveDocumentLibraryWithFile: { parentObject: any; overwrite: boolean; fileObjects: any[]; thisData: any; fail: (f2: any) => void; done: any; }) {
+            headers = updateHeader(headers);
+            if (fileObjects && fileObjects.length > 0) {
+                var currentRecord = spCRUD.currentRecord();
+                if (fileObjects[0].name.toLowerCase() == currentRecord.FileLeafRef.toLowerCase()) {
+                    saveDocumentLibraryWithFile.overwrite = true;
+                    saveDocumentLibraryWithFile.done = function (r2: any) {
+                        switch (thisActionType.toLowerCase()) {
+                            default:
+                            case 'update':
+                                headers = updateHeader(headers);
+                                formObjects.__metadata = {
+                                    'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
+                                };
+                                var crudRequest2 = {
+                                    headers: headers,
+                                    method: 'POST',
+                                    url: r2.d.ListItemAllFields.__deferred.uri,
+                                    data: JSON.stringify(formObjects),
+                                    fail: function (a: any) {
+                                        toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                                    },
+                                    always: function (a: any) {
+                                        clearLastSave();
+                                    },
+                                    done: function (a: any) {
+                                        closeModalRefreshData(m);
+                                        toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
+                                    }
+                                };
+                                spCommon.spCommon.ajax(crudRequest2);
+                                break;
+                        }
+                    };
+                    triggerDocumentLibraryUpload(saveDocumentLibraryWithFile);
+                }
+                else {
+                    toastr.error('File name must be the same in order to update file.', 'Form Not Submitted!');
+                }
+            }
+            else {
+                formObjects.__metadata = {
+                    'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
+                };
+                var updateFileLeafRef = $(caller).data().FileLeafRef;
+                var url101Update = parentObject.path + "/_api/Web/GetFileByServerRelativePath(decodedurl='" + updateFileLeafRef + "')/ListItemAllFields";
+                var crudRequest21 = {
                     headers: headers,
                     method: 'POST',
-                    url: destinationURL,
-                    data: thisActionType.toLowerCase() == 'delete' ? undefined : JSON.stringify(formObjects),
+                    url: url101Update,
+                    data: JSON.stringify(formObjects),
                     fail: function (a: any) {
                         toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
                     },
-                    always: function (a: any) {
-
+                    done: function (a: any) {
+                        closeModalRefreshData(m);
+                        toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                     },
-                    done: undefined
+                    always: function (a: any) {
+                        saveChildrenAfterParentSave();
+                    }
                 };
+                spCommon.spCommon.ajax(crudRequest21);
+            }
+        }
 
-                crudRequest2.done = function (r: any) {
+        function saveChildrenAfterParentSave() {
+            var childRequestFail = function (a1: any) {
+                toastr.error('There was an issue saving a child row, please reload the parent item.', 'Child item not saved!');
+            };
+            for (var index = 0; index < childForms.length; index++) {
+                var childObject = childForms[index];
+                var childPostStruct = getDestionationUrl({
+                    action: childObject.formObjects.ID ? "update" : "save",
+                    path: childObject.thisObject.path,
+                    spType: childObject.thisObject.spType,
+                    caller: childObject.thisObject.caller,
+                    formObjects: childObject.formObjects,
+                    headers: childObject.formObjects.ID ? updateHeader({}) : {}
+                });
+                var crudChildRequest = {
+                    headers: childPostStruct.headers,
+                    method: 'POST',
+                    url: childPostStruct.url,
+                    data: childObject.thisActionType.toLowerCase() == 'delete' ? undefined : JSON.stringify(childObject.formObjects),
+                    fail: childRequestFail,
+                    always: function (a: any) {
+                    }
+                };
+                spCommon.spCommon.ajax(crudChildRequest);
+            }
+        }
 
+        function saveDocumentLibraryNew(saveDocumentLibraryWithFile: { parentObject: any; overwrite: boolean; fileObjects: any[]; thisData: any; fail: (f2: any) => void; done: any; }) {
+            saveDocumentLibraryWithFile.overwrite = false;
+            saveDocumentLibraryWithFile.done = function (r2: any) {
+                thisApp.lastSave.mainSaveData = r2.d;
+                thisApp.lastSave.owner = parentObject.owner;
+                thisApp.lastSave.action = { action: thisActionType.toLowerCase(), loaded: false };
+                thisApp.lastSave.templateType = baseTemplate;
+                switch (thisActionType.toLowerCase()) {
+                    default:
+                    case 'save':
+                        headers = updateHeader(headers);
+                        formObjects.__metadata = {
+                            'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
+                        };
+                        var crudRequest2 = {
+                            headers: headers,
+                            method: 'POST',
+                            url: r2.d.ListItemAllFields.__deferred.uri,
+                            data: JSON.stringify(formObjects),
+                            fail: function (a: any) {
+                                toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                            },
+                            always: function (a: any) {
+                            },
+                            done: function (a: any) {
+                                closeModalRefreshData(m);
+                                toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
+                            }
+                        };
+                        spCommon.spCommon.ajax(crudRequest2);
+                        break;
+                    case 'update':
+                        clearLastSave();
+                        break;
+                }
+            };
+            triggerDocumentLibraryUpload(saveDocumentLibraryWithFile);
+        }
+
+        function crudGenericList() {
+            var crudRequest2 = {
+                headers: headers,
+                method: 'POST',
+                url: destinationURL,
+                data: thisActionType.toLowerCase() == 'delete' ? undefined : JSON.stringify(formObjects),
+                fail: function (r: any) {
+                    switch (thisActionType.toLowerCase()) {
+                        default:
+                        case 'save':
+                            toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                            break;
+                        case 'update':
+                            toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
+                            break;
+                        case 'delete':
+                            var matchedError = false;
+                            if (matchedError == false && r.responseJSON.error.message.value.indexOf('list is related to an item in the')) {
+                                toastr.warning('Item cannot be deleted due to child relationshops.', 'Failed to delete!');
+                                matchedError = true;
+                            }
+                            if (matchedError == false && r.responseJSON.error.message.value.indexOf('Item does not exist')) {
+                                toastr.warning(r.responseJSON.error.message.value, 'Refresh Data Table!');
+                                matchedError = true;
+                            }
+                            break;
+                    }
+                    closeModalRefreshData(m);
+                },
+                always: function (a: any) {
+                },
+                done: function (r: any) {
                     switch (thisActionType.toLowerCase()) {
                         default:
                         case 'save':
                             var returnedData = r.d;
                             thisApp.lastSave.mainSaveData = r.d;
                             thisApp.lastSave.owner = thisData.owner;
-                            thisApp.lastSave.action = { action : thisActionType.toLowerCase(), loaded : false };
+                            thisApp.lastSave.action = { action: thisActionType.toLowerCase(), loaded: false };
                             thisApp.lastSave.templateType = baseTemplate;
-
                             setTimeout(function () {
                                 triggerGenericListUploads({
                                     parentObject: parentObject,
@@ -2149,7 +2352,6 @@ export var spCRUD = (function () {
                             toastr.success('Data has been successfully submitted.', 'Form Submitted!');
                             break;
                         case 'update':
-
                             setTimeout(function () {
                                 triggerGenericListUploads({
                                     parentObject: parentObject,
@@ -2160,272 +2362,21 @@ export var spCRUD = (function () {
                                     thisData: thisData
                                 });
                             }, 50);
-
                             toastr.success('Data has been successfully submitted.', 'Form Submitted!');
                             break;
                         case 'delete':
                             if (r && r.responseJSON && r.responseJSON.error && r.responseJSON.error.message && r.responseJSON.error.message.value.indexOf('list is related to an item in the')) {
                                 toastr.success('Data has been successfully deleted.', 'Item Deleted!');
-                            } else {
+                            }
+                            else {
                                 toastr.success('Data has been successfully deleted.', 'Item Deleted!');
-
                             }
                             break;
                     }
-
-                    closeModalRefreshData(m);                    
-                };
-
-                crudRequest2.fail = function (r: any) {
-                    switch (thisActionType.toLowerCase()) {
-                        default:
-                        case 'save':
-                            toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                            break;
-                        case 'update':
-                            toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                            break;
-                        case 'delete':
-                            var matchedError = false;
-
-                            if (matchedError == false && r.responseJSON.error.message.value.indexOf('list is related to an item in the')) {
-                                toastr.warning('Item cannot be deleted due to child relationshops.', 'Failed to delete!');
-                                matchedError = true;
-                            }
-
-                            if (matchedError == false && r.responseJSON.error.message.value.indexOf('Item does not exist')) {
-                                toastr.warning(r.responseJSON.error.message.value, 'Refresh Data Table!');
-                                matchedError = true;
-                            }
-
-                            break;
-                    }
-
-                    closeModalRefreshData(m);                                      
-                };
-
-                spCommon.spCommon.ajax(crudRequest2);
-            } else if (baseTemplate == '101') {
-                switch (thisActionType.toLowerCase()) {
-                    default:
-                    case 'save':
-
-                        triggerDocumentLibraryUpload({
-                            parentObject: parentObject,
-                            overwrite: false,
-                            fileObjects: fileObjects,
-                            thisData: thisData,
-                            fail: function (f2: any) {
-                                var matchedError = false;
-
-                                if (matchedError == false && f2.responseJSON.error.message.value.indexOf('already exists')) {
-                                    toastr.error(f2.responseJSON.error.message.value.replace('i:0#.f|membership|', ''), 'File already exists!');
-                                    matchedError = true;
-                                }
-
-                            },
-                            done: function (r2: any) {
-                                thisApp.lastSave.mainSaveData = r2.d;
-                                thisApp.lastSave.owner = parentObject.owner;
-                                thisApp.lastSave.action = { action : thisActionType.toLowerCase(), loaded : false };
-                                thisApp.lastSave.templateType = baseTemplate;
-
-                                switch (thisActionType.toLowerCase()) {
-                                    default:
-                                    case 'save':
-
-                                        headers = updateHeader(headers);
-
-                                        formObjects.__metadata = {
-                                            'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
-                                        };
-
-                                        var crudRequest2 = {
-                                            headers: headers,
-                                            method: 'POST',
-                                            url: r2.d.ListItemAllFields.__deferred.uri,
-                                            data: JSON.stringify(formObjects),
-                                            fail: function (a: any) {
-                                                toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                                            },
-                                            always: function (a: any) {
-
-                                            },
-                                            done: function (a: any) {
-                                                
-                                                closeModalRefreshData(m);
-                                                                                            
-                                                toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
-                                            }
-                                        };
-
-                                        spCommon.spCommon.ajax(crudRequest2);
-
-                                        break;
-                                    case 'update':
-                                        clearLastSave();
-
-                                        break;
-                                }
-                            }
-                        });
-                        break;
-                    case 'update':
-                        headers = updateHeader(headers);
-
-                        if (fileObjects && fileObjects.length > 0) {
-                            var currentRecord = spCRUD.currentRecord()
-
-                            if (fileObjects[0].name.toLowerCase() == currentRecord.FileLeafRef.toLowerCase()) {
-                                triggerDocumentLibraryUpload({
-                                    parentObject: parentObject,
-                                    overwrite: true,
-                                    fileObjects: fileObjects,
-                                    thisData: thisData,
-                                    fail: function (f2: any) {
-                                        var matchedError = false;
-
-                                        if (matchedError == false && f2.responseJSON.error.message.value.indexOf('already exists')) {
-                                            toastr.error(f2.responseJSON.error.message.value.replace('i:0#.f|membership|', ''), 'File already exists!');
-                                            matchedError = true;
-                                        }
-
-                                    },
-                                    done: function (r2: any) {
-
-                                        switch (thisActionType.toLowerCase()) {
-                                            default:
-                                            case 'update':
-
-                                                headers = updateHeader(headers);
-
-                                                formObjects.__metadata = {
-                                                    'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
-                                                };
-
-                                                var crudRequest2 = {
-                                                    headers: headers,
-                                                    method: 'POST',
-                                                    url: r2.d.ListItemAllFields.__deferred.uri,
-                                                    data: JSON.stringify(formObjects),
-                                                    fail: function (a: any) {
-                                                        toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                                                    },
-                                                    always: function (a: any) {
-                                                        clearLastSave();
-                                                    },
-                                                    done: function (a: any) {
-
-                                                        closeModalRefreshData(m);
-
-                                                        toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
-                                                    }
-                                                };
-
-                                                spCommon.spCommon.ajax(crudRequest2);
-
-                                                break;
-                                        }
-                                    }
-                                });
-
-                            } else {
-                                toastr.error('File name must be the same in order to update file.', 'Form Not Submitted!');
-                            }
-                        } else {
-                            formObjects.__metadata = {
-                                'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
-                            };
-                            var updateFileLeafRef = $(caller).data().FileLeafRef;
-                            var url101Update = parentObject.path + "/_api/Web/GetFileByServerRelativePath(decodedurl='" + updateFileLeafRef + "')/ListItemAllFields";
-
-                            var crudRequest21 = {
-                                headers: headers,
-                                method: 'POST',
-                                url: url101Update,
-                                data: JSON.stringify(formObjects),
-                                fail: function (a: any) {
-                                    toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                                },
-                                always: function (a: any) {
-
-                                    var childRequestFail = function (a1: any) {
-                                        toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
-                                    };
-
-                                    for (var index = 0; index < childForms.length; index++) {
-                                        var childObject = childForms[index];
-
-                                        var childPostStruct = getDestionationUrl({
-                                            action: childObject.formObjects.ID ? "update" : "save",
-                                            path: childObject.thisObject.path,
-                                            spType: childObject.thisObject.spType,
-                                            caller: childObject.thisObject.caller,
-                                            formObjects: childObject.formObjects,
-                                            headers: childObject.formObjects.ID ? updateHeader({}) : {}
-                                        });
-
-                                        var crudChildRequest = {
-                                            headers: childPostStruct.headers,
-                                            method: 'POST',
-                                            url: childPostStruct.url,
-                                            data: childObject.thisActionType.toLowerCase() == 'delete' ? undefined : JSON.stringify(childObject.formObjects),
-                                            fail: childRequestFail,
-                                            always: function (a: any) {
-
-                                            }
-                                        };
-
-                                        spCommon.spCommon.ajax(crudChildRequest);
-                                    }
-                                },
-                                done: function (a: any) {
-
-                                    closeModalRefreshData(m);
-
-                                    toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
-                                }
-                            };
-
-                            spCommon.spCommon.ajax(crudRequest21);
-                        }
-
-                        break;
-                    case 'delete':
-                        var crudRequest3 = {
-                            headers: headers,
-                            method: 'POST',
-                            url: destinationURL,
-                            data: undefined,
-                            done: function (a: any) {
-                                toastr.success('File has been deleted successfully submitted.', 'File deleted!');
-                            },
-                            fail: function (r: any) {
-
-                                var matchedError = false;
-
-                                if (matchedError == false && r.responseJSON.error.message.value.indexOf('list is related to an item in the')) {
-                                    toastr.warning('Item cannot be deleted due to child relationships.', 'Failed to delete!');
-                                    matchedError = true;
-                                }
-
-                                if (matchedError == false && r.responseJSON.error.message.value.indexOf('Item does not exist')) {
-                                    toastr.warning(r.responseJSON.error.message.value, 'Refresh Data Table!');
-                                    matchedError = true;
-                                }
-                            },
-                            always: function (a: any) {
-                                clearLastSave();
-                            }
-                        };
-
-                        closeModalRefreshData(m);                        
-
-                        spCommon.spCommon.ajax(crudRequest3);
-
-                        break;
+                    closeModalRefreshData(m);
                 }
-            }
+            };
+            spCommon.spCommon.ajax(crudRequest2);
         }
     }
 
@@ -2443,7 +2394,7 @@ export var spCRUD = (function () {
                     url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.parentObject.spType + "')/RootFolder/Files/add(overwrite=" + overWriteFile + ", url='" + m.fileObjects[thisFile].name + "')",
                     done: m.done,
                     fail: m.fail,
-                    loaded : false
+                    loaded: false
                 });
 
                 thesePendingFiles.push(itemForQueue);
@@ -2492,8 +2443,8 @@ export var spCRUD = (function () {
                     thisData: m.thisData,
                     returnedData: m.returnedData,
                     url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.parentObject.spType + "')/items(" + m.returnedData.ID + ")/AttachmentFiles/add(FileName='" + m.fileObjects[thisFile].name + "')",
-                    loaded : false
-                });                
+                    loaded: false
+                });
 
                 thesePendingFiles.push(itemForQueue);
             }
@@ -2600,7 +2551,7 @@ export var spCRUD = (function () {
             PrincipalAccountType: '',
             SearchPrincipalSource: undefined,
             ResolvePrincipalSource: undefined,
-            AllowMultipleValues : undefined,
+            AllowMultipleValues: undefined,
             MaximumEntitySuggestions: undefined,
             SharePointGroupID: undefined,
             Width: undefined
@@ -2692,10 +2643,10 @@ export var spCRUD = (function () {
 
             if ($(thisPickerPrePopulateObject).data('prepopulate')) {
                 var data = {
-                    users : []
+                    users: []
                 };
                 var peoplePicker = SPClientPeoplePicker.SPClientPeoplePickerDict[$(element).prop('id') + "_TopSpan"];
-                
+
                 var prepop = $(thisPickerPrePopulateObject).data('prepopulate');
                 if ($(thisPickerPrePopulateObject).data('multi')) {
                     data.users = prepop != undefined && prepop.results != undefined ? prepop.results : [];
@@ -2877,9 +2828,10 @@ export var spCRUD = (function () {
                 loadLists();
                 //spCommon.spCommon.theList(m);
                 setTimeout(function () {
-                    spLoader.theLoader.hide({
-                        id: 'initiateApp'
-                    });
+                    +
+                        spLoader.theLoader.hide({
+                            id: 'initiateApp'
+                        });
                 }, 2000);
             }
             else {
