@@ -45,7 +45,6 @@
 }
 
 
-
 .card-header {
   padding: 0.25rem 0.25rem;
   background-color: #eaeaea;
@@ -55,6 +54,16 @@
 .card-header button {
   color: #0069d9;
   font-weight: 700;
+}
+
+.accordion .card-header .collapsable:after {
+    font-family: 'FontAwesome';  
+    content: "\f139";
+    cursor: pointer;
+}
+.accordion .card-header .collapsable.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\f13a"; 
 }
 
 .add-child {
