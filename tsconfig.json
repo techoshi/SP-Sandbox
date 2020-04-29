@@ -7,6 +7,7 @@
       "sourceMap": true,
       "outDir": "compiled",
       "target": "es5",
+      "lib": ["dom", "es6", "es2015", "es2016"]
   },
   "include": [
       "src/**/*.ts", "src/SiteAssets/_spa/handlebars/helpers/case.js"

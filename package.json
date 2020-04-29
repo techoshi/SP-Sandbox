@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@babel/polyfill": "^7.8.7",
     "@types/bootstrap": "^4.3.2",
     "@types/datatables.net": "^1.10.19",
     "@types/handlebars": "^4.1.0",
@@ -10,7 +11,7 @@
     "@types/moment": "^2.13.0",
     "@types/select2": "^4.0.48",
     "@types/toastr": "^2.1.37",
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.4.1",
     "datatables.net": "^1.10.20",
     "datatables.net-autofill": "^2.3.4",
     "datatables.net-bs4": "^1.10.20",
@@ -31,7 +32,12 @@
     "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-typescript": "^7.9.0",
     "@types/sharepoint": "^2016.1.8",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-add-module-exports": "^1.0.2",
     "css-loader": "^3.5.2",
     "file-loader": "^6.0.0",
     "handlebars": "^4.7.6",

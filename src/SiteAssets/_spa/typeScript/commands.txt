@@ -69,8 +69,18 @@ npm install material-design-icons
 npm install font-awesome
 npm install font-awesome-loader --save-dev
 
-npm install node-sass extract-text-webpack-plugin transfer-webpack-plugin image-webpack-loader
+//npm install node-sass extract-text-webpack-plugin transfer-webpack-plugin image-webpack-loader
 npm install url-loader --save-dev
+
+
+npm install babel --save-dev
+npm install babel-cli --save-dev
+npm install babel-loader@7 --save-dev
+npm install @babel/preset-env
+npm install --save-dev @babel/preset-typescript
+npm install --save-dev @babel/core @babel/cli @babel/preset-env
+npm install --save @babel/polyfill
+npm install babel-plugin-add-module-exports --save-dev
 
 npm i
 

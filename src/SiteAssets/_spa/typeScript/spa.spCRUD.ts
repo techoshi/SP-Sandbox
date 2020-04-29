@@ -286,7 +286,7 @@ export var spCRUD = (function () {
 
             if (lookupDataPoints[m.owner] != undefined && lookupDataPoints[m.owner][m.listGuid] == undefined) {
                 lookupDataPoints[m.owner][element.guid].response = a;
-
+                lookupDataPoints[m.owner][element.guid].lastupdate = Date.now();
             }
 
             loadTheLookupData({
@@ -312,11 +312,13 @@ export var spCRUD = (function () {
                     source: m.source,
                     method: 'GET',
                     async: false,
-                    url: m.path + "/_api/web/lists(guid'" + element.guid + "')/items",
+                    url: m.path + "/_api/web/lists(guid'" + element.guid + "')/items?LookupCall=" + element.owner,
                     done: reloadLookupDataDone
                 });
             }
         }
+
+        globalThis.spaLookups = lookupDataPoints;
     }
 
     function getLookupData(m: any) {
@@ -361,7 +363,8 @@ export var spCRUD = (function () {
                             list: m.listGuid,
                             response: a,
                             owner: Title,
-                            parentForm: m.parentObject.owner
+                            parentForm: m.parentObject.owner,
+                            lastupdate : Date.now()
                         };
                     }
 
@@ -1940,20 +1943,24 @@ export var spCRUD = (function () {
                                         ids.push(theseValues[u].EntityData.SPGroupID);
                                         break;
                                     case "User":
-                                        var thisUser = spCommon.spAjax({
+
+                                        var thisUserRequest = <spaAjax>{};
+                                        {
                                             //source: f.thisData.owner,
-                                            d: undefined,
-                                            method: 'GET',
+                                            thisUserRequest.d = undefined;
+                                            thisUserRequest.method = 'GET';
                                             // headers: {
                                             //     "X-HTTP-Method": "PUT",
                                             //     "accept": "application/json; odata=verbose"
                                             //     },
-                                            async: false,
+                                            thisUserRequest.async = false;
                                             //data : { 'logonName': theseValues[u].Key },
-                                            url: spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'",
+                                            thisUserRequest.url = spCRUD.data().objects[parentData.owner].path + "/_api/web/siteusers(@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'";
                                             //url: spCRUD.data().objects[parentData.owner].path + "/_api/SP.UserProfiles.PeopleManager/GetPropertiesFor(accountName=@v)?@v='" + encodeURIComponent(theseValues[u].Key) + "'" 
                                             //url: spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
-                                        });
+                                        };
+
+                                        var thisUser = spCommon.spAjax(thisUserRequest);
 
                                         if (thisUser && thisUser['d']) {
                                             ids.push(thisUser['d'].Id);

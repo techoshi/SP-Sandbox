@@ -14,6 +14,7 @@ import * as spEnv from "./spa.spEnv";
 import * as spCRUD from "./spa.spCRUD";
 import * as spLoader from "./theLoader";
 import * as spData from "./dt-helper";
+import { spCommon, spAjax } from './spa.spCommon';
 
 export var spQuery = (function () {
 
@@ -82,7 +83,7 @@ export var spQuery = (function () {
                                 var orderable = true;
 
                                 var excludeFromOrder = ["MultiChoice", "Note"];
-                                
+
                                 if (excludeFromOrder.indexOf(thisRow.TypeAsString) > -1) {
                                     orderable = false;
                                 }
@@ -175,9 +176,9 @@ export var spQuery = (function () {
                 var element = theFilters[index];
                 filterConcat += index == 0 ? "(" : "";
 
-                filterConcat += element.filter + (index == (theFilters.length -1) ? "" : " and ");
+                filterConcat += element.filter + (index == (theFilters.length - 1) ? "" : " and ");
 
-                filterConcat += index == (theFilters.length -1) ? ")" : "";
+                filterConcat += index == (theFilters.length - 1) ? ")" : "";
             }
 
             selectQ += "&$filter=" + filterConcat;
@@ -189,9 +190,9 @@ export var spQuery = (function () {
     function getSelectStruct(m: any) {
 
         var selectStruct = {
-            columns : [],
-            filters : [],
-            expands : []
+            columns: [],
+            filters: [],
+            expands: []
         };
 
         m.itemCall = typeof m.itemCall == "boolean" ? m.itemCall : false;
@@ -211,28 +212,26 @@ export var spQuery = (function () {
         var loadedColumns = 0;
 
         //Load passed in filters
-        if(typeof m.queryFilter == "string")
-        {
-            selectStruct.filters.push({ type : "filter", filter : m.queryFilter });
+        if (typeof m.queryFilter == "string") {
+            selectStruct.filters.push({ type: "filter", filter: m.queryFilter });
         }
-        else if(typeof m.queryFilter == "object" && Array.isArray(m.queryFilter))
-        {
+        else if (typeof m.queryFilter == "object" && Array.isArray(m.queryFilter)) {
             for (var index = 0; index < m.queryFilter.length; index++) {
                 var element = m.queryFilter[index];
-                selectStruct.filters.push({ type : "filter", filter : element.queryFilter });
-            }            
+                selectStruct.filters.push({ type: "filter", filter: element.queryFilter });
+            }
         }
-        
+
         if (_.find(m.tableStructure.d.results, function (obj) {
-                return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
-            })) {
+            return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
+        })) {
             var Lookups = _.filter(m.tableStructure.d.results, function (obj) {
                 return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
             });
 
             if (_.find(Lookups, function (o) {
-                    return o.InternalName == 'Attachments';
-                })) {
+                return o.InternalName == 'Attachments';
+            })) {
                 hasAttachments = true;
                 selectStruct.columns.push({ type: "lookup", column: "AttachmentFiles", expand: "AttachmentFiles" });
             }
@@ -281,7 +280,7 @@ export var spQuery = (function () {
                     column: "EncodedAbsUrl"
                 });
 
-                if (!m.itemCall) {                    
+                if (!m.itemCall) {
                     selectStruct.filters.push({
                         type: "filter",
                         filter: "FSObjType eq 0"
@@ -293,8 +292,8 @@ export var spQuery = (function () {
 
         //Load Lookups
         if (_.find(m.tableStructure.d.results, function (obj) {
-                return excludeTheseTypes.indexOf(obj.TypeAsString) > -1;
-            })) {
+            return excludeTheseTypes.indexOf(obj.TypeAsString) > -1;
+        })) {
             var Lookups2 = _.filter(m.tableStructure.d.results, function (obj) {
                 return excludeTheseTypes.indexOf(obj.TypeAsString) > -1;
             });
@@ -352,6 +351,11 @@ export var spQuery = (function () {
         return orderbyPre + orderby;
     }
 
+    function triggerFetch(m: any) {
+        var trueURL = getRestQuery(m);
+        return _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo?justCall=true";
+    }
+
     function getRestQuery(m: any) {
         var thisSearch = "";
         if (m.search) {
@@ -382,7 +386,133 @@ export var spQuery = (function () {
         return m.tableStructure.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/items?" + useTop + m.ColumnsSelect + '&' + getOrderBy(m) + thisSearch;
     }
 
+    function promiseQuery(m: any) {
+
+        if (typeof m.isDatatable == "boolean" && m.isDatatable) {
+            spEnv.tables[m.xtra.tableName].callThePromise = "Loading";
+        }
+
+        var rootPath = m.xtra.tableStructure.path;
+
+        var useTop = "$skiptoken=" + encodeURIComponent("Paged=TRUE&p_ID=0") + "&$top=5000";
+
+        var newJsonData = {};
+
+        var columns = m.struct.columns.filter((objectType: { type: any; }) => objectType.type == "column");
+        var required = m.struct.columns.filter((objectType: { type: string; }) => objectType.type == "required");
+        var lookup = m.struct.columns.filter((objectType: { type: string; }) => objectType.type == "lookup");
+
+        var eachQueryStruct = [];
+        var eachAjax = [];
+
+        //Step 1 perform columnCalls
+        var columnChunks = _.chunk(columns, 5);
+        //var lookupChunks = _.chunk(lookup, 1);          
+        var lookupChunks: unknown[][] = [];
+
+        var grouped = _.groupBy(lookup, 'expand');
+
+        for (var thisCall in grouped) {
+            var thisGroup = grouped[thisCall] as unknown[];
+            lookupChunks.push(thisGroup);
+        }
+
+        //add required to each chunk
+        for (var index = 0; index < columnChunks.length; index++) {
+            var element = columnChunks[index];
+
+            columnChunks[index] = element.concat(required);
+            var currentStruct = { columns: columnChunks[index], filters: m.struct.filters, expand: m.struct.expand };
+            eachQueryStruct.push(currentStruct);
+            var getSelectParam = getSelect(currentStruct)
+            console.log(getSelectParam);
+
+            eachAjax.push({
+                url: m.xtra.tableStructure.path + "/_api/web/lists/getbytitle('" + m.xtra.tableName + "')/items?" + useTop + "&" + getSelectParam + "&" + getOrderBy(m.xtra),
+                method: "GET",
+                promise: true
+            })
+        }
+
+        for (var index = 0; index < lookupChunks.length; index++) {
+            var element = lookupChunks[index];
+
+            lookupChunks[index] = element.concat(required);
+            var currentStruct = { columns: lookupChunks[index], filters: m.struct.filters, expand: m.struct.expand };
+            eachQueryStruct.push(currentStruct);
+            var getSelectParam = getSelect(currentStruct)
+            console.log(getSelectParam);
+
+            eachAjax.push({
+                url: m.xtra.tableStructure.path + "/_api/web/lists/getbytitle('" + m.xtra.tableName + "')/items?" + useTop + "&" + getSelectParam + "&" + getOrderBy(m.xtra),
+                method: "GET",
+                promise: true,
+                headers: { Accept: "application/json" }
+            })
+        }
+
+        //console.log(eachAjax);
+
+        var ajaxes = [];
+        eachAjax.forEach(element => {
+            ajaxes.push(spAjax(element))
+        });
+
+        //@ts-ignore
+        return Promise.all(ajaxes).then(function (returnedData) {
+            var mergedRecs = [];
+            console.log(returnedData);
+
+            //Each Array from Promise
+            for (let index = 0; index < returnedData.length; index++) {
+                var element;
+                if (returnedData[index] && returnedData[index].d) {
+                    element = returnedData[index].d.results;
+                }
+
+                if (returnedData[index] && returnedData[index].value) {
+                    element = returnedData[index].value;
+                }
+
+
+                if (mergedRecs.length == 0) {
+                    mergedRecs = mergedRecs.concat(element);
+                }
+                else {
+                    //Rows of Current Results
+                    for (let index = 0; index < element.length; index++) {
+                        const currentRow = element[index];
+
+                        var currentID = currentRow.ID;
+
+                        var RowToBeMerged = _.find(mergedRecs, function (o) { if (o.ID == currentID) { return true } else { return false } });
+
+                        if (RowToBeMerged != undefined) {
+                            _.merge(RowToBeMerged, currentRow);
+                        }
+                    }
+                }
+                //var merged = _.merge(_.keyBy(mergedRecs, 'ID'), _.keyBy(mergedRecs, 'ID'));
+                var merged = _.unionBy(mergedRecs, element, "ID");
+                mergedRecs = _.values(merged);
+            }
+            console.log(mergedRecs);
+
+            return mergedRecs;
+        });
+    }
+
+    function promiseData(m: any) {
+        var newJsonData = {};
+        var selectStruct = ""; //getSelectStruct(m); 
+
+        selectStruct = selectStruct;
+
+        return newJsonData;
+    }
+
     function conformDataToSharePointRest(e: any, settings: any, data: any, xtra: any) {
+
         var thisTable = $('#' + settings.sInstance).data('table');
 
         var thisOrder = data.order;
@@ -403,16 +533,198 @@ export var spQuery = (function () {
             spEnv.tables[thisTable].originalCaller.currentCall = newRestQ;
 
             //tables[thisTable].ajax.url('#' + newRestQ);
-            if (data.start == 0) {
-                spEnv.tables[thisTable].ajax.url(newRestQ);
-            } else {
-                spEnv.tables[thisTable].ajax.url(getRestCount(thisTableMeta));
+            if (false) {
+                if (data.start == 0) {
+                    spEnv.tables[thisTable].ajax.url(newRestQ);
+                } else {
+                    spEnv.tables[thisTable].ajax.url(getRestCount(thisTableMeta));
+                }
             }
         }
 
         data.columns = [];
         data.order = [];
+
         //console.log('Query by:'  + settings.sInstance);
+    }
+
+    function conformRestDataToDataTable(e: any, settings: any, json: any, xhr: any, xtra: any) {
+        json = json ? json : {};
+        json.value = json.value ? json.value : [];
+
+        var struct = getSelectStruct(xtra);
+
+        var returnedData = [];
+
+        //Compare Previous request for change
+        if (spEnv.tables[xtra.tableName].originalCaller.previousXHR) {
+            const currentXHR = spEnv.tables[xtra.tableName].originalCaller.xhrReq;
+            const previosXHR = spEnv.tables[xtra.tableName].originalCaller.previousXHR;
+            if (!_.isEqual(currentXHR.order, previosXHR.order) || !_.isEqual(currentXHR.search, previosXHR.search)) {
+                spEnv.tables[xtra.tableName].originalCaller.callThePromise = "Load";
+            }
+        }
+
+        if (spEnv.tables[xtra.tableName].originalCaller.callThePromise == "Load") {
+            var returnedData2 = promiseQuery({
+                isDatatable: true,
+                source: spEnv.tables[xtra.tableName].originalCaller,
+                struct: struct,
+                xtra: xtra
+            }).then(function (thisPromiseData: any) {
+
+                var ServerCall = Array.isArray(thisPromiseData);
+
+                returnedData = thisPromiseData;
+                var json2 = { value: [], recordsTotal: 0, recordsFiltered: 0, spData: [], fullData: [], data: {}, start: 0, length: 0 };
+                if (returnedData.length > 0) {
+                    json2.value = returnedData;
+
+                    var ServerCall = Array.isArray(json2.value);
+
+                    if (!$('table#' + xtra.tableName).is(':visible')) {
+                        json2.data = [];
+                        json2.start = 0;
+                        json2.length = defaultPageSize;
+                        json2.recordsTotal = 0;
+                        json2.recordsFiltered = 0;
+
+                        return json2;
+                    }
+
+                    if (ServerCall) {
+                        json2.spData = JSON.parse(JSON.stringify(json2.value));
+
+                        ParseSharePointDataToSpa(json2);
+
+                        var thisTable = $('#' + settings.sInstance).data('table');
+                        var thisTableMeta = spEnv.tables[thisTable].originalCaller;
+
+                        json2.recordsTotal = json2.value.length; // ListCount.d.ItemCount;
+                        json2.recordsFiltered = json2.value.length;
+
+                        json2.fullData = json2.value;
+                        var tempData = returnPagedData({
+                            meta: spEnv.tables[thisTable].originalCaller.xhrReq,
+                            data: json2.fullData,
+                            start: 0,
+                            length: spEnv.tables && spEnv.tables[xtra.tableName] && spEnv.tables[xtra.tableName].originalCaller && spEnv.tables[xtra.tableName].originalCaller.xhrReq ? spEnv.tables[xtra.tableName].originalCaller.xhrReq.length : defaultPageSize
+                        });
+
+                        json2.data = tempData.data;
+                        json2.recordsTotal = tempData.recordsTotal;
+                        json2.recordsFiltered = tempData.recordsFiltered;
+                        json2.length = xtra.xhrReq && xtra.xhrReq.length ? xtra.xhrReq.length : defaultPageSize;;
+                        delete json2.value;
+                    }
+
+                    if (spEnv.mGlobal[xtra.path][xtra.tableName] != undefined) {
+                        spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData = json2;
+                    }
+
+                    //spEnv.tables[xtra.tableName].ajax.reload(null, false);
+                }
+
+                spEnv.tables[xtra.tableName].ajax.reload(null, false);
+                spEnv.tables[xtra.tableName].originalCaller.callThePromise = "Loaded";
+            });
+        } else {
+            json.fullData = spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData.fullData;
+            var ogCaller = spEnv.tables[xtra.tableName];
+            var ogMGlobal = spEnv.mGlobal[xtra.path][xtra.tableName];
+
+            var tempData2 = returnPagedData({
+                meta: {},
+                data: ogMGlobal.currentJsonData.fullData,
+                start: ogCaller.originalCaller.xhrReq.start,
+                length: ogCaller.originalCaller.xhrReq.length
+            });
+            json.data = tempData2.data;
+            json.recordsTotal = tempData2.recordsTotal;
+            json.recordsFiltered = tempData2.recordsFiltered;
+            json.spData = spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData.spData;
+        }
+
+        if (json.FormDigestValue) {
+            $('#__REQUESTDIGEST').val(json.FormDigestValue);
+            // json.data = [];
+            // json.recordsTotal = 0;
+            // json.recordsFiltered = 0;
+        }
+
+        var tempCurrentJson = spEnv.mGlobal.page[xtra.tableName];
+        // if(tempCurrentJson.currentJsonData && tempCurrentJson.currentJsonData.data != undefined)
+        if (spEnv.tables[xtra.tableName].originalCaller.callThePromise == "Load") {
+            //     // var tempData = spEnv.mGlobal.page[xtra.tableName].currentJsonData;
+            //     // json.data = tempData.spData;
+            //     // json.recordsTotal = tempData.recordsTotal;
+            //     // json.recordsFiltered = tempData.recordsFiltered;
+            //     // json.start = tempData.start;
+            //     // json.length = tempData.length; 
+            //     // json.spData = tempData.spData;  
+            // }
+            // else
+            // {
+            json.data = [];
+            json.recordsTotal = 0;
+            json.recordsFiltered = 0;
+            json.start = 0;
+            json.length = xtra.xhrReq && xtra.xhrReq.length ? xtra.xhrReq.length : defaultPageSize;
+        }
+
+        spEnv.tables[xtra.tableName].originalCaller.previousXHR = spEnv.tables[xtra.tableName].originalCaller.xhrReq;
+
+        return json;
+
+        function ParseSharePointDataToSpa(json: any) {
+            for (var d = 0; d < json.value.length; d++) {
+                var d2 = json.value[d];
+                for (var o in d2) {
+                    if (o.includes('@odata.navigationLinkUrl', 0)) {
+                        var scanThisName = o.replace('@odata.navigationLinkUrl', '');
+                        if (d2[scanThisName] == undefined) {
+                            d2[scanThisName] = '';
+                        }
+                    }
+                    if (d2[o] != undefined && typeof d2[o] == 'object') {
+                        if (Array.isArray(d2[o])) {
+                            var content = JSON.stringify(d2[o]);
+                            d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content.length + '" data-typeof="Array">' + JSON.stringify(d2[o]) + '</span><span class="lync-presence"></span>';
+                        }
+                        else {
+                            if (Object.keys(d2[o]).length == 1 && d2[o]["__deferred"] != undefined) {
+                                d2[o] = "";
+                            }
+                            else {
+                                var content2 = JSON.stringify(d2[o]);
+                                d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content2.length + '" data-typeof="Object">' + content2 + '</span><span class="lync-presence"></span>';
+                            }
+                        }
+                    }
+                    else if (d2[o] == undefined) {
+                        d2[o] = '';
+                    }
+                    else if (typeof d2[o] === "boolean") {
+                        if (o.toLowerCase() == "attachments") {
+                            if (d2[o]) {
+                                d2[o] = spEnv.$pa.env.fileAttachment();
+                            }
+                            else {
+                                d2[o] = '';
+                            }
+                        }
+                        else {
+                            if (d2[o]) {
+                                d2[o] = "Yes";
+                            }
+                            else {
+                                d2[o] = "No";
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     function getDataDictionaryQuery(m: any) {
@@ -426,112 +738,13 @@ export var spQuery = (function () {
         return m.tableStructure.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/ItemCount";
     }
 
-    function conformRestDataToDataTable(e: any, settings: any, json: any, xhr: any, xtra: any) {
-        json = json ? json : {};
-        json.value = json.value ? json.value : [];
-
-        var ServerCall = Array.isArray(json.value);
-
-        if (!$('table#' + xtra.tableName).is(':visible')) {
-            json.data = [];
-            json.start = 0;
-            json.length = defaultPageSize;
-            json.recordsTotal = 0;
-            json.recordsFiltered = 0;
-
-            return json;
-        }
-
-        if (ServerCall) {
-            json.spData = JSON.parse(JSON.stringify(json.value));
-
-            for (var d = 0; d < json.value.length; d++) {
-                var d2 = json.value[d];
-
-                for (var o in d2) {
-                    if (o.includes('@odata.navigationLinkUrl', 0)) {
-                        var scanThisName = o.replace('@odata.navigationLinkUrl', '');
-                        if (d2[scanThisName] == undefined) {
-                            d2[scanThisName] = '';
-                        }
-                    }
 
 
-                    if (d2[o] != undefined && typeof d2[o] == 'object') {
-                        if (Array.isArray(d2[o])) {
-                            var content = JSON.stringify(d2[o]);
 
-                            d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content.length + '" data-typeof="Array">' + JSON.stringify(d2[o]) + '</span><span class="lync-presence"></span>';
-                        } else {
-                            var content2 = JSON.stringify(d2[o]);
-
-                            d2[o] = '<span class="hide-json" data-type="JSON" data-size="' + content2.length + '" data-typeof="Object">' + content2 + '</span><span class="lync-presence"></span>';
-                        }
-                    } else if (d2[o] == undefined) {
-                        d2[o] = '';
-                    } else if (typeof d2[o] === "boolean") {
-                        if (o.toLowerCase() == "attachments") {
-                            if (d2[o]) {
-                                d2[o] = spEnv.$pa.env.fileAttachment();
-                            } else {
-                                d2[o] = '';
-                            }
-                        } else {
-                            if (d2[o]) {
-                                d2[o] = "Yes";
-                            } else {
-                                d2[o] = "No";
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            var thisTable = $('#' + settings.sInstance).data('table');
-            var thisTableMeta = spEnv.tables[thisTable].originalCaller;
-
-            json.recordsTotal = json.value.length; // ListCount.d.ItemCount;
-            json.recordsFiltered = json.value.length;
-
-            json.fullData = json.value;
-            var tempData = returnPagedData({
-                meta: spEnv.tables[thisTable].originalCaller.xhrReq,
-                data: json.fullData,
-                start: 0,
-                length: spEnv.tables && spEnv.tables[xtra.tableName] && spEnv.tables[xtra.tableName].originalCaller && spEnv.tables[xtra.tableName].originalCaller.xhrReq ? spEnv.tables[xtra.tableName].originalCaller.xhrReq.length : defaultPageSize
-            });
-
-            json.data = tempData.data;
-            json.recordsTotal = tempData.recordsTotal;
-            json.recordsFiltered = tempData.recordsFiltered;
-
-            delete json.value;
-        } else {
-            json.fullData = spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData.fullData;
-            var tempData2 = returnPagedData({
-                meta: {},
-                data: spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData.fullData,
-                start: spEnv.tables[xtra.tableName].originalCaller.xhrReq.start,
-                length: spEnv.tables[xtra.tableName].originalCaller.xhrReq.length
-            });
-            json.data = tempData2.data;
-            json.recordsTotal = tempData2.recordsTotal;
-            json.recordsFiltered = tempData2.recordsFiltered;
-            json.spData = spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData.spData;
-        }
-
-        if (spEnv.mGlobal[xtra.path][xtra.tableName] != undefined) {
-            spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData = json;
-
-        }
-
-        return json;
-    }
 
     function returnPagedData(m: any) {
         var pagedArray = [];
-        var data = JSON.parse(JSON.stringify(m.data));
+        var data = m.data == undefined ? [] : JSON.parse(JSON.stringify(m.data));
         var startRow = m.start > 0 ? m.start : 0;
         var endRow = startRow + m.length;
 
@@ -543,12 +756,12 @@ export var spQuery = (function () {
             var searchStageData = data;
 
             var conditionSyntax = spEnv.$pa.env.spSearchCondition({
-                objectName : "o",
+                objectName: "o",
                 columns: m.meta.columns,
                 search: m.meta.search
             });
 
-            var searchData = _.filter(searchStageData, function (o) {                
+            var searchData = _.filter(searchStageData, function (o) {
                 return eval(conditionSyntax);
             });
 
@@ -567,8 +780,7 @@ export var spQuery = (function () {
         return {
             data: pagedArray,
             recordsTotal: data.length, // ListCount.d.ItemCount;
-            recordsFiltered: recordsFiltered
-
+            recordsFiltered: recordsFiltered            
         };
     }
 
@@ -614,6 +826,7 @@ export var spQuery = (function () {
         var owner = $(this).data('owner');
 
         if (spEnv.tables[owner]) {
+            spEnv.tables[owner].originalCaller.callThePromise = "Load";
             spEnv.tables[owner].ajax.reload();
         }
     }
@@ -636,8 +849,8 @@ export var spQuery = (function () {
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    type: "Get",
-                    url: getRestQuery(m)
+                    type: "POST",
+                    url: triggerFetch(m)
                 },
                 "dom": m.dom != undefined ? m.dom : "<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
                 "oLanguage": m.oLanguage != undefined ? m.oLanguage : {
@@ -669,14 +882,15 @@ export var spQuery = (function () {
                             if (thisObjectData && thisObjectData.owner && spEnv.tables && spEnv.tables[thisObjectData.owner]) {
                                 spEnv.tables[m.tableName].search($(this).val()).draw();
                             }
-                        }, 1000));
+                        }, 1000)
+                    );
 
                     $('#' + m.tableName + ' input[type="search"]').addClass('iris-pager-nav');
                     var thisParent = $('#' + m.tableName + '_filter').parent();
                     $(thisParent).addClass('iris-text-align-right');
                     $('#' + m.tableName + '_filter').addClass('iris-inline-block');
-                    $('#' + m.tableName + '_filter').parent('div').append('<div id="' + m.tableName + '_right_actions" class="iris-right-actions"></div>')
-                    
+                    $('#' + m.tableName + '_filter').parent('div').append('<div id="' + m.tableName + '_right_actions" class="iris-right-actions"></div>');
+
                     $('#' + m.tableName + '_right_actions').append(spEnv.$pa.env.datatable_refresh_html({
                         owner: m.tableName
                     }));
@@ -832,6 +1046,7 @@ export var spQuery = (function () {
                 }).DataTable(DataTableInMemory);
 
             spEnv.tables[m.tableName].originalCaller = m;
+            spEnv.tables[m.tableName].originalCaller.callThePromise = "Load";
         }
     }
 

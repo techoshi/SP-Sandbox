@@ -31,28 +31,28 @@ interface JQuery {
     moveUp: any
 }
 
-interface SharePointListStruct { 
-    url: string; 
+interface SharePointListStruct {
+    url: string;
     Title: string;
-    type : string; 
+    type: string;
     Description: string;
     hasSequence: boolean,
     hasActive: boolean,
-    Columns : {
-        type : string; 
-        Title : string;
-        MaxLength : number;
+    Columns: {
+        type: string;
+        Title: string;
+        MaxLength: number;
         AllowMultipleValues: boolean;
         LookupFieldName: string;
-        LookupListId : {
-            listName : string
+        LookupListId: {
+            listName: string
         }
     }[];
 }
 
 interface spaRepeatableOverload {
-    html : string,
-    bind : any
+    html: string,
+    bind: any
 }
 
 interface spaRepeatable {
@@ -64,46 +64,62 @@ interface spaRepeatable {
 
 interface spaLoadListStruct {
     id: string;
-    name : string;
-    tabTitle : string;
-    path : string;
+    name: string;
+    tabTitle: string;
+    path: string;
     search: string[],
-    singular : string;
+    singular: string;
     columns: {
-        visible : string[],
-        hidden : string[],
+        visible: string[],
+        hidden: string[],
         readOnly: string[]
     },
-    table : any,
-    children : spaLoadListStruct[],
+    table: any,
+    children: spaLoadListStruct[],
     hidden: boolean,
     sectionName: string,
     condition: string,
-    repeatable : spaRepeatable,
-    metaDataVisible : boolean,
-    wholeForm : boolean,
-    dataEditable : boolean,
-    form : any,
-    config : boolean,
-    availableParent : string[],
-    relationships : any[]
-    formType : string;
+    repeatable: spaRepeatable,
+    metaDataVisible: boolean,
+    wholeForm: boolean,
+    dataEditable: boolean,
+    form: any,
+    config: boolean,
+    availableParent: string[],
+    relationships: any[]
+    formType: string;
     action: string;
-    selectedRow : any;
-    actionData : any;
-    lastSelectedRecord : any;
-    baseTemplate : any;
+    selectedRow: any;
+    actionData: any;
+    lastSelectedRecord: any;
+    baseTemplate: any;
     formSelector: any;
-    queryFilter : any;
+    queryFilter: any;
     dataPresent: any;
-    
+
     thisVar: string;
     thisObjectLower: string;
     owner: string;
-    source : string;
+    source: string;
     loaded: boolean;
     title: string;
     spType: string;
     loadActionButtons: boolean;
-    
+
+}
+
+interface spaAjax {
+    method: string;
+    url: string;
+    data: any;
+    d: any;
+    async: boolean,
+    processData: boolean;
+    headers: any;
+    retryLimit: number;
+    tryCount: number;
+    done: any;
+    fail : any;
+    always: any;
+    promise: boolean;
 }

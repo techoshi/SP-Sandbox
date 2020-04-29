@@ -6,9 +6,9 @@ import * as spEnv from "./spa.spEnv";
 import * as spAsync from "./spa.spAsyncQueue";
 import * as spPrompt from "./spa.spPrompt";
 import * as spLoader from "./theLoader";
-import * as toastr from "toastr"; 
+import * as toastr from "toastr";
 
-export async function spAjax(m:any) {
+export async function spAjax(m: spaAjax) {
     /*var source = m.source;
 
     var thisData =  {
@@ -56,6 +56,10 @@ export async function spAjax(m:any) {
             }
         });
 
+    if (typeof m.promise == "boolean" && m.promise) {
+        return ajaxReturn;
+    }
+
     if (m.async == false && ajaxReturn.status == 200) {
         return ajaxReturn.responseJSON;
     }
@@ -67,16 +71,16 @@ export var spCommon = (function () {
     };
 
     var continueToUpdateContext = true;
-    
+
     function updateDigest() {
         spAjax2({
             url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
             async: true,
             method: 'POST',
-            done: function (r:any) {
+            done: function (r: any) {
                 $('#__REQUESTDIGEST').val(r.d.GetContextWebInformation.FormDigestValue);
             },
-            fail: function (response:any, errorCode:any, errorMessage:any) {
+            fail: function (response: any, errorCode: any, errorMessage: any) {
                 continueToUpdateContext = false;
 
                 spPrompt.promptDialog.prompt({
@@ -91,8 +95,8 @@ export var spCommon = (function () {
                             active: true,
                             close: true,
                             click: function () {
-                            	spLoader.theLoader.show({ id : 'reload-page' });
-                            	setTimeout(function () { window.location.reload(); }, 500);
+                                spLoader.theLoader.show({ id: 'reload-page' });
+                                setTimeout(function () { window.location.reload(); }, 500);
                             }
                         }]
                 });
@@ -123,11 +127,11 @@ export var spCommon = (function () {
         //toastr.options.extendedTimeOut = "0"
     }
 
-    function spAjax2(m:any) {
+    function spAjax2(m: any) {
         spAjax(m);
     }
 
-    function getExtension(path:string) {
+    function getExtension(path: string) {
         var basename = path.split(/[\\/]/).pop(),  // extract file name from full path ...
             // (supports `\\` and `/` separators)
             pos = basename.lastIndexOf(".");       // get last position of `.`
@@ -140,19 +144,19 @@ export var spCommon = (function () {
 
     initSettings();
 
-    function getRelativeURL(m:any) {
+    function getRelativeURL(m: any) {
         if (typeof m.url == 'string') {
             return m.url.replace(/^.*\/\/[^\/]+/, '');
         }
     }
 
-    function getSiteLists(m:any) {
+    function getSiteLists(m: any) {
 
         var thisAjax = {
             source: m.source,
             method: 'GET',
             url: m.path + "/_api/web/lists?$filter=Hidden eq false", // and BaseType ne 1",
-            done: function (a:any) {
+            done: function (a: any) {
 
                 thisSite.objects = a;
 
@@ -160,30 +164,30 @@ export var spCommon = (function () {
                     m.afterCompletion();
                 }
             },
-            fail: function (a:any) {
+            fail: function (a: any) {
             },
-            always: function (a:any) {
+            always: function (a: any) {
                 //loadLists();
             }
         };
 
         spCommon.ajax(thisAjax);
     }
-    
+
     return {
-        ajax: function (m:any) { return spAjax2(m); },
-        getExtension: function (m:any) {
+        ajax: function (m: any) { return spAjax2(m); },
+        getExtension: function (m: any) {
             return getExtension(m);
         },
-        addHandlebar: function (o:any) {
+        addHandlebar: function (o: any) {
             return o ? Handlebars.compile(o) : function () { console.log('Handlebar Not Present'); };
         },
-        addHandlebarPartial: function (m:any) {
+        addHandlebarPartial: function (m: any) {
             if (typeof m == 'object' && m.name) {
                 return m.content ? Handlebars.registerPartial(m.name, m.content) : Handlebars.registerPartial(m.name, '');
             }
         },
-        ordinal_suffix_of: function (i:any) {
+        ordinal_suffix_of: function (i: any) {
             var j = i % 10,
                 k = i % 100;
             if (j == 1 && k != 11) {
@@ -197,110 +201,104 @@ export var spCommon = (function () {
             }
             return i + "th";
         },
-        getRelativeURL: function (m:any) {
+        getRelativeURL: function (m: any) {
             return getRelativeURL(m);
         },
-        theList: function (m:any) { return thisSite; },
-        getUserPermissions : function (m:any)
-		{
-			for (var i = 0; i < m.urls.length; i++) { 
-				
-				//console.log(m.urls[i]);
-				
-				var site = { path : m.urls[i], privileges : [] };
-			
-				var ajaxStruct = {
-					url : m.urls[i] + "/_api/web/getusereffectivepermissions(@u)?@u='" + encodeURIComponent("i:0#.f|membership|" + m.accountName) + "'",
-					method : 'GET',
-					async: true,
-					done : function (a:any) { 
+        theList: function (m: any) { return thisSite; },
+        getUserPermissions: function (m: any) {
+            for (var i = 0; i < m.urls.length; i++) {
+
+                //console.log(m.urls[i]);
+
+                var site = { path: m.urls[i], privileges: [] };
+
+                var ajaxStruct = {
+                    url: m.urls[i] + "/_api/web/getusereffectivepermissions(@u)?@u='" + encodeURIComponent("i:0#.f|membership|" + m.accountName) + "'",
+                    method: 'GET',
+                    async: true,
+                    done: function (a: any) {
 
                         var returnedData = a;
-				
+
                         var permissions = new SP.BasePermissions();
                         permissions.initPropertiesFromJson(returnedData.d.GetUserEffectivePermissions);
-                        
+
                         var permLevels = [];
-                        
+
                         //@ts-ignore
-                        for(var permLevelName in SP.PermissionKind.prototype) {
+                        for (var permLevelName in SP.PermissionKind.prototype) {
                             if (SP.PermissionKind.hasOwnProperty(permLevelName)) {
-                               //@ts-ignore
-                               var permLevel = SP.PermissionKind.parse(permLevelName);
-                               if(permissions.has(permLevel)){
-                                  permLevels.push(permLevelName);
+                                //@ts-ignore
+                                var permLevel = SP.PermissionKind.parse(permLevelName);
+                                if (permissions.has(permLevel)) {
+                                    permLevels.push(permLevelName);
                                 }
-                            }     
+                            }
                         }
-                        site.privileges = permLevels; 
-                        
+                        site.privileges = permLevels;
+
                         spEnv.spPermissions.site.push(site);
-					}
+                    }
                 };
                 spAsync.spAsyncQueue.call(ajaxStruct);
             }
-			
+
             spEnv.spPermissions.loaded = true;
-                        
-            if(typeof m.done == "function")
-            {
-                var permInterval = setInterval(function(){
-                    if(spAsync.spAsyncQueue.queue().length == 0)
-                    {
+
+            if (typeof m.done == "function") {
+                var permInterval = setInterval(function () {
+                    if (spAsync.spAsyncQueue.queue().length == 0) {
                         clearInterval(permInterval);
                         m.done();
                     }
-                }, 50);                
+                }, 50);
             }
-		},
-		checkUserPermission : function (m:any)
-		{
-			if(spEnv.spPermissions.loaded && _.find(spEnv.spPermissions.site, { path : m.path, privileges: [m.privilege] }))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
         },
-        getFileExtension : function (fileNameOrURL : string, showUnixDotFiles : boolean) {
+        checkUserPermission: function (m: any) {
+            if (spEnv.spPermissions.loaded && _.find(spEnv.spPermissions.site, { path: m.path, privileges: [m.privilege] })) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        },
+        getFileExtension: function (fileNameOrURL: string, showUnixDotFiles: boolean) {
             /* First, let's declare some preliminary variables we'll need later on. */
             var fileName;
             var fileExt;
-        
+
             /* Now we'll create a hidden anchor ('a') element (Note: No need to append this element to the document). */
             var hiddenLink = document.createElement('a');
-        
+
             /* Just for fun, we'll add a CSS attribute of [ style.display = "none" ]. Remember: You can never be too sure! */
             hiddenLink.style.display = "none";
-        
+
             /* Set the 'href' attribute of the hidden link we just created, to the 'fileNameOrURL' argument received by this function. */
             hiddenLink.setAttribute('href', fileNameOrURL);
-        
+
             /* Now, let's take advantage of the browser's built-in parser, to remove elements from the original 'fileNameOrURL' argument received by this function, without actually modifying our newly created hidden 'anchor' element.*/
             fileNameOrURL = fileNameOrURL.replace(hiddenLink.protocol, ""); /* First, let's strip out the protocol, if there is one. */
             fileNameOrURL = fileNameOrURL.replace(hiddenLink.hostname, ""); /* Now, we'll strip out the host-name (i.e. domain-name) if there is one. */
             fileNameOrURL = fileNameOrURL.replace(":" + hiddenLink.port, ""); /* Now finally, we'll strip out the port number, if there is one (Kinda overkill though ;-)). */
-        
+
             /* Now, we're ready to finish processing the 'fileNameOrURL' variable by removing unnecessary parts, to isolate the file name. */
-        
+
             /* Operations for working with [relative, root-relative, and absolute] URL's ONLY [BEGIN] */
-        
+
             /* Break the possible URL at the [ '?' ] and take first part, to shave of the entire query string ( everything after the '?'), if it exist. */
             fileNameOrURL = fileNameOrURL.split('?')[0];
-        
+
             /* Sometimes URL's don't have query's, but DO have a fragment [ # ](i.e 'reference anchor'), so we should also do the same for the fragment tag [ # ]. */
             fileNameOrURL = fileNameOrURL.split('#')[0];
-        
+
             /* Now that we have just the URL 'ALONE', Let's remove everything to the last slash in URL, to isolate the file name. */
             fileNameOrURL = fileNameOrURL.substr(1 + fileNameOrURL.lastIndexOf("/"));
-        
+
             /* Operations for working with [relative, root-relative, and absolute] URL's ONLY [END] */
-        
+
             /* Now, 'fileNameOrURL' should just be 'fileName' */
             fileName = fileNameOrURL;
-        
+
             /* Now, we check if we should show UNIX dot-files, or not. This should be either 'true' or 'false'. */
             if (showUnixDotFiles == false) {
                 /* If not ('false'), we should check if the filename starts with a period (indicating it's a UNIX dot-file). */
@@ -309,18 +307,17 @@ export var spCommon = (function () {
                     return "";
                 }
             }
-        
+
             /* Now, let's get everything after the period in the filename (i.e. the correct 'file extension'). */
             fileExt = fileName.substr(1 + fileName.lastIndexOf("."));
-        
+
             /* Now that we've discovered the correct file extension, let's return it to the function caller. */
             return fileExt;
         }
     }
 })();
 
-if($('#DeltaPlaceHolderMain').length == 0)
-{
+if ($('#DeltaPlaceHolderMain').length == 0) {
     $('#DeltaPlaceHolderMain')
     $('body').append('<div id="DeltaPlaceHolderMain"></div>');
 }

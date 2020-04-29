@@ -287,8 +287,8 @@ iGlobal.pager.init = function (model) {
 
     iGlobal.pager.recordType = model.recordType == '' || model.recordType == undefined || model.recordType == null ? 'rows' : model.recordType;
     iGlobal.pager.id = model.divID.substring(1, model.divID.length);
-    iGlobal.pager.total = model.currentJsonData.recordsFiltered;
-    iGlobal.pager.stop = model.currentJsonData.data != undefined ? model.params.start + model.currentJsonData.data.length : 0;
+    iGlobal.pager.total = model.currentJsonData.recordsFiltered != undefined ? model.currentJsonData.recordsFiltered : 0;
+    iGlobal.pager.stop = model.params.length != undefined ? model.params.start + model.params.length : 0;
     iGlobal.pager.start = iGlobal.pager.stop > 0 ? (model.params.start + 1) : 0;
     iGlobal.pager.isFirstPage = model.params.start === 0 ? true : false;
     iGlobal.pager.isLastPage = model.params.start + model.params.length >= iGlobal.pager.total + 1 ? true : false;
