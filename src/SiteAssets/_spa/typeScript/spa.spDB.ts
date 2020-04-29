@@ -281,14 +281,14 @@ export var spDB = (function () {
                 "IF-MATCH": "*"
             },
             done: function (a: any) {
-                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'List ' + m.Title + ' deleted! ',
                     type: 'success'
                 }));
                 toastr.success('List ' + m.Title + ' deleted! ');
             },
             fail: function (response: any, errorCode: any, errorMessage: any) {
-                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'List ' + m.Title + ' not deleted! ' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -315,13 +315,13 @@ export var spDB = (function () {
 
             },
             done: function (a: any, status: any, xhr: any) {
-                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View Field ' + m.Title + ' added to View' + m.ViewTitle + '.',
                     type: 'success'
                 }));
             },
             fail: function (response: any, errorCode: any, errorMessage: any) {
-                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View Field ' + m.Title + ' not added to View' + m.ViewTitle + '.' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -350,7 +350,7 @@ export var spDB = (function () {
 
             },
             done: function (a: any, status: any, xhr: any) {
-                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.',
                     type: 'success'
                 }));
@@ -371,7 +371,7 @@ export var spDB = (function () {
                 }
             },
             fail: function (response: any, errorCode: any, errorMessage: any) {
-                $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                     content: 'View ' + m.ViewTitle + ' created for List ' + m.Title + '.' + response.responseJSON.error.message.value,
                     type: 'danger'
                 }));
@@ -385,7 +385,7 @@ export var spDB = (function () {
         m.method = 'POST';
         m.data = JSON.stringify(m.data);
         m.done = function (a: any) {
-            $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+            $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                 content: 'Field ' + thisFieldTitle + ' added to List ' + m.originalRequest.Title + '!',
                 type: 'success'
             }));
@@ -393,7 +393,7 @@ export var spDB = (function () {
         };
         m.fail = function (response: any, errorCode: any, errotMessage: any) {
             toastr.error('Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!', 'Field Create Failed!');
-            $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+            $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                 content: 'Field ' + thisFieldTitle + ' not added to List ' + m.originalRequest.Title + '!',
                 type: 'danger'
             }));
@@ -452,7 +452,7 @@ export var spDB = (function () {
                         list[m.Title].Id = a.d.Id;
                         toastr.success(m.type + ' ' + m.Title + ' created!', 'List Created!');
 
-                        $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                        $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                             content: m.type + ' ' + m.Title + ' created!',
                             type: 'primary'
                         }));
@@ -474,7 +474,7 @@ export var spDB = (function () {
                         CreateListView(m);
                     },
                     fail: function (response: any, errorCode: any, errorMessage: any) {
-                        $('#DeltaPlaceHolderMain').prepend(spEnv.$pa.env.bootstrapAlert({
+                        $('#installer-body').prepend(spEnv.$pa.env.bootstrapAlert({
                             content: 'List ' + m.Title + ' not created! ' + response.responseJSON.error.message.value,
                             type: 'danger'
                         }));
@@ -485,7 +485,7 @@ export var spDB = (function () {
                     return list;
                 }
             } else {
-                $('#DeltaPlaceHolderMain').append(spEnv.$pa.env.bootstrapAlert({
+                $('#installer-body').append(spEnv.$pa.env.bootstrapAlert({
                     content: 'List not created the necessary criteria not provided!',
                     type: 'danger'
                 }));
@@ -657,6 +657,8 @@ export var spDB = (function () {
         initUI: function () {
 
             var uiActions = [];
+
+            $('#DeltaPlaceHolderMain').append('<div class="row"><div class="col-md-12" ><div id="installer-body" style="overflow: scroll; min-height: 600px; height: 800px;"></div></div></div>');
 
             uiActions.push({
                 text: "Install",

@@ -815,11 +815,11 @@ export var spQuery = (function () {
             $('.dataTable:visible').find('#' + m.tableID + '_wrapper .dataTables_scrollHeadInner .table:hidden, #' + m.tableID + '_wrapper .dataTables_scrollHeadInner:hidden, .dataTable').css('width', '100%');
         }, 300);
 
-        var rootObject = spCRUD.spCRUD.data();
-        if (rootObject.lastSave && (rootObject.lastSave.action && rootObject.lastSave.action.action != undefined && rootObject.lastSave.action.action == "save") && rootObject.lastSave.action.loaded == false) {
-            rootObject.lastSave.action.loaded = true;
-            spCRUD.spCRUD.reloadEditForm();
-        }
+        // var rootObject = spCRUD.spCRUD.data();
+        // if (rootObject.lastSave && (rootObject.lastSave.action && rootObject.lastSave.action.action != undefined && rootObject.lastSave.action.action == "save") && rootObject.lastSave.action.loaded == false) {
+        //     rootObject.lastSave.action.loaded = true;
+        //     spCRUD.spCRUD.reloadEditForm();
+        // }
     }
 
     function refreshServerData(m) {

@@ -12,7 +12,7 @@
         <link rel="stylesheet" type="text/css" href="/Sandbox/SiteAssets/_spa/plugins/font-awesome-4.7.0/css/font-awesome.min.css"/>
         <link rel="stylesheet" type="text/css" href="/Sandbox/SiteAssets/_spa/plugins/jstree/themes/default/style.css"/>
         <link rel="stylesheet" type="text/css" href="/_layouts/15/1033/styles/Themable/corev15.css"/>
-        <title>Document Clearance</title>
+        <title>Document Clearance Installer</title>
     </head>
     <body>
         <form runat="server">

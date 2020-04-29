@@ -9,59 +9,56 @@ import * as spLoader from "./theLoader";
 import * as toastr from "toastr";
 
 export async function spAjax(m: spaAjax) {
-    /*var source = m.source;
 
-    var thisData =  {
-        '__metadata': {  
-            'type': 'SP.Data.' + source + 'ListItem' // it defines the ListEnitityTypeName  
+    try {
+
+        var headers = m.headers != undefined ? m.headers : {};
+        headers.Accept = headers.Accept ? headers.Accept : "application/json; odata=verbose"; //It defines the Data format   
+        headers["content-type"] = headers["content-type"] ? headers["content-type"] : "application/json;odata=verbose"; //It defines the content type as JSON  
+        headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
+
+        var ajaxParam = {
+            method: m.method,
+            url: m.url,
+            data: m.data,
+            async: m.async != undefined ? m.async : true,
+            processData: m.processData != undefined ? m.processData : true,
+            headers: headers,
+            retryLimit: m.retryLimit != undefined ? m.retryLimit : 0,
+            tryCount: m.tryCount != undefined ? m.tryCount : 0,
         }
-    }*/
+        var ajaxReturn = await $.ajax(ajaxParam)
+            .done(function (response, textStatus, request) {
 
-    var headers = m.headers != undefined ? m.headers : {};
-    headers.Accept = headers.Accept ? headers.Accept : "application/json; odata=verbose"; //It defines the Data format   
-    headers["content-type"] = headers["content-type"] ? headers["content-type"] : "application/json;odata=verbose"; //It defines the content type as JSON  
-    headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
+                if (request.getResponseHeader('X-RequestDigest')) {
+                    $('#__REQUESTDIGEST').val();
+                }
 
-    var ajaxParam = {
-        method: m.method,
-        url: m.url,
-        data: m.data,
-        //async: m.async != undefined ? m.async : true,
-        processData: m.processData != undefined ? m.processData : true,
-        headers: headers,
-        retryLimit: m.retryLimit != undefined ? m.retryLimit : 0,
-        tryCount: m.tryCount != undefined ? m.tryCount : 0,
-    }
+                if (typeof m.done == 'function') {
+                    m.done(response);
+                }
+            })
+            .fail(function (response, errorCode, errorMessage) {
+                if (typeof m.fail == 'function') {
+                    m.fail(response, errorCode, errorMessage);
+                }
+            })
+            .always(function (response, textStatus, request) {
+                //Nothing
+                if (typeof m.always == 'function') {
+                    m.always(response);
+                }
+            });
 
-    var ajaxReturn = await $.ajax(ajaxParam)
-        .done(function (response, textStatus, request) {
+        if (typeof m.promise == "boolean" && m.promise) {
+            return ajaxReturn;
+        }
 
-            if (request.getResponseHeader('X-RequestDigest')) {
-                $('#__REQUESTDIGEST').val();
-            }
+        if (m.async == false && ajaxReturn.status == 200) {
+            return ajaxReturn.responseJSON;
+        }
+    } catch (error) {
 
-            if (typeof m.done == 'function') {
-                m.done(response);
-            }
-        })
-        .fail(function (response, errorCode, errorMessage) {
-            if (typeof m.fail == 'function') {
-                m.fail(response, errorCode, errorMessage);
-            }
-        })
-        .always(function (response, textStatus, request) {
-            //Nothing
-            if (typeof m.always == 'function') {
-                m.always(response);
-            }
-        });
-
-    if (typeof m.promise == "boolean" && m.promise) {
-        return ajaxReturn;
-    }
-
-    if (m.async == false && ajaxReturn.status == 200) {
-        return ajaxReturn.responseJSON;
     }
 }
 
@@ -127,8 +124,57 @@ export var spCommon = (function () {
         //toastr.options.extendedTimeOut = "0"
     }
 
-    function spAjax2(m: any) {
-        spAjax(m);
+    function spAjax2(m:any) {
+        /*var source = m.source;
+	
+        var thisData =  {
+            '__metadata': {  
+                'type': 'SP.Data.' + source + 'ListItem' // it defines the ListEnitityTypeName  
+            }
+        }*/
+
+        var headers = m.headers != undefined ? m.headers : {};
+        headers.Accept = headers.Accept ? headers.Accept : "application/json; odata=verbose"; //It defines the Data format   
+        headers["content-type"] = headers["content-type"] ? headers["content-type"] : "application/json;odata=verbose"; //It defines the content type as JSON  
+        headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
+
+        var ajaxParam = {
+            method: m.method,
+            url: m.url,
+            data: m.data,
+            async: m.async != undefined ? m.async : true,
+            processData: m.processData != undefined ? m.processData : true,
+            headers: headers,
+            retryLimit: m.retryLimit != undefined ? m.retryLimit : 0,
+            tryCount: m.tryCount != undefined ? m.tryCount : 0,
+        }
+
+        var ajaxReturn = $.ajax(ajaxParam)
+            .done(function (response, textStatus, request) {
+
+                if (request.getResponseHeader('X-RequestDigest')) {
+                    $('#__REQUESTDIGEST').val();
+                }
+
+                if (typeof m.done == 'function') {
+                    m.done(response);
+                }
+            })
+            .fail(function (response, errorCode, errorMessage) {
+                if (typeof m.fail == 'function') {
+                    m.fail(response, errorCode, errorMessage);
+                }
+            })
+            .always(function (response, textStatus, request) {
+                //Nothing
+                if (typeof m.always == 'function') {
+                    m.always(response);
+                }
+            });
+
+        if (m.async == false && ajaxReturn.status == 200) {
+            return ajaxReturn.responseJSON;
+        }
     }
 
     function getExtension(path: string) {
