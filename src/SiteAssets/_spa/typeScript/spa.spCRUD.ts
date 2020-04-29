@@ -653,6 +653,7 @@ export var spCRUD = (function () {
 
             setTimeout(function () {
                 if (spEnv.tables[linkData.owner] && spEnv.tables[linkData.owner].ajax) {
+                    spEnv.tables[linkData.owner].originalCaller.callThePromise == "Load";
                     spEnv.tables[linkData.owner].ajax.reload();
                 }
             }, 300);
@@ -1186,7 +1187,7 @@ export var spCRUD = (function () {
         $('.sp-calendar').datepicker();
 
         $('#modal-' + m.action + '-' + m.source).find('.select2-js, .sp-lookup').select2({
-            dropdownParent: $('#modal-' + m.action + '-' + m.source),
+            dropdownParent: $('.modal'),
             width: '100%'
         });
 
@@ -1640,6 +1641,7 @@ export var spCRUD = (function () {
                 done: function (a: any) {
                     $('[data-filecontainer="edit-' + dm.owner + '-attachments"] tbody tr:eq(' + dm.tableRow + ')').remove();
                     toastr.success('Attachment ' + dm.name + ' deleted!', 'Attachment Deleted!');
+                    spEnv.tables[dm.owner].originalCaller.callThePromise == "Load";
                     spEnv.tables[dm.owner].ajax.reload();
                 },
                 fail: function (a: any) {
@@ -2097,6 +2099,8 @@ export var spCRUD = (function () {
                     //var thisowner = $(callerId).parents('.modal').data('owner');
                     $(callerId).parents('.modal').remove();
                     $('.fillin-modal').remove();
+
+                    spEnv.tables[s.source].originalCaller.callThePromise = "Load";
                     spEnv.tables[s.source].ajax.reload();
                 }, 200);
             }
