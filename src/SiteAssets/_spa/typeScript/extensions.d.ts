@@ -105,6 +105,7 @@ interface spaLoadListStruct {
     title: string;
     spType: string;
     loadActionButtons: boolean;
+    queryStructure : any;
 
 }
 
