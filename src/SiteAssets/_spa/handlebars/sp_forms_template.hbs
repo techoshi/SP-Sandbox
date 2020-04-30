@@ -125,14 +125,17 @@
     {{#if loadActionButtons}}
         {{#switch formType}}
             {{#case "edit"}}
-                <button type="button" class="btn btn-primary save-data" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Update">Update Form</button> 
+                <button type="button" class="btn btn-primary save-data" data-reload="false" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Update">Update</button> 
+                <button type="button" class="btn btn-primary save-data" data-reload="true" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Update">Update & Reload</button> 
             {{/case}} 
             {{#case "view"}}
             {{/case}} 
             {{#default}}{{setVar "formType" "create"}}
-                <button type="button" class="btn btn-primary save-data" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Save">Save Form</button>
+                <button type="button" class="btn btn-primary save-data" data-reload="false" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Save">Save</button>
+                <button type="button" class="btn btn-primary save-data" data-reload="true" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Save">Save & Reload</button>
                 <button type="button" class="btn btn-success clear-data" data-owner="{{owner}}" data-source="{{name}}" data-sptype="{{spType}}" data-caller="form-{{formType}}-{{name}}" data-action="Reset">Reset Form</button> 
             {{/default}} 
         {{/switch}} 
     {{/if}}
 </div>
+

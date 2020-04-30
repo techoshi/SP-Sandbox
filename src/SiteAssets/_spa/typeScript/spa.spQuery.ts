@@ -1064,8 +1064,12 @@ export var spQuery = (function () {
         },
         getItemQuery: function (m: any) {
             var struct = getSelectStruct(m);
-            var stringQuery = getSelect(struct);
-            return stringQuery;
+            var restApiQuery = getSelect(struct);
+            return { 
+                struct : struct, 
+                restApiQuery : restApiQuery,
+                path : ""
+            };
         }
     };
 })();
