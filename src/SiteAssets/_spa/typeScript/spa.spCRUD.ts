@@ -1489,6 +1489,7 @@ export var spCRUD = (function () {
 
         var selectedRow = m.selectedRow;
 
+        var itemURL = "";
         var itemRestApiURL = "";
         var actionData = m.actionData ? m.actionData : {};
 
@@ -1511,7 +1512,7 @@ export var spCRUD = (function () {
                         queryStructure.path = actionData['odata.editLink'];
 
                         thisCaller.queryStructure = queryStructure;
-
+                        itemURL = actionData['odata.editLink'];
                         itemRestApiURL = actionData['odata.editLink'] + queryStructure.restApiQuery;
 
                         var getDataForType = ['view', 'edit'];
@@ -1535,7 +1536,7 @@ export var spCRUD = (function () {
                                 //								var thisFile = [{ FileName : returnedData.FileLeafRef }]
                                 showFiles({
                                     box: action + '-' + owner + '-' + 'attachments',
-                                    itemURL: itemRestApiURL,
+                                    itemURL: itemURL,
                                     files: attachments,
                                     parentObject: m
                                 });
