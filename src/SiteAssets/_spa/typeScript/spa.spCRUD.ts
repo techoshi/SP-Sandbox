@@ -1240,12 +1240,18 @@ export var spCRUD = (function () {
         modalLoader(thisData);
     }
 
-    async function reloadEditForm(spaObject) {
+    async function reloadEditForm(a: any) {
+
+        var s = a.m;
+        var r = a.r;
+
         var foundRow = {};
 
+        var spaObject = a.parentObject;
+        var url = "";
         if (spaObject.baseTemplate == "100") {
             if (spaObject.action == "edit") {
-                var url = spaObject.queryStructure.path + spaObject.queryStructure.restApiQuery;
+                url = spaObject.queryStructure.path + spaObject.queryStructure.restApiQuery;
 
                 var itemQuery = <spaAjax>{};
                 {
@@ -1260,23 +1266,62 @@ export var spCRUD = (function () {
                 foundRow = await spCommon.spAjax(itemQuery);
             }
             else if (spaObject.action == "create") {
+                var queryObject = getQueryForObject(spaObject);
+                var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ID + ")";
+                url = spaObject.path + "/_api/" + path + queryObject.restApiQuery;
+                queryObject.path = path;
+                spaObject.queryStructure = queryObject;
 
+                var itemQuery = <spaAjax>{};
+                {
+                    itemQuery.method = 'GET';
+                    itemQuery.url = url;
+                    itemQuery.promise = true;
+                    itemQuery.headers = {
+                        Accept: "application/json;odata=verbose"
+                    };
+                };
+
+                foundRow = await spCommon.spAjax(itemQuery);
             }
         } else if (spaObject.baseTemplate == "101") {
-            var url = spaObject.queryStructure.path + spaObject.queryStructure.restApiQuery;
+            if (spaObject.action == "edit") {
+                url = spaObject.queryStructure.path + spaObject.queryStructure.restApiQuery;
 
-            var itemQuery = <spaAjax>{};
-            {
-                itemQuery.method = 'GET';
-                itemQuery.url = spaObject.path + "/_api/" + url;
-                itemQuery.promise = true;
-                itemQuery.headers = {
-                    Accept: "application/json;odata=verbose"
+                var itemQuery = <spaAjax>{};
+                {
+                    itemQuery.method = 'GET';
+                    itemQuery.url = spaObject.path + "/_api/" + url;
+                    itemQuery.promise = true;
+                    itemQuery.headers = {
+                        Accept: "application/json;odata=verbose"
+                    };
                 };
-            };
 
-            foundRow = await spCommon.spAjax(itemQuery);
+                foundRow = await spCommon.spAjax(itemQuery);
+            }
+            else if (spaObject.action == "create") { 
+
+                var queryObject = getQueryForObject(spaObject);
+                var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ListItemAllFields.ID + ")";
+                url = spaObject.path + "/_api/" + path + queryObject.restApiQuery;
+                queryObject.path = path;
+                spaObject.queryStructure = queryObject;
+
+                var itemQuery = <spaAjax>{};
+                {
+                    itemQuery.method = 'GET';
+                    itemQuery.url = url;
+                    itemQuery.promise = true;
+                    itemQuery.headers = {
+                        Accept: "application/json;odata=verbose"
+                    };
+                };
+
+                foundRow = await spCommon.spAjax(itemQuery);
+            }
         }
+
         if (foundRow) {
             var thisData = {
                 owner: spaObject.owner,
@@ -2139,8 +2184,11 @@ export var spCRUD = (function () {
 
                 if (thisData.reload) {
                     var reloadableActions = ["create", "edit"];
-                    if (reloadableActions.indexOf(a.parentObject.action) > -1 && a.parentObject.queryStructure.restApiQuery && a.parentObject.queryStructure.path) {
-                        reloadEditForm(a.parentObject);
+                    if (a.parentObject.action == "edit" && a.parentObject.queryStructure.restApiQuery && a.parentObject.queryStructure.path) {
+                        reloadEditForm(a);
+                    }
+                    else if (a.parentObject.action == "create"){
+                        reloadEditForm(a);
                     }
                 }
                 else {
@@ -2254,10 +2302,12 @@ export var spCRUD = (function () {
                                 formObjects.__metadata = {
                                     'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
                                 };
+
                                 var crudRequest2 = {
                                     headers: headers,
                                     method: 'POST',
-                                    url: r2.d.ListItemAllFields.__deferred.uri,
+                                    //url: r2.d.ListItemAllFields.__deferred.uri,
+                                    url: parentObject.path + "/_api/Web/Lists(guid'" + parentObject.listData.Id + "')/Items(" + r2.d.ListItemAllFields.ID + ")",
                                     data: JSON.stringify(formObjects),
                                     fail: function (a: any) {
                                         toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
@@ -2266,7 +2316,7 @@ export var spCRUD = (function () {
                                         clearLastSave();
                                     },
                                     done: function (a: any) {
-                                        closeModalRefreshData({ parentObject: parentObject, m: m, r: a });
+                                        closeModalRefreshData({ parentObject: parentObject, m: m, r: r2 });
                                         toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                                     }
                                 };
@@ -2347,10 +2397,14 @@ export var spCRUD = (function () {
                         formObjects.__metadata = {
                             'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
                         };
+
+                        var queryObject = getQueryForObject(parentObject);
+
                         var crudRequest2 = {
                             headers: headers,
                             method: 'POST',
-                            url: r2.d.ListItemAllFields.__deferred.uri,
+                            //url: r2.d.ListItemAllFields.__deferred.uri,
+                            url: parentObject.path + "/_api/Web/Lists(guid'" + parentObject.listData.Id + "')/Items(" + r2.d.ListItemAllFields.ID + ")",
                             data: JSON.stringify(formObjects),
                             fail: function (a: any) {
                                 toastr.error('There was an issue saving the data, please refresh the page and try again.', 'Form Not Submitted!');
@@ -2358,7 +2412,7 @@ export var spCRUD = (function () {
                             always: function (a: any) {
                             },
                             done: function (a: any) {
-                                closeModalRefreshData({ parentObject: parentObject, m: m, r: a });
+                                closeModalRefreshData({ parentObject: parentObject, m: m, r: r2 });
                                 toastr.success('File meta has been successfully submitted.', 'Form Submitted!');
                             }
                         };
@@ -2463,7 +2517,7 @@ export var spCRUD = (function () {
                     fileObjects: m.fileObjects,
                     thisFile: thisFile,
                     thisData: m.thisData,
-                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.parentObject.spType + "')/RootFolder/Files/add(overwrite=" + overWriteFile + ", url='" + m.fileObjects[thisFile].name + "')",
+                    url: m.parentObject.path + "/_api/web/lists/GetByTitle('" + m.parentObject.spType + "')/RootFolder/Files/add(overwrite=" + overWriteFile + ", url='" + m.fileObjects[thisFile].name + "')?$expand=ListItemAllFields",
                     done: m.done,
                     fail: m.fail,
                     loaded: false

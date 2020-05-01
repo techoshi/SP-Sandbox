@@ -18,12 +18,16 @@
 # accept: application/json;
 
 
-Get https://eminentitco.sharepoint.com/Sandbox/_api/Web/GetFileByServerRelativePath(decodedurl='/Sandbox/DCMain/office%20-%20wwwwy%20-%20Copy.pdf')/ListItemAllFields
-Content-Type: {{contentType}}
-accept: application/json;
+# Get https://eminentitco.sharepoint.com/Sandbox/_api/Web/GetFileByServerRelativePath(decodedurl='/Sandbox/DCMain/office%20-%20wwwwy%20-%20Copy.pdf')/ListItemAllFields
+# Content-Type: {{contentType}}
+# accept: application/json;
 
-Get https://eminentitco.sharepoint.com/Sandbox/_api/Web/Lists(guid'bd8e54e9-c648-42ec-92e2-1613598132d9')/Items(14)
-?$select=GUID,ID,Modified,FileLeafRef,Title,CurrentPerson,CurrentStatus,ContentType,EncodedAbsUrl,Editor/Title,Priority/Id,Priority/Priority,Source/Id,Source/Source,Marking/Id,Marking/Marking
-&$expand=Editor,Priority,Source,Marking
+# Get https://eminentitco.sharepoint.com/Sandbox/_api/Web/Lists(guid'bd8e54e9-c648-42ec-92e2-1613598132d9')/Items(14)
+# ?$select=GUID,ID,Modified,FileLeafRef,Title,CurrentPerson,CurrentStatus,ContentType,EncodedAbsUrl,Editor/Title,Priority/Id,Priority/Priority,Source/Id,Source/Source,Marking/Id,Marking/Marking
+# &$expand=Editor,Priority,Source,Marking
+# Content-Type: {{contentType}}
+# accept: application/json;
+
+Get https://eminentitco.sharepoint.com/Sandbox/DCMain/Attachment%202%20-%20Proposal%20Form.docx
 Content-Type: {{contentType}}
 accept: application/json;
