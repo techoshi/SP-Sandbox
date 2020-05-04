@@ -1248,27 +1248,25 @@ export var spCRUD = (function () {
         var foundRow = {};
 
         var spaObject = a.parentObject;
+        var queryObject = getQueryForObject(spaObject);
+        
         var url = "";
         var urlWithOutQuery = "";
         if (spaObject.baseTemplate == "100") {
             if (spaObject.action == "edit") {
-                urlWithOutQuery = spaObject.queryStructure.path;
-                url = spaObject.queryStructure.path + "?" + spaObject.queryStructure.restApiQuery;
+                urlWithOutQuery = spaObject.path + "/_api/" + spaObject.queryStructure.path;
 
-                var itemQuery = <spaAjax>{};
-                {
-                    itemQuery.method = 'GET';
-                    itemQuery.url = spaObject.path + "/_api/" + url;
-                    itemQuery.promise = true;
-                    itemQuery.headers = {
-                        Accept: "application/json;odata=verbose"
-                    };
-                };
-                
-                foundRow = await spCommon.spAjax(itemQuery);
+                var theRecord = await spQuery.spQuery.promiseQuery({
+                    struct : queryObject.struct,
+                    parentObject : {
+                        name : spaObject.name,
+                        path : urlWithOutQuery
+                    }
+                });
+
+                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
             }
             else if (spaObject.action == "create") {
-                var queryObject = getQueryForObject(spaObject); //Reload Custom
                 var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ID + ")";
                 urlWithOutQuery = spaObject.path + "/_api/" + path
 
@@ -1280,43 +1278,36 @@ export var spCRUD = (function () {
                     }
                 });
 
-                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;//await spCommon.spAjax(itemQuery);
+                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
             }
         } else if (spaObject.baseTemplate == "101") {
             if (spaObject.action == "edit") {
-                url = spaObject.queryStructure.path + spaObject.queryStructure.restApiQuery;
 
-                var itemQuery = <spaAjax>{};
-                {
-                    itemQuery.method = 'GET';
-                    itemQuery.url = spaObject.path + "/_api/" + url;
-                    itemQuery.promise = true;
-                    itemQuery.headers = {
-                        Accept: "application/json;odata=verbose"
-                    };
-                };
+                urlWithOutQuery = spaObject.path + "/_api/" + spaObject.queryStructure.path;
+                var theRecord = await spQuery.spQuery.promiseQuery({
+                    struct : queryObject.struct,
+                    parentObject : {
+                        name : spaObject.name,
+                        path : urlWithOutQuery
+                    }
+                });
 
-                foundRow = await spCommon.spAjax(itemQuery);
+                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
             }
             else if (spaObject.action == "create") { 
 
-                var queryObject = getQueryForObject(spaObject); //Reload Doc Lib
                 var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ListItemAllFields.ID + ")";
-                url = spaObject.path + "/_api/" + path + "?" + queryObject.restApiQuery;
-                queryObject.path = path;
-                spaObject.queryStructure = queryObject;
+                urlWithOutQuery = spaObject.path + "/_api/" + path;
 
-                var itemQuery = <spaAjax>{};
-                {
-                    itemQuery.method = 'GET';
-                    itemQuery.url = url;
-                    itemQuery.promise = true;
-                    itemQuery.headers = {
-                        Accept: "application/json;odata=verbose"
-                    };
-                };
+                var theRecord = await spQuery.spQuery.promiseQuery({
+                    struct : queryObject.struct,
+                    parentObject : {
+                        name : spaObject.name,
+                        path : urlWithOutQuery
+                    }
+                });
 
-                foundRow = await spCommon.spAjax(itemQuery);
+                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
             }
         }
 
