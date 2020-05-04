@@ -1249,7 +1249,7 @@ export var spCRUD = (function () {
 
         var spaObject = a.parentObject;
         var queryObject = getQueryForObject(spaObject);
-        
+
         var url = "";
         var urlWithOutQuery = "";
         if (spaObject.baseTemplate == "100") {
@@ -1257,57 +1257,57 @@ export var spCRUD = (function () {
                 urlWithOutQuery = spaObject.path + "/_api/" + spaObject.queryStructure.path;
 
                 var theRecord = await spQuery.spQuery.promiseQuery({
-                    struct : queryObject.struct,
-                    parentObject : {
-                        name : spaObject.name,
-                        path : urlWithOutQuery
+                    struct: queryObject.struct,
+                    parentObject: {
+                        name: spaObject.name,
+                        path: urlWithOutQuery
                     }
                 });
 
-                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
+                foundRow = theRecord.length > 0 ? { d: theRecord[0] } : undefined;
             }
             else if (spaObject.action == "create") {
                 var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ID + ")";
                 urlWithOutQuery = spaObject.path + "/_api/" + path
 
                 var theRecord = await spQuery.spQuery.promiseQuery({
-                    struct : queryObject.struct,
-                    parentObject : {
-                        name : spaObject.name,
-                        path : urlWithOutQuery
+                    struct: queryObject.struct,
+                    parentObject: {
+                        name: spaObject.name,
+                        path: urlWithOutQuery
                     }
                 });
 
-                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
+                foundRow = theRecord.length > 0 ? { d: theRecord[0] } : undefined;
             }
         } else if (spaObject.baseTemplate == "101") {
             if (spaObject.action == "edit") {
 
                 urlWithOutQuery = spaObject.path + "/_api/" + spaObject.queryStructure.path;
                 var theRecord = await spQuery.spQuery.promiseQuery({
-                    struct : queryObject.struct,
-                    parentObject : {
-                        name : spaObject.name,
-                        path : urlWithOutQuery
+                    struct: queryObject.struct,
+                    parentObject: {
+                        name: spaObject.name,
+                        path: urlWithOutQuery
                     }
                 });
 
-                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
+                foundRow = theRecord.length > 0 ? { d: theRecord[0] } : undefined;
             }
-            else if (spaObject.action == "create") { 
+            else if (spaObject.action == "create") {
 
                 var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ListItemAllFields.ID + ")";
                 urlWithOutQuery = spaObject.path + "/_api/" + path;
 
                 var theRecord = await spQuery.spQuery.promiseQuery({
-                    struct : queryObject.struct,
-                    parentObject : {
-                        name : spaObject.name,
-                        path : urlWithOutQuery
+                    struct: queryObject.struct,
+                    parentObject: {
+                        name: spaObject.name,
+                        path: urlWithOutQuery
                     }
                 });
 
-                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;
+                foundRow = theRecord.length > 0 ? { d: theRecord[0] } : undefined;
             }
         }
 
@@ -1517,7 +1517,7 @@ export var spCRUD = (function () {
         });
     }
 
-    function loadFormData(m: spaLoadListStruct) {
+    async function loadFormData(m: spaLoadListStruct) {
         var action = m.action;
         var owner = m.owner;
 
@@ -1551,132 +1551,156 @@ export var spCRUD = (function () {
 
                         var getDataForType = ['view', 'edit'];
 
-                        var getServerDataDone = function (a: any) {
-                            var tempQueryStructure = queryStructure;
+                        var getServerDataDone = async function (a: any) {
 
-                            var returnedData = a.d;
-                            currentRecord = returnedData;
+                            if (a.length == 1) {
+                                var thisMergedRecord = { d: a[0] };
 
-                            m.lastSelectedRecord = a;
+                                var returnedData = thisMergedRecord.d;
+                                currentRecord = returnedData;
 
-                            loadDataToDom(m, returnedData);
+                                m.lastSelectedRecord = thisMergedRecord;
 
-                            if (m.baseTemplate != '101') {
-                                var attachments = [];
-                                if (returnedData.AttachmentFiles && returnedData.AttachmentFiles.results) {
-                                    attachments = returnedData.AttachmentFiles.results;
+                                loadDataToDom(m, returnedData);
+
+                                if (m.baseTemplate != '101') {
+                                    var attachments = [];
+                                    if (returnedData.AttachmentFiles && returnedData.AttachmentFiles.results) {
+                                        attachments = returnedData.AttachmentFiles.results;
+                                    }
+
+                                    //var thisFile = [{ FileName : returnedData.FileLeafRef }]
+                                    showFiles({
+                                        box: action + '-' + owner + '-' + 'attachments',
+                                        itemURL: itemURL,
+                                        files: attachments,
+                                        parentObject: m
+                                    });
+                                    $('.Delete-Attachment-File').unbind('click', deleteItemAttachmentPrompt);
+                                    $('.Delete-Attachment-File').bind('click', deleteItemAttachmentPrompt);
+                                } else {
+                                    var relativeFilePath = spCommon.spCommon.getRelativeURL({
+                                        url: returnedData.EncodedAbsUrl
+                                    });
+                                    var attachments2 = [{
+                                        FileName: returnedData.FileLeafRef,
+                                        ServerRelativeUrl: relativeFilePath,
+                                        parentObject: m
+                                    }];
+                                    $(m.formSelector).data('FileLeafRef', relativeFilePath);
+                                    showFiles({
+                                        box: action + '-' + owner + '-' + 'attachments',
+                                        files: attachments2,
+                                        parentObject: m
+                                    });
                                 }
 
-                                //								var thisFile = [{ FileName : returnedData.FileLeafRef }]
-                                showFiles({
-                                    box: action + '-' + owner + '-' + 'attachments',
-                                    itemURL: itemURL,
-                                    files: attachments,
-                                    parentObject: m
-                                });
-                                $('.Delete-Attachment-File').unbind('click', deleteItemAttachmentPrompt);
-                                $('.Delete-Attachment-File').bind('click', deleteItemAttachmentPrompt);
-                            } else {
-                                var relativeFilePath = spCommon.spCommon.getRelativeURL({
-                                    url: returnedData.EncodedAbsUrl
-                                });
-                                var attachments2 = [{
-                                    FileName: returnedData.FileLeafRef,
-                                    ServerRelativeUrl: relativeFilePath,
-                                    parentObject: m
-                                }];
-                                $(m.formSelector).data('FileLeafRef', relativeFilePath);
-                                showFiles({
-                                    box: action + '-' + owner + '-' + 'attachments',
-                                    files: attachments2,
-                                    parentObject: m
-                                });
-                            }
+                                if (m.children && Array.isArray(m.children) && m.children.length > 0) {
+                                    var callChildAjax = async function (cm: any) {
+                                        var loadChildObject = function (a: any) {
+                                            var theseMergedRecords = { d: a };
 
-                            if (m.children && Array.isArray(m.children) && m.children.length > 0) {
-                                var callChildAjax = function (cm) {
-                                    var loadChildObject = function (a) {
+                                            if (theseMergedRecords && theseMergedRecords.d && Array.isArray(theseMergedRecords.d)) {
 
-                                        if (a && a.d && a.d.results && Array.isArray(a.d.results)) {
+                                                var childRowsQueue = [];
 
-                                            var childRowsQueue = [];
+                                                for (var index = 0; index < theseMergedRecords.d.length; index++) {
+                                                    var thisObjectEntry = theseMergedRecords.d[index];
 
-                                            for (var index = 0; index < a.d.results.length; index++) {
-                                                var thisObjectEntry = a.d.results[index];
+                                                    //Load Parent ID into Child Record
+                                                    if (typeof thisObjectEntry[m.spType] == "object" && thisObjectEntry[m.spType].Id) {
+                                                        thisObjectEntry[m.spType + "Id"] = thisObjectEntry[m.spType].Id;
+                                                    }
 
-                                                var thisChildParentRef = _.find(thisObjectEntry, { EntityPropertyName: m.thisVar });
-
-                                                //Load Parent ID into Child Record
-                                                if (typeof thisObjectEntry[m.spType] == "object" && thisObjectEntry[m.spType].Id) {
-                                                    thisObjectEntry[m.spType + "Id"] = thisObjectEntry[m.spType].Id;
+                                                    childRowsQueue.push({
+                                                        ownersource: cm.thisChild.source,
+                                                        source: cm.m.source,
+                                                        action: action,
+                                                        sptype: cm.m.spType,
+                                                        owner: "",
+                                                        container: "child-card-body-" + cm.thisChild.source,
+                                                        rowData: thisObjectEntry
+                                                    });
                                                 }
 
-                                                childRowsQueue.push({
-                                                    ownersource: cm.thisChild.source,
-                                                    source: cm.m.source,
-                                                    action: action,
-                                                    sptype: cm.m.spType,
-                                                    owner: "",
-                                                    container: "child-card-body-" + cm.thisChild.source,
-                                                    rowData: thisObjectEntry
-                                                });
+                                                loadChildRow(childRowsQueue);
                                             }
+                                        };
 
-                                            loadChildRow(childRowsQueue);
-                                        }
+                                        await spQuery.spQuery.promiseQuery({
+                                            struct: cm.struct,
+                                            parentObject: {
+                                                name: cm.parentObject.name,
+                                                path: cm.parentObject.path
+                                            }
+                                        }).then(loadChildObject);
                                     };
 
-                                    spCommon.spCommon.ajax({
-                                        source: cm.thisChild.owner,
-                                        method: 'GET',
-                                        url: cm.url,
-                                        done: loadChildObject
-                                    });
-                                };
+                                    for (var index = 0; index < m.children.length; index++) {
+                                        var thisChild = m.children[index];
+                                        var parentID = m.lastSelectedRecord.d.ID;
 
-                                for (var index = 0; index < m.children.length; index++) {
-                                    var thisChild = m.children[index];
-                                    var parentID = m.lastSelectedRecord.d.ID;
+                                        if (thisChild.condition) {
+                                            var ConditionHB = spCommon.spCommon.addHandlebar(thisChild.condition);
 
-                                    if (thisChild.condition) {
-                                        var ConditionHB = spCommon.spCommon.addHandlebar(thisChild.condition);
+                                            thisChild.queryFilter = ConditionHB({ ID: parentID });
 
-                                        thisChild.queryFilter = ConditionHB({ ID: parentID });
+                                            var thisChildPath = thisChild.path + "/_api/web/lists/getbytitle('" + thisChild.spType + "')/items";
+                                            var thisQuery = getQueryForObject(thisChild); //Load Children
+                                            thisQuery.path = thisChildPath;
+                                            thisChild.queryStructure = thisQuery;
 
-                                        var thisChildPath = thisChild.path + "/_api/web/lists/getbytitle('" + thisChild.spType + "')/items";
-                                        var thisQuery = getQueryForObject(thisChild); //Load Children
-                                        thisQuery.path = thisChildPath;
-                                        thisChild.queryStructure = thisQuery;
-                                        callChildAjax({ m: m, url: thisChildPath + "?" + thisQuery.restApiQuery, thisChild: thisChild });
-                                    }
-                                    else {
-                                        //Shouldn't be called
-                                        //getQueryForObject(thisChild);
-                                    }
+                                            callChildAjax({
+                                                m: m,
+                                                thisChild: thisChild,
+                                                struct: thisQuery.struct,
+                                                parentObject: {
+                                                    name: m.owner,
+                                                    path: thisChildPath
+                                                }
+                                            });
+                                        }
+                                        else {
+                                            //Shouldn't be called
+                                            //getQueryForObject(thisChild);
+                                        }
 
-                                    if (thisChild.repeatable.overloads && Array.isArray(thisChild.repeatable.overloads) && thisChild.repeatable.overloads.length > 0) {
-                                        for (let index = 0; index < thisChild.repeatable.overloads.length; index++) {
-                                            const element = thisChild.repeatable.overloads[index];
+                                        if (thisChild.repeatable.overloads && Array.isArray(thisChild.repeatable.overloads) && thisChild.repeatable.overloads.length > 0) {
+                                            for (let index = 0; index < thisChild.repeatable.overloads.length; index++) {
+                                                const element = thisChild.repeatable.overloads[index];
 
-                                            if (typeof element.bind == "function") {
-                                                element.bind();
+                                                if (typeof element.bind == "function") {
+                                                    element.bind();
+                                                }
+
                                             }
-
                                         }
                                     }
                                 }
-                            }
 
-                            hideLoaderShowModal(m);
+                                hideLoaderShowModal(m);
+                            }
+                            else
+                            {
+                                toastr.error('Item data not found! Please refresh.');
+                            }
                         };
 
                         if (getDataForType.indexOf(action) > -1 && m.dataPresent) {
-                            spCommon.spCommon.ajax({
-                                source: m.owner,
-                                method: 'GET',
-                                url: m.path + "/_api/" + itemRestApiURL + "",
-                                done: getServerDataDone
-                            });
+                            // spCommon.spCommon.ajax({
+                            //     source: m.owner,
+                            //     method: 'GET',
+                            //     url: m.path + "/_api/" + itemRestApiURL + "",
+                            //     done: getServerDataDone
+                            // });
+
+                            await spQuery.spQuery.promiseQuery({
+                                struct: queryStructure.struct,
+                                parentObject: {
+                                    name: m.owner,
+                                    path: m.path + "/_api/" + actionData['odata.editLink'] + ""
+                                }
+                            }).then(getServerDataDone);
                         } else {
                             hideLoaderShowModal(m);
                         }
@@ -2176,7 +2200,7 @@ export var spCRUD = (function () {
                     if (a.parentObject.action == "edit" && a.parentObject.queryStructure.restApiQuery && a.parentObject.queryStructure.path) {
                         reloadEditForm(a);
                     }
-                    else if (a.parentObject.action == "create"){
+                    else if (a.parentObject.action == "create") {
                         reloadEditForm(a);
                     }
                 }
