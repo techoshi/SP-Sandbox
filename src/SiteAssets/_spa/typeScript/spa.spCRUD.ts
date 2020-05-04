@@ -1249,9 +1249,11 @@ export var spCRUD = (function () {
 
         var spaObject = a.parentObject;
         var url = "";
+        var urlWithOutQuery = "";
         if (spaObject.baseTemplate == "100") {
             if (spaObject.action == "edit") {
-                url = spaObject.queryStructure.path + spaObject.queryStructure.restApiQuery;
+                urlWithOutQuery = spaObject.queryStructure.path;
+                url = spaObject.queryStructure.path + "?" + spaObject.queryStructure.restApiQuery;
 
                 var itemQuery = <spaAjax>{};
                 {
@@ -1262,27 +1264,23 @@ export var spCRUD = (function () {
                         Accept: "application/json;odata=verbose"
                     };
                 };
-
+                
                 foundRow = await spCommon.spAjax(itemQuery);
             }
             else if (spaObject.action == "create") {
-                var queryObject = getQueryForObject(spaObject);
+                var queryObject = getQueryForObject(spaObject); //Reload Custom
                 var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ID + ")";
-                url = spaObject.path + "/_api/" + path + queryObject.restApiQuery;
-                queryObject.path = path;
-                spaObject.queryStructure = queryObject;
+                urlWithOutQuery = spaObject.path + "/_api/" + path
 
-                var itemQuery = <spaAjax>{};
-                {
-                    itemQuery.method = 'GET';
-                    itemQuery.url = url;
-                    itemQuery.promise = true;
-                    itemQuery.headers = {
-                        Accept: "application/json;odata=verbose"
-                    };
-                };
+                var theRecord = await spQuery.spQuery.promiseQuery({
+                    struct : queryObject.struct,
+                    parentObject : {
+                        name : spaObject.name,
+                        path : urlWithOutQuery
+                    }
+                });
 
-                foundRow = await spCommon.spAjax(itemQuery);
+                foundRow = theRecord.length > 0 ? { d : theRecord[0] } : undefined;//await spCommon.spAjax(itemQuery);
             }
         } else if (spaObject.baseTemplate == "101") {
             if (spaObject.action == "edit") {
@@ -1302,9 +1300,9 @@ export var spCRUD = (function () {
             }
             else if (spaObject.action == "create") { 
 
-                var queryObject = getQueryForObject(spaObject);
+                var queryObject = getQueryForObject(spaObject); //Reload Doc Lib
                 var path = "Web/Lists(guid'" + spaObject.listData.Id + "')/Items(" + r.d.ListItemAllFields.ID + ")";
-                url = spaObject.path + "/_api/" + path + queryObject.restApiQuery;
+                url = spaObject.path + "/_api/" + path + "?" + queryObject.restApiQuery;
                 queryObject.path = path;
                 spaObject.queryStructure = queryObject;
 
@@ -1388,7 +1386,7 @@ export var spCRUD = (function () {
             itemQueryStruct.itemCall = true;
         }
         var itemQuery = spQuery.spQuery.getItemQuery(itemQueryStruct);
-        itemQuery.restApiQuery = "?" + itemQuery.restApiQuery;
+        //itemQuery.restApiQuery = "?" + itemQuery.restApiQuery;
         return itemQuery;
     }
 
@@ -1543,7 +1541,7 @@ export var spCRUD = (function () {
         });
 
         currentRecord = undefined;
-        var queryStructure = getQueryForObject(m);
+        var queryStructure = getQueryForObject(m); //LoadData
 
         switch (action) {
             case 'view':
@@ -1558,7 +1556,7 @@ export var spCRUD = (function () {
 
                         thisCaller.queryStructure = queryStructure;
                         itemURL = actionData['odata.editLink'];
-                        itemRestApiURL = actionData['odata.editLink'] + queryStructure.restApiQuery;
+                        itemRestApiURL = actionData['odata.editLink'] + "?" + queryStructure.restApiQuery;
 
                         var getDataForType = ['view', 'edit'];
 
@@ -1655,14 +1653,14 @@ export var spCRUD = (function () {
                                         thisChild.queryFilter = ConditionHB({ ID: parentID });
 
                                         var thisChildPath = thisChild.path + "/_api/web/lists/getbytitle('" + thisChild.spType + "')/items";
-                                        var thisQuery = getQueryForObject(thisChild);
+                                        var thisQuery = getQueryForObject(thisChild); //Load Children
                                         thisQuery.path = thisChildPath;
                                         thisChild.queryStructure = thisQuery;
-                                        callChildAjax({ m: m, url: thisChildPath + thisQuery.restApiQuery, thisChild: thisChild });
+                                        callChildAjax({ m: m, url: thisChildPath + "?" + thisQuery.restApiQuery, thisChild: thisChild });
                                     }
                                     else {
                                         //Shouldn't be called
-                                        getQueryForObject(thisChild);
+                                        //getQueryForObject(thisChild);
                                     }
 
                                     if (thisChild.repeatable.overloads && Array.isArray(thisChild.repeatable.overloads) && thisChild.repeatable.overloads.length > 0) {
@@ -2397,8 +2395,6 @@ export var spCRUD = (function () {
                         formObjects.__metadata = {
                             'type': 'SP.ListItem' // it defines the ListEnitityTypeName  
                         };
-
-                        var queryObject = getQueryForObject(parentObject);
 
                         var crudRequest2 = {
                             headers: headers,

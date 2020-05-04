@@ -386,17 +386,29 @@ export var spQuery = (function () {
         return m.tableStructure.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/items?" + useTop + m.ColumnsSelect + '&' + getOrderBy(m) + thisSearch;
     }
 
-    function promiseQuery(m: any) {
+    async function promiseQuery(m: any) {
+
+        var thePath = "";
+        var theName = "";
+        var hasOrder = false;
+        var theOrder = "";
+        var fullURL = "";
 
         if (typeof m.isDatatable == "boolean" && m.isDatatable) {
             spEnv.tables[m.xtra.tableName].callThePromise = "Loading";
+            thePath = m.xtra.tableStructure.path;
+            theName = m.xtra.tableName;
+            theOrder = getOrderBy(m.xtra);
+            hasOrder = theOrder.length > 0 ? true : false;
+            fullURL = thePath + "/_api/web/lists/getbytitle('" + theName + "')/items";
+        }
+        else {
+            thePath = m.parentObject.path;
+            theName = m.parentObject.name;
+            fullURL = thePath;
         }
 
-        var rootPath = m.xtra.tableStructure.path;
-
         var useTop = "$skiptoken=" + encodeURIComponent("Paged=TRUE&p_ID=0") + "&$top=5000";
-
-        var newJsonData = {};
 
         var columns = m.struct.columns.filter((objectType: { type: any; }) => objectType.type == "column");
         var required = m.struct.columns.filter((objectType: { type: string; }) => objectType.type == "required");
@@ -427,11 +439,19 @@ export var spQuery = (function () {
             var getSelectParam = getSelect(currentStruct)
             console.log(getSelectParam);
 
+            var columnChunkURL = "";
+            if (typeof m.isDatatable == "boolean" && m.isDatatable) {
+                columnChunkURL = fullURL + "?" + useTop + "&" + getSelectParam + (hasOrder ? "&" + theOrder : "")
+            }
+            else {
+                columnChunkURL = fullURL + "?" + getSelectParam;
+            }
+
             eachAjax.push({
-                url: m.xtra.tableStructure.path + "/_api/web/lists/getbytitle('" + m.xtra.tableName + "')/items?" + useTop + "&" + getSelectParam + "&" + getOrderBy(m.xtra),
+                url: columnChunkURL,
                 method: "GET",
                 promise: true
-            })
+            });
         }
 
         for (var index = 0; index < lookupChunks.length; index++) {
@@ -443,15 +463,21 @@ export var spQuery = (function () {
             var getSelectParam = getSelect(currentStruct)
             console.log(getSelectParam);
 
+            var lookupChunkURL = "";
+            if (typeof m.isDatatable == "boolean" && m.isDatatable) {
+                lookupChunkURL = fullURL + "?" + useTop + "&" + getSelectParam + (hasOrder ? "&" + theOrder : "")
+            }
+            else {
+                lookupChunkURL = fullURL + "?" + getSelectParam;
+            }
+
             eachAjax.push({
-                url: m.xtra.tableStructure.path + "/_api/web/lists/getbytitle('" + m.xtra.tableName + "')/items?" + useTop + "&" + getSelectParam + "&" + getOrderBy(m.xtra),
+                url: lookupChunkURL,
                 method: "GET",
                 promise: true,
                 headers: { Accept: "application/json" }
-            })
+            });
         }
-
-        //console.log(eachAjax);
 
         var ajaxes = [];
         eachAjax.forEach(element => {
@@ -459,56 +485,61 @@ export var spQuery = (function () {
         });
 
         //@ts-ignore
-        return Promise.all(ajaxes).then(function (returnedData) {
-            var mergedRecs = [];
-            console.log(returnedData);
+        const returnedData = await Promise.all(ajaxes);
+        var mergedRecs = [];
+        //console.log(returnedData);
+        //Each Array from Promise
 
-            //Each Array from Promise
-            for (let index = 0; index < returnedData.length; index++) {
-                var element;
-                if (returnedData[index] && returnedData[index].d) {
-                    element = returnedData[index].d.results;
+        if (Array.isArray(returnedData)) {
+            for (let index_2 = 0; index_2 < returnedData.length; index_2++) {
+                var element_3: any;
+
+                if (returnedData[index_2] && returnedData[index_2].d) {
+                    if(Array.isArray(returnedData[index_2].d.results))
+                    {
+                        element_3 = returnedData[index_2].d.results;
+                    }                    
+                    else if(returnedData[index_2].d.ID != undefined)
+                    {
+                        element_3 = [returnedData[index_2].d];
+                    }
                 }
-
-                if (returnedData[index] && returnedData[index].value) {
-                    element = returnedData[index].value;
+                else if (returnedData[index_2] && returnedData[index_2].value) {
+                    element_3 = returnedData[index_2].value;
                 }
-
+                else
+                {
+                    element_3 = [returnedData[index_2]]
+                }
 
                 if (mergedRecs.length == 0) {
-                    mergedRecs = mergedRecs.concat(element);
+                    mergedRecs = mergedRecs.concat(element_3);
                 }
                 else {
                     //Rows of Current Results
-                    for (let index = 0; index < element.length; index++) {
-                        const currentRow = element[index];
-
+                    for (let index_3 = 0; index_3 < element_3.length; index_3++) {
+                        const currentRow = element_3[index_3];
                         var currentID = currentRow.ID;
-
-                        var RowToBeMerged = _.find(mergedRecs, function (o) { if (o.ID == currentID) { return true } else { return false } });
-
+                        var RowToBeMerged = _.find(mergedRecs, function (o) {
+                            if (o.ID == currentID) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
                         if (RowToBeMerged != undefined) {
                             _.merge(RowToBeMerged, currentRow);
                         }
                     }
                 }
                 //var merged = _.merge(_.keyBy(mergedRecs, 'ID'), _.keyBy(mergedRecs, 'ID'));
-                var merged = _.unionBy(mergedRecs, element, "ID");
+                var merged = _.unionBy(mergedRecs, element_3, "ID");
                 mergedRecs = _.values(merged);
             }
-            console.log(mergedRecs);
-
-            return mergedRecs;
-        });
-    }
-
-    function promiseData(m: any) {
-        var newJsonData = {};
-        var selectStruct = ""; //getSelectStruct(m); 
-
-        selectStruct = selectStruct;
-
-        return newJsonData;
+        }
+        //console.log(mergedRecs);
+        return mergedRecs;
     }
 
     function conformDataToSharePointRest(e: any, settings: any, data: any, xtra: any) {
@@ -568,7 +599,6 @@ export var spQuery = (function () {
         if (spEnv.tables[xtra.tableName].originalCaller.callThePromise == "Load") {
             var returnedData2 = promiseQuery({
                 isDatatable: true,
-                source: spEnv.tables[xtra.tableName].originalCaller,
                 struct: struct,
                 xtra: xtra
             }).then(function (thisPromiseData: any) {
@@ -738,10 +768,6 @@ export var spQuery = (function () {
         return m.tableStructure.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/ItemCount";
     }
 
-
-
-
-
     function returnPagedData(m: any) {
         var pagedArray = [];
         var data = m.data == undefined ? [] : JSON.parse(JSON.stringify(m.data));
@@ -780,7 +806,7 @@ export var spQuery = (function () {
         return {
             data: pagedArray,
             recordsTotal: data.length, // ListCount.d.ItemCount;
-            recordsFiltered: recordsFiltered            
+            recordsFiltered: recordsFiltered
         };
     }
 
@@ -1050,8 +1076,6 @@ export var spQuery = (function () {
         }
     }
 
-    var temp = [];
-
     return {
         genTable: function (m: any) {
             genTable(m);
@@ -1065,11 +1089,14 @@ export var spQuery = (function () {
         getItemQuery: function (m: any) {
             var struct = getSelectStruct(m);
             var restApiQuery = getSelect(struct);
-            return { 
-                struct : struct, 
-                restApiQuery : restApiQuery,
-                path : ""
+            return {
+                struct: struct,
+                restApiQuery: restApiQuery,
+                path: ""
             };
+        },
+        promiseQuery: function (m: any) {
+            return promiseQuery(m);
         }
     };
 })();
