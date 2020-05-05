@@ -90,25 +90,6 @@ export var spCRUD = (function () {
         }
     }
 
-    function removeFile(e: any) {
-        var thisRowIndex = $(this).parents('tr').index();
-        var parent = $(this).parents('.file_inventory');
-        var thisOwner = $(parent).data('filecontainer');
-
-        var thisFileInput = $(parent).siblings('.box.has_advanced_upload').find('input.box__file');
-
-        var FileArray = $(thisFileInput).data().files;
-
-        var index;
-
-        FileArray.splice(thisRowIndex, 1);
-
-        showFiles({
-            box: thisOwner,
-            files: FileArray
-        });
-    }
-
     function initObjectParams(e: spaLoadListStruct) {
         e.thisVar = e.thisVar ? e.thisVar : e.name;
         e.name = e.name.toLowerCase();
@@ -392,6 +373,25 @@ export var spCRUD = (function () {
                 }
             });
         }
+    }
+
+    function removeFile(e: any) {
+        var thisRowIndex = $(this).parents('tr').index();
+        var parent = $(this).parents('.file_inventory');
+        var thisOwner = $(parent).data('filecontainer');
+
+        var thisFileInput = $(parent).siblings('.box.has_advanced_upload').find('input.box__file');
+
+        var FileArray = $(thisFileInput).data().files;
+
+        var index;
+
+        FileArray.splice(thisRowIndex, 1);
+
+        showFiles({
+            box: thisOwner,
+            files: FileArray
+        });
     }
 
     var showFiles = function (sfm: any) {
