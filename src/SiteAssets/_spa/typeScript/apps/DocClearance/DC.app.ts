@@ -116,7 +116,7 @@ var DocumentClearance = <spaLoadListStruct>{};
     DocumentClearance.singular = "Document Clearance";
     DocumentClearance.columns = {
         visible: [],
-        hidden: ["Title"],
+        hidden: [],
         readOnly: ["CurrentPerson", "CurrentStatus"]
     };
     DocumentClearance.table = {

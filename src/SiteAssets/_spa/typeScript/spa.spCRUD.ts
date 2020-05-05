@@ -2062,7 +2062,7 @@ export var spCRUD = (function () {
                                             //url: spCRUD.data().objects[parentData.owner].path + "/_api/web/ensureuser('"+  encodeURIComponent(theseValues[u].Key) +"')",
                                         };
 
-                                        var thisUser = spCommon.spAjax(thisUserRequest);
+                                        var thisUser = spCommon.spCommon.ajax(thisUserRequest);
 
                                         if (thisUser && thisUser['d']) {
                                             ids.push(thisUser['d'].Id);
