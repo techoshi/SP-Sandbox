@@ -386,8 +386,6 @@ export var spCRUD = (function () {
     
             var FileArray = $(thisFileInput).data().files;
     
-            var index;
-    
             FileArray.splice(thisRowIndex, 1);
     
             FileLoaderMethods.showFiles({
