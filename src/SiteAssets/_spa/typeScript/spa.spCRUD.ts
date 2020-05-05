@@ -375,208 +375,225 @@ export var spCRUD = (function () {
         }
     }
 
-    function removeFile(e: any) {
-        var thisRowIndex = $(this).parents('tr').index();
-        var parent = $(this).parents('.file_inventory');
-        var thisOwner = $(parent).data('filecontainer');
+    var FileLoaderMethods = (function(){
 
-        var thisFileInput = $(parent).siblings('.box.has_advanced_upload').find('input.box__file');
-
-        var FileArray = $(thisFileInput).data().files;
-
-        var index;
-
-        FileArray.splice(thisRowIndex, 1);
-
-        showFiles({
-            box: thisOwner,
-            files: FileArray
-        });
-    }
-
-    var showFiles = function (sfm: any) {
-        sfm.create = false;
-        sfm.view = false;
-        sfm.edit = false;
-        sfm.officeLinks = false;
-        if (sfm.parentObject) {
-            sfm.owner = sfm.parentObject.source;
-
-            switch (sfm.parentObject.action) {
-                case "create":
-                    sfm.create = true;
-                    break;
-                case "view":
-                    sfm.view = true;
-                    sfm.officeLinks = true;
-                    break;
-                case "edit":
-                    sfm.edit = true;
-                    sfm.officeLinks = true;
-                    break;
-            }
-        }
-        var newFileArray = [];
-        for (var i = 0; i < sfm.files.length; i++) {
-            if (sfm.files[i].size == undefined) {
-                sfm.files[i].extension = spCommon.spCommon.getFileExtension(sfm.files[i].FileName, false);
-                sfm.files[i].exactURL = window.location.origin + sfm.files[i].ServerRelativeUrl;
-            }
-
-            var thisTempFileObject = {};
-            for (var ii in sfm.files[i]) {
-                thisTempFileObject[ii] = sfm.files[i][ii];
-            }
-            thisTempFileObject[ii] = typeof sfm.files[i].ServerRelativeUrl == "boolean" ? sfm.files[i].ServerRelativeUrl : false;
-            newFileArray.push(thisTempFileObject);
-        }
-
-        sfm.files = newFileArray;
-
-        $('[data-filecontainer=' + sfm.box + '] .box__inventory').html(spEnv.$pa.env.fileInventory(sfm));
-
-        $('.box__inventory tbody tr .Remove-File').unbind('click', removeFile);
-        $('.box__inventory tbody tr .Remove-File').bind('click', removeFile);
-
-        //var thisValue = m.files.length > 1 ? ($input.attr('data-multiple-caption') || '').replace( '{count}', m.files.length ) : m.files[0].name;
-        //$label.text(thisValue);
-    };
-
-    function fileLoader(m: any) {
-        var validation = m.validation == undefined ? {} : m.validation;
-        var allowedExtensions = validation.allowedExtensions == undefined ? [] : validation.allowedExtensions;
-        var sizeLimit = validation.sizeLimit == undefined ? -1 : validation.sizeLimit;
-
-        var $form = $(m.thisObject);
-
-        if (isAdvancedUpload) {
-            $form.addClass('has_advanced_upload');
-        }
-
-        var $input = $form.find('input[type="file"]');
-        var $label = $form.find('label');
-
-        var checkExtension = function (m: any) {
-            if (m.allowedExtensions.length > 0) {
-                var thisExtension = spCommon.spCommon.getExtension(m.file.name);
-
-                var addFile = m.allowedExtensions.indexOf(thisExtension.toLowerCase()) > -1;
-
-                if (!addFile) {
-                    toastr.error('File ' + m.file.name + ' not added to queue.', ' File extension ' + thisExtension + ' not allowed');
-                }
-
-                return addFile;
-            } else {
-                return true;
-            }
-        };
-
-        var checkFileSize = function (m: any) {
-            if (!isNaN(m.sizeLimit) && m.sizeLimit > -1) {
-                var thisFileSize = m.file.size;
-
-                var addFile = m.sizeLimit >= thisFileSize;
-
-                if (!addFile) {
-                    toastr.error('File ' + m.file.name + ' not added to queue.', ' File size too large and not allowed');
-                }
-
-                return addFile;
-            } else {
-                return true;
-            }
-        };
-
-        if (isAdvancedUpload) {
-
-            $form.on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }).on('dragover dragenter', function () {
-                $form.addClass('is_dragover');
-            }).on('dragleave dragend drop', function () {
-                $form.removeClass('is_dragover');
-            }).on('drop', function (e) {
-                if (e.originalEvent.dataTransfer.files) {
-                    var thisFileLoaderData = $(this).data();
-
-                    var thisCaller = _.find(theseLists, function (r) {
-                        return r.name.toLowerCase() == thisFileLoaderData.owner;
-                    });                    
-
-                    if ($(this).find('input').prop('multiple') == false) {
-                        $(this).find('input').data('files', []);
-                    }
-
-                    var droppedFiles = $(this).find('input').data('files') == undefined ? [] : $(this).find('input').data('files');
-
-                    for (var thisFile = 0; thisFile < e.originalEvent.dataTransfer.files.length; thisFile++) {
-                        if (checkExtension({
-                            allowedExtensions: allowedExtensions,
-                            file: e.originalEvent.dataTransfer.files[thisFile]
-                        }) &&
-                            checkFileSize({
-                                sizeLimit: sizeLimit,
-                                file: e.originalEvent.dataTransfer.files[thisFile]
-                            })
-                        ) {
-                            var currentDroppedFile = e.originalEvent.dataTransfer.files[thisFile];
-                            if(thisCaller && thisCaller.baseTemplate == "101")
-                            {
-                                $('.form[data-source="' + thisFileLoaderData.owner + '"][data-formtype="create"] input[data-entity="Title"]').val(currentDroppedFile.name)
-                            }
-                            droppedFiles.push(currentDroppedFile);
-                        }
-                    }
-
-                    $(this).find('input').data('files', droppedFiles);
-                    
-                    showFiles({
-                        box: $(this).prop('id'),
-                        files: droppedFiles
-                    });
-                }
+        function removeFile(e: any) {
+            var thisRowIndex = $(this).parents('tr').index();
+            var parent = $(this).parents('.file_inventory');
+            var thisOwner = $(parent).data('filecontainer');
+    
+            var thisFileInput = $(parent).siblings('.box.has_advanced_upload').find('input.box__file');
+    
+            var FileArray = $(thisFileInput).data().files;
+    
+            var index;
+    
+            FileArray.splice(thisRowIndex, 1);
+    
+            FileLoaderMethods.showFiles({
+                box: thisOwner,
+                files: FileArray
             });
         }
 
-        var fileObjectChanged = function (e: any) {
-            if (e.target.files) {
-                if ($(e.currentTarget).prop('multiple') == false) {
-                    $(this).data('files', []);
+        function showFiles (sfm: any) {
+            sfm.create = false;
+            sfm.view = false;
+            sfm.edit = false;
+            sfm.officeLinks = false;
+            if (sfm.parentObject) {
+                sfm.owner = sfm.parentObject.source;
+    
+                switch (sfm.parentObject.action) {
+                    case "create":
+                        sfm.create = true;
+                        break;
+                    case "view":
+                        sfm.view = true;
+                        sfm.officeLinks = true;
+                        break;
+                    case "edit":
+                        sfm.edit = true;
+                        sfm.officeLinks = true;
+                        break;
                 }
-
-                var droppedFiles = $(this).data('files') == undefined ? [] : $(this).data('files');
-
-                for (var thisFile = 0; thisFile < e.target.files.length; thisFile++) {
-                    if (checkExtension({
-                        allowedExtensions: allowedExtensions,
-                        file: e.target.files[thisFile]
-                    }) &&
-                        checkFileSize({
-                            sizeLimit: sizeLimit,
-                            file: e.target.files[thisFile]
-                        })
-                    ) {
-                        droppedFiles.push(e.target.files[thisFile]);
-                    }
-                }
-
-                $(this).data('files', droppedFiles);
-
-                showFiles({
-                    box: $(this).parents('.box').prop('id'),
-                    files: droppedFiles
-                });
             }
+            var newFileArray = [];
+            for (var i = 0; i < sfm.files.length; i++) {
+                if (sfm.files[i].size == undefined) {
+                    sfm.files[i].extension = spCommon.spCommon.getFileExtension(sfm.files[i].FileName, false);
+                    sfm.files[i].exactURL = window.location.origin + sfm.files[i].ServerRelativeUrl;
+                }
+    
+                var thisTempFileObject = {};
+                for (var ii in sfm.files[i]) {
+                    thisTempFileObject[ii] = sfm.files[i][ii];
+                }
+                thisTempFileObject[ii] = typeof sfm.files[i].ServerRelativeUrl == "boolean" ? sfm.files[i].ServerRelativeUrl : false;
+                newFileArray.push(thisTempFileObject);
+            }
+    
+            sfm.files = newFileArray;
+    
+            $('[data-filecontainer=' + sfm.box + '] .box__inventory').html(spEnv.$pa.env.fileInventory(sfm));
+    
+            $('.box__inventory tbody tr .Remove-File').unbind('click', FileLoaderMethods.removeFile);
+            $('.box__inventory tbody tr .Remove-File').bind('click', FileLoaderMethods.removeFile);
+    
+            //var thisValue = m.files.length > 1 ? ($input.attr('data-multiple-caption') || '').replace( '{count}', m.files.length ) : m.files[0].name;
+            //$label.text(thisValue);
         };
 
-        //$form.each(function(i, element){ 
-        //	$('#' + $form[i].id ).find('input[type="file"]') .on('change', fileObjectChanged)
-        //})
-
-        $input.on('change', fileObjectChanged);
-    }
+        function fileLoader(m: any) {
+            var validation = m.validation == undefined ? {} : m.validation;
+            var allowedExtensions = validation.allowedExtensions == undefined ? [] : validation.allowedExtensions;
+            var sizeLimit = validation.sizeLimit == undefined ? -1 : validation.sizeLimit;
+    
+            var $form = $(m.thisObject);
+    
+            if (isAdvancedUpload) {
+                $form.addClass('has_advanced_upload');
+            }
+    
+            var $input = $form.find('input[type="file"]');
+            var $label = $form.find('label');
+    
+            var checkExtension = function (m: any) {
+                if (m.allowedExtensions.length > 0) {
+                    var thisExtension = spCommon.spCommon.getExtension(m.file.name);
+    
+                    var addFile = m.allowedExtensions.indexOf(thisExtension.toLowerCase()) > -1;
+    
+                    if (!addFile) {
+                        toastr.error('File ' + m.file.name + ' not added to queue.', ' File extension ' + thisExtension + ' not allowed');
+                    }
+    
+                    return addFile;
+                } else {
+                    return true;
+                }
+            };
+    
+            var checkFileSize = function (m: any) {
+                if (!isNaN(m.sizeLimit) && m.sizeLimit > -1) {
+                    var thisFileSize = m.file.size;
+    
+                    var addFile = m.sizeLimit >= thisFileSize;
+    
+                    if (!addFile) {
+                        toastr.error('File ' + m.file.name + ' not added to queue.', ' File size too large and not allowed');
+                    }
+    
+                    return addFile;
+                } else {
+                    return true;
+                }
+            };
+    
+            if (isAdvancedUpload) {
+    
+                $form.on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }).on('dragover dragenter', function () {
+                    $form.addClass('is_dragover');
+                }).on('dragleave dragend drop', function () {
+                    $form.removeClass('is_dragover');
+                }).on('drop', function (e) {
+                    if (e.originalEvent.dataTransfer.files) {
+                        var thisFileLoaderData = $(this).data();
+    
+                        var thisCaller = _.find(theseLists, function (r) {
+                            return r.name.toLowerCase() == thisFileLoaderData.owner;
+                        });                    
+    
+                        if ($(this).find('input').prop('multiple') == false) {
+                            $(this).find('input').data('files', []);
+                        }
+    
+                        var droppedFiles = $(this).find('input').data('files') == undefined ? [] : $(this).find('input').data('files');
+    
+                        for (var thisFile = 0; thisFile < e.originalEvent.dataTransfer.files.length; thisFile++) {
+                            if (checkExtension({
+                                allowedExtensions: allowedExtensions,
+                                file: e.originalEvent.dataTransfer.files[thisFile]
+                            }) &&
+                                checkFileSize({
+                                    sizeLimit: sizeLimit,
+                                    file: e.originalEvent.dataTransfer.files[thisFile]
+                                })
+                            ) {
+                                var currentDroppedFile = e.originalEvent.dataTransfer.files[thisFile];
+                                if(thisCaller && thisCaller.baseTemplate == "101")
+                                {
+                                    $('.form[data-source="' + thisFileLoaderData.owner + '"][data-formtype="create"] input[data-entity="Title"]').val(currentDroppedFile.name)
+                                }
+                                droppedFiles.push(currentDroppedFile);
+                            }
+                        }
+    
+                        $(this).find('input').data('files', droppedFiles);
+                        
+                        FileLoaderMethods.showFiles({
+                            box: $(this).prop('id'),
+                            files: droppedFiles
+                        });
+                    }
+                });
+            }
+    
+            var fileObjectChanged = function (e: any) {
+                if (e.target.files) {
+                    if ($(e.currentTarget).prop('multiple') == false) {
+                        $(this).data('files', []);
+                    }
+    
+                    var droppedFiles = $(this).data('files') == undefined ? [] : $(this).data('files');
+    
+                    for (var thisFile = 0; thisFile < e.target.files.length; thisFile++) {
+                        if (checkExtension({
+                            allowedExtensions: allowedExtensions,
+                            file: e.target.files[thisFile]
+                        }) &&
+                            checkFileSize({
+                                sizeLimit: sizeLimit,
+                                file: e.target.files[thisFile]
+                            })
+                        ) {
+                            droppedFiles.push(e.target.files[thisFile]);
+                        }
+                    }
+    
+                    $(this).data('files', droppedFiles);
+    
+                    FileLoaderMethods.showFiles({
+                        box: $(this).parents('.box').prop('id'),
+                        files: droppedFiles
+                    });
+                }
+            };
+    
+            //$form.each(function(i, element){ 
+            //	$('#' + $form[i].id ).find('input[type="file"]') .on('change', fileObjectChanged)
+            //})
+    
+            $input.on('change', fileObjectChanged);
+        }
+        return {
+            removeFile : function(e : any)
+            {
+                return removeFile(e);
+            },
+            showFiles : function(sfm: any)
+            {
+                return showFiles(sfm);
+            },
+            fileLoader : function(m: any)
+            {
+                return fileLoader(m);
+            }
+        }
+    })();    
 
     function loadTabStructure(m: any) {
 
@@ -1071,7 +1088,7 @@ export var spCRUD = (function () {
         var thisMo = m.action;
         $('#modal-' + thisMo + '-' + m.source + ' .form-container button').prependTo('#modal-' + thisMo + '-' + m.source + ' .modal-footer');
 
-        fileLoader({
+        FileLoaderMethods.fileLoader({
             thisObject: '.' + m.source.toLowerCase() + '-attachments',
             validation: {
                 allowedExtensions: ["jpeg", "jpg", "gif", "png", "docx", "pdf", "xlsx", "txt", "xls", "ppt", "pptx", "doc", "zip", "7z", "psd"],
@@ -1581,7 +1598,7 @@ export var spCRUD = (function () {
                                     }
 
                                     //var thisFile = [{ FileName : returnedData.FileLeafRef }]
-                                    showFiles({
+                                    FileLoaderMethods.showFiles({
                                         box: action + '-' + owner + '-' + 'attachments',
                                         itemURL: itemURL,
                                         files: attachments,
@@ -1599,7 +1616,7 @@ export var spCRUD = (function () {
                                         parentObject: m
                                     }];
                                     $(m.formSelector).data('FileLeafRef', relativeFilePath);
-                                    showFiles({
+                                    FileLoaderMethods.showFiles({
                                         box: action + '-' + owner + '-' + 'attachments',
                                         files: attachments2,
                                         parentObject: m
@@ -2991,7 +3008,7 @@ export var spCRUD = (function () {
             $('.spa-app-items').empty();
         },
         fileLoader: function (m: any) {
-            fileLoader(m);
+            FileLoaderMethods.fileLoader(m);
         },
         saveData: function (m: any) {
             return saveForm(m);
