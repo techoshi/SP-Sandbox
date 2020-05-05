@@ -25,8 +25,8 @@ var DcMainWork = <spaLoadListStruct>{};
 
                     function thisFunction() { toastr.success('Clicked'); };
  
-                    $('.modal[data-owner="documentclearancework"]').off('click', '.send-to-person', thisFunction);
-                    $('.modal[data-owner="documentclearancework"]').on('click', '.send-to-person', thisFunction)
+                    $('.modal[data-owner="documentclearance"]').off('click', '.send-to-person', thisFunction);
+                    $('.modal[data-owner="documentclearance"]').on('click', '.send-to-person', thisFunction)
                 }
             } as spaRepeatableOverload
         ]
