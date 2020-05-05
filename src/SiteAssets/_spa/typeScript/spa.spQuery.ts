@@ -635,6 +635,7 @@ export var spQuery = (function () {
 
                         json2.fullData = json2.value;
                         var tempData = returnPagedData({
+                            runSearch : false,
                             meta: spEnv.tables[thisTable].originalCaller.xhrReq,
                             data: json2.fullData,
                             start: 0,
@@ -664,7 +665,8 @@ export var spQuery = (function () {
             var ogMGlobal = spEnv.mGlobal[xtra.path][xtra.tableName];
 
             var tempData2 = returnPagedData({
-                meta: {},
+                runSearch : true,
+                meta: ogCaller.originalCaller.xhrReq ? { search : ogCaller.originalCaller.xhrReq.search, columns : ogCaller.originalCaller.xhrReq.columns } : {},
                 data: ogMGlobal.currentJsonData.fullData,
                 start: ogCaller.originalCaller.xhrReq.start,
                 length: ogCaller.originalCaller.xhrReq.length
@@ -787,9 +789,9 @@ export var spQuery = (function () {
                 search: m.meta.search
             });
 
-            var searchData = _.filter(searchStageData, function (o) {
-                return eval(conditionSyntax);
-            });
+            var searchData = m.runSearch ? _.filter(searchStageData, function (o) {
+                    return eval(conditionSyntax);                
+            }) : searchStageData;
 
             var endRowLength = searchData.length <= endRow ? searchData.length : endRow;
             for (var r = startRow; r < endRowLength; r++) {
