@@ -499,6 +499,12 @@ export var spCRUD = (function () {
                 $form.removeClass('is_dragover');
             }).on('drop', function (e) {
                 if (e.originalEvent.dataTransfer.files) {
+                    var thisFileLoaderData = $(this).data();
+
+                    var thisCaller = _.find(theseLists, function (r) {
+                        return r.name.toLowerCase() == thisFileLoaderData.owner;
+                    });                    
+
                     if ($(this).find('input').prop('multiple') == false) {
                         $(this).find('input').data('files', []);
                     }
@@ -515,12 +521,17 @@ export var spCRUD = (function () {
                                 file: e.originalEvent.dataTransfer.files[thisFile]
                             })
                         ) {
-                            droppedFiles.push(e.originalEvent.dataTransfer.files[thisFile]);
+                            var currentDroppedFile = e.originalEvent.dataTransfer.files[thisFile];
+                            if(thisCaller && thisCaller.baseTemplate == "101")
+                            {
+                                $('.form[data-source="' + thisFileLoaderData.owner + '"][data-formtype="create"] input[data-entity="Title"]').val(currentDroppedFile.name)
+                            }
+                            droppedFiles.push(currentDroppedFile);
                         }
                     }
 
                     $(this).find('input').data('files', droppedFiles);
-
+                    
                     showFiles({
                         box: $(this).prop('id'),
                         files: droppedFiles
