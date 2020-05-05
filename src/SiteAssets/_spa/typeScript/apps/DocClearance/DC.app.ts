@@ -117,7 +117,7 @@ var DocumentClearance = <spaLoadListStruct>{};
     DocumentClearance.columns = {
         visible: [],
         hidden: [],
-        readOnly: ["CurrentPerson", "CurrentStatus"]
+        readOnly: []//["CurrentParticipant", "CurrentStatus"]
     };
     DocumentClearance.table = {
         css: {

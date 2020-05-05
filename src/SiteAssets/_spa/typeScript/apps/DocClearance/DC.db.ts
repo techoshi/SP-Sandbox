@@ -118,9 +118,8 @@ var MainList = {
 		LookupFieldName: 'Marking'
 	},
 	{
-		type: 'FieldText',
-		Title: 'CurrentPerson',
-		DefaultValue: 'Not Assigned'
+		type: 'FieldUser',
+		Title: 'CurrentParticipant'
 	},
 	{
 		type: 'FieldText',
