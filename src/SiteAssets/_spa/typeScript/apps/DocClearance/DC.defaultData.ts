@@ -2,7 +2,7 @@ import * as spDB from "../../spa.spDB";
 
 function getStatusData() {
     return {
-        name: 'ST11',
+        name: 'DocClearanceTypes',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -23,7 +23,7 @@ function getStatusData() {
 
 function getRoles() {
     return {
-        name: 'UT11',
+        name: 'DocClearanceRoles',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -84,7 +84,7 @@ function getRoles() {
 
 function getPriorities() {
     return {
-        name: 'P11',
+        name: 'DocClearancePriorities',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -105,7 +105,7 @@ function getPriorities() {
 
 function getSources() {
     return {
-        name: 'S11',
+        name: 'DocClearanceSources',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [{
@@ -130,7 +130,7 @@ function getSources() {
 
 function getMarkings() {
     return {
-        name: 'M11',
+        name: 'DocClearanceMarkings',
         path: _spPageContextInfo.webAbsoluteUrl,
         baseTemplate: "100",
         data: [

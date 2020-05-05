@@ -3,7 +3,7 @@ import * as spDB from "../../spa.spDB";
 
 var DocClearanceList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'ST11',
+	Title: 'DocClearanceTypes',
 	type: "Generic List",
 	Description: 'Document Clearance Status',
 	Columns: [{
@@ -15,7 +15,7 @@ var DocClearanceList = {
 } as SharePointListStruct;
 var RoleTypes = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'UT11',
+	Title: 'DocClearanceRoles',
 	type: "Generic List",
 	Description: 'Document Clearance User Types',
 	Columns: [
@@ -23,35 +23,18 @@ var RoleTypes = {
 			type: 'FieldText',
 			Title: 'RoleType',
 			MaxLength: 100
+		},
+		{
+			type: 'FieldUser',
+			Title: 'Participant'
 		}
 	]
 } as SharePointListStruct;
 
-var Participants = {
-	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'RU11',
-	type: "Generic List",
-	Description: 'Document Clearance User Types',
-	Columns: [
-		{
-			type: 'FieldLookup',
-			Title: 'RoleType',
-			LookupListId: {
-				listName: RoleTypes.Title
-			},
-			AllowMultipleValues: false,
-			LookupFieldName: 'RoleType'
-		},
-		{
-			type: 'FieldText',
-			Title: 'Participant'
-		}
-	]
-} as SharePointListStruct;	
 
 var WorkflowList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'W11',
+	Title: 'DocClearanceWFTypes',
 	type: "Generic List",
 	Description: 'Document Clearance Workflow',
 	Columns: [{
@@ -62,7 +45,7 @@ var WorkflowList = {
 } as SharePointListStruct;
 var PrioritiesList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'P11',
+	Title: 'DocClearancePriorities',
 	type: "Generic List",
 	Description: 'Document Clearance Priorities',
 	Columns: [{
@@ -73,7 +56,7 @@ var PrioritiesList = {
 } as SharePointListStruct;
 var SourcesList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'S11',
+	Title: 'DocClearanceSources',
 	type: "Generic List",
 	Description: 'Document Clearance Sources',
 	Columns: [{
@@ -84,7 +67,7 @@ var SourcesList = {
 } as SharePointListStruct;
 var MarkingsList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'M11',
+	Title: "DocClearanceMarkings",
 	type: "Generic List",
 	Description: 'Document Markings',
 	Columns: [{
@@ -95,7 +78,7 @@ var MarkingsList = {
 } as SharePointListStruct;
 var MainList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'DCMain',
+	Title: 'DocumentClearance',
 	type: "Document Library",
 	Description: 'Document Clearance App',
 	Columns: [{
@@ -148,7 +131,7 @@ var MainList = {
 } as SharePointListStruct;
 var WorkList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'WORK',
+	Title: 'DocumentClearanceWork',
 	type: "Generic List",
 	Description: 'Document Clearance WorkFlow',
 	hasSequence: true,
@@ -156,7 +139,7 @@ var WorkList = {
 	Columns: [
 		{
 			type: 'FieldLookup',
-			Title: 'DCMain',
+			Title: 'DocumentClearance',
 			LookupListId: {
 				listName: MainList.Title
 			},
@@ -173,14 +156,9 @@ var WorkList = {
 			LookupFieldName: 'RoleType'
 		},
 		{
-			type: 'FieldLookup',
-			Title: 'Participant',
-			LookupListId: {
-				listName: Participants.Title
-			},
-			AllowMultipleValues: false,
-			LookupFieldName: 'Participant'
-		},
+			type: 'FieldUser',
+			Title: 'Participant'
+		},		
 		{
 			type: 'FieldLookup',
 			Title: 'Status',
@@ -198,13 +176,13 @@ var WorkList = {
 } as SharePointListStruct;
 var NoteList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
-	Title: 'Note',
+	Title: "DocClearanceNote",
 	type: "Generic List",
 	Description: 'Document Clearance WorkFlow',
 	Columns: [
 		{
 			type: 'FieldLookup',
-			Title: 'DCMain',
+			Title: 'DocumentClearance',
 			LookupListId: {
 				listName: MainList.Title
 			},
@@ -228,7 +206,6 @@ var NoteList = {
 
 spDB.thisLists.push(DocClearanceList);
 spDB.thisLists.push(RoleTypes);
-spDB.thisLists.push(Participants);
 spDB.thisLists.push(WorkflowList);
 spDB.thisLists.push(PrioritiesList);
 spDB.thisLists.push(SourcesList);

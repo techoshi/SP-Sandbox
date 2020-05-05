@@ -9,10 +9,10 @@ var appTemplate = {
 
 var DcMainWork = <spaLoadListStruct>{};
 {
-    DcMainWork.name = "WORK";
+    DcMainWork.name = "DocumentClearanceWork";
     DcMainWork.tabTitle = "Document Clearance Flow";
     DcMainWork.sectionName = "Approval/Review Area";
-    DcMainWork.condition = "DCMain eq {{ID}}";
+    DcMainWork.condition = "DocumentClearance eq {{ID}}";
     var repeatableWork = <spaRepeatable>{};
     {
         repeatableWork.enable = true;
@@ -37,7 +37,7 @@ var DcMainWork = <spaLoadListStruct>{};
     DcMainWork.wholeForm = false;
     DcMainWork.columns = {
         visible: ["RoleType", "RoleUser", "Participant", "Status", "DateOfDecision"],
-        hidden: ["Title", "DCMain", "Sequence"],
+        hidden: ["Title", "DocumentClearance", "Sequence"],
         readOnly: ["DateOfDecision"]
     };
     DcMainWork.availableParent = ["edit"];
@@ -59,29 +59,29 @@ var DcMainWork = <spaLoadListStruct>{};
     DcMainWork.search = [""];
 };
 
-var DCMainNotes = <spaLoadListStruct>{};
+var DocumentClearanceNotes = <spaLoadListStruct>{};
 {
-    DCMainNotes.hidden = true;
-    DCMainNotes.name = "Note";
-    DCMainNotes.sectionName = "Notes";
-    DCMainNotes.singular = "Note Entry";
-    DCMainNotes.condition = "DCMain eq {{ID}}";
+    DocumentClearanceNotes.hidden = true;
+    DocumentClearanceNotes.name = "DocClearanceNote";
+    DocumentClearanceNotes.sectionName = "Notes";
+    DocumentClearanceNotes.singular = "Note Entry";
+    DocumentClearanceNotes.condition = "DocumentClearance eq {{ID}}";
     var repeatableNote = <spaRepeatable>{};
     {
         repeatableNote.enable = true;
         repeatableNote.hasSequence = false;
     }
-    DCMainNotes.repeatable = repeatableNote;
-    DCMainNotes.metaDataVisible = true;
-    DCMainNotes.wholeForm = false;
-    DCMainNotes.availableParent = ["edit"];
-    DCMainNotes.dataEditable = false;
-    DCMainNotes.columns = {
+    DocumentClearanceNotes.repeatable = repeatableNote;
+    DocumentClearanceNotes.metaDataVisible = true;
+    DocumentClearanceNotes.wholeForm = false;
+    DocumentClearanceNotes.availableParent = ["edit"];
+    DocumentClearanceNotes.dataEditable = false;
+    DocumentClearanceNotes.columns = {
         visible: ["NoteEntry"],
-        hidden: ["Title", "DCMain", "Sequence", "CurrentStatus"],
+        hidden: ["Title", "DocumentClearance", "Sequence", "CurrentStatus"],
         readOnly: []
     };
-    DCMainNotes.form = {
+    DocumentClearanceNotes.form = {
         columns: [{
             name: "NoteEntry",
             bootstrapGridOverride: {
@@ -90,7 +90,7 @@ var DCMainNotes = <spaLoadListStruct>{};
             css: {}
         }]
     };
-    DCMainNotes.table = {
+    DocumentClearanceNotes.table = {
         css: {
             "width": "200px",
             "min-width": "200px"
@@ -103,25 +103,25 @@ var DCMainNotes = <spaLoadListStruct>{};
             }
         }]
     };
-    DCMainNotes.search = [""];
+    DocumentClearanceNotes.search = [""];
 };
 
-var DCMainChildren = [];
-DCMainChildren.push(DcMainWork);
-DCMainChildren.push(DCMainNotes);
+var DocumentClearanceChildren = [];
+DocumentClearanceChildren.push(DcMainWork);
+DocumentClearanceChildren.push(DocumentClearanceNotes);
 
-var DCMain = <spaLoadListStruct>{};
+var DocumentClearance = <spaLoadListStruct>{};
 {
-    DCMain.name = "DCMain";
-    DCMain.tabTitle = "Document Clearance";
-    DCMain.search = [""];
-    DCMain.singular = "Document Clearance";
-    DCMain.columns = {
+    DocumentClearance.name = "DocumentClearance";
+    DocumentClearance.tabTitle = "Document Clearance";
+    DocumentClearance.search = [""];
+    DocumentClearance.singular = "Document Clearance";
+    DocumentClearance.columns = {
         visible: [],
         hidden: ["Title"],
         readOnly: ["CurrentPerson", "CurrentStatus"]
     };
-    DCMain.table = {
+    DocumentClearance.table = {
         css: {
             "width": "200px",
             "min-width": "200px"
@@ -134,12 +134,12 @@ var DCMain = <spaLoadListStruct>{};
             }
         }]
     };
-    DCMain.children = DCMainChildren;
+    DocumentClearance.children = DocumentClearanceChildren;
 };
 
 var Priorities = <spaLoadListStruct>{};
 {
-    Priorities.name = "P11";
+    Priorities.name = "DocClearancePriorities";
     Priorities.tabTitle = "Clearance Priorities";
     Priorities.search = [""];
     Priorities.singular = "Clearance Priority";
@@ -148,7 +148,7 @@ var Priorities = <spaLoadListStruct>{};
 
 var Sources = <spaLoadListStruct>{};
 {
-    Sources.name = "S11";
+    Sources.name = "DocClearanceSources";
     Sources.tabTitle = "Clearance Sources";
     Sources.search = [""];
     Sources.singular = "Clearance Source";
@@ -157,7 +157,7 @@ var Sources = <spaLoadListStruct>{};
 
 var Marking = <spaLoadListStruct>{};
 {
-    Marking.name = "M11";
+    Marking.name = "DocClearanceMarkings";
     Marking.tabTitle = "Markings";
     Marking.search = [""];
     Marking.singular = "Marking";
@@ -184,7 +184,7 @@ var LeadPortfolio = <spaLoadListStruct>{};
 
 var DocStatus = <spaLoadListStruct>{};
 {
-    DocStatus.name = "ST11";
+    DocStatus.name = "DocClearanceTypes";
     DocStatus.tabTitle = "Doc Status";
     DocStatus.search = [""];
     DocStatus.singular = "Document Status";
@@ -193,7 +193,7 @@ var DocStatus = <spaLoadListStruct>{};
 
 var RoleTypes = <spaLoadListStruct>{};
 {
-    RoleTypes.name = "UT11";
+    RoleTypes.name = "DocClearanceRoles";
     RoleTypes.tabTitle = "Role Types";
     RoleTypes.search = [""];
     RoleTypes.singular = "Role Type";
@@ -210,7 +210,7 @@ var Participants = <spaLoadListStruct>{};
 };
 
 var spLists = [
-    DCMain,
+    DocumentClearance,
     Priorities,
     Sources,
     Marking,
