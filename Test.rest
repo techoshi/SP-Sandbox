@@ -1,7 +1,7 @@
 @contentType = application/json
 //https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('wkfl')/items?$skiptoken=Paged%3DTRUE%26p_ID%3D0&$top=5000&$select=GUID,ID,Title,DateOfDecision,ContentType,Attachments,AttachmentFiles,DocumentClearance/Id,DocumentClearance/Title,RoleType/Id,RoleType/RoleType,Role/Id,Role/EMail,Role/FirstName,Role/LastName,Role/WorkPhone,Role/Office,Role/Department,Role/JobTitle,Role/Title,Role/SipAddress,Role/Name,Status/Id,Status/Status&$expand=AttachmentFiles,DocumentClearance,RoleType,Role,Status&$orderBy=Attachments%20asc&$filter=DocumentClearance%20eq%202
 //https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('work')/items?$skiptoken=Paged%3DTRUE%26p_ID%3D0&$top=5000&$select=GUID,ID,Modified,Title,DateOfDecision,zSequence,zActive,ContentType,Attachments,AttachmentFiles,Editor/Title,DocumentClearance/Id,DocumentClearance/Title,RoleType/Id,RoleType/RoleType,Status/Id,Status/Status&$expand=AttachmentFiles,Editor,DocumentClearance,RoleType,Status&$orderBy=Attachments%20asc&draw=1&start=0&length=50&search%5Bvalue%5D=&search%5Bregex%5D=false&_=1587674557622
-# Get https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('dcmain')/items
+# Get https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('documentclearancework')/items
 # ?$skiptoken=Paged%3DTRUE%26p_ID%3D0&$top=5000
 # &$select=GUID,ID,Modified,FileLeafRef,Title,CurrentPerson,CurrentStatus,ContentType,Source/Id,Source/Source,Marking/Id,Marking/Marking
 # &$expand=Source,Marking
@@ -9,7 +9,7 @@
 # Content-Type: {{contentType}}
 # accept: application/json
 
-# Get https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('dcmain')/items
+# Get https://eminentitco.sharepoint.com/Sandbox/_api/web/lists/getbytitle('documentclearancework')/items
 # ?$skiptoken=Paged%3DTRUE%26p_ID%3D0&$top=5000
 # &$select=GUID,ID,Modified,Source/Id,Source/Source
 # &$expand=Source

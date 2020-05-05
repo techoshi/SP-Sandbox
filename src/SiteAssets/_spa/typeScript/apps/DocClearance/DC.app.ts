@@ -24,11 +24,9 @@ var DcMainWork = <spaLoadListStruct>{};
                 bind: function() {
 
                     function thisFunction() { toastr.success('Clicked'); };
-
-                    //$('.modal[data-owner="dcmain"] .send-to-person').unbind('click', thisFunction);
-                    //$('.modal[data-owner="dcmain"] .send-to-person').bind('click', thisFunction);     
-                    $('.modal[data-owner="dcmain"]').off('click', '.send-to-person', thisFunction);
-                    $('.modal[data-owner="dcmain"]').on('click', '.send-to-person', thisFunction)
+ 
+                    $('.modal[data-owner="documentclearancework"]').off('click', '.send-to-person', thisFunction);
+                    $('.modal[data-owner="documentclearancework"]').on('click', '.send-to-person', thisFunction)
                 }
             } as spaRepeatableOverload
         ]
