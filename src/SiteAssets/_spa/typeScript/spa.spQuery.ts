@@ -424,7 +424,7 @@ export var spQuery = (function () {
             var currentStruct = { columns: columnChunks[index], filters: m.struct.filters, expand: m.struct.expand };
             eachQueryStruct.push(currentStruct);
             var getSelectParam = getSelect(currentStruct)
-            console.log(getSelectParam);
+            //console.log(getSelectParam);
 
             var columnChunkURL = "";
             if (typeof m.isDatatable == "boolean" && m.isDatatable) {
@@ -448,7 +448,7 @@ export var spQuery = (function () {
             var currentStruct = { columns: lookupChunks[index], filters: m.struct.filters, expand: m.struct.expand };
             eachQueryStruct.push(currentStruct);
             var getSelectParam = getSelect(currentStruct)
-            console.log(getSelectParam);
+            // console.log(getSelectParam);
 
             var lookupChunkURL = "";
             if (typeof m.isDatatable == "boolean" && m.isDatatable) {
@@ -869,7 +869,7 @@ export var spQuery = (function () {
                     [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000],
                     [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000]
                 ],
-                "pageLength": mo.pageLength != undefined && mo.pageLength != '' ? mo.pageLength : defaultPageSize,
+                "pageLength": mo.pageLength != undefined && mo.pageLength != "" ? mo.pageLength : defaultPageSize,
                 "autoWidth": false,
                 "columns": ColumnsModel.Columns,
                 "columnDefs": ColumnsModel.ColumnDefs,
@@ -890,37 +890,37 @@ export var spQuery = (function () {
                         }, 1000)
                     );
 
-                    $('#' + m.tableName + ' input[type="search"]').addClass('iris-pager-nav');
+                    $('#' + m.tableName + ' input[type="search"]').addClass("iris-pager-nav");
                     var thisParent = $('#' + m.tableName + '_filter').parent();
                     $(thisParent).addClass('iris-text-align-right');
-                    $('#' + m.tableName + '_filter').addClass('iris-inline-block');
-                    $('#' + m.tableName + '_filter').parent('div').append('<div id="' + m.tableName + '_right_actions" class="iris-right-actions"></div>');
+                    $('#' + m.tableName + '_filter').addClass("iris-inline-block");
+                    $('#' + m.tableName + '_filter').parent("div").append('<div id="' + m.tableName + '_right_actions" class="iris-right-actions"></div>');
 
                     $('#' + m.tableName + '_right_actions').append(spEnv.$pa.env.datatable_refresh_html({
                         owner: m.tableName
                     }));
 
-                    $('.actionRefresh').unbind('click', refreshServerData);
-                    $('.actionRefresh').bind('click', refreshServerData);
+                    $(".actionRefresh").unbind("click", refreshServerData);
+                    $(".actionRefresh").bind("click", refreshServerData);
                 },
                 "fnDrawCallback": function (oSettings, json) {
 
-                    $('#' + m.tableName + '_wrapper .dataTables_scrollHead th').each(function (th, thElement) {
+                    $("#" + m.tableName + "_wrapper .dataTables_scrollHead th").each(function (th, thElement) {
                         var thisElementData = $(thElement).data();
                         $(thElement).html(_.startCase($(thElement).html()));
 
-                        $('#' + m.tableName + ' tbody tr').each(function (tr, trElement) {
+                        $("#" + m.tableName + " tbody tr").each(function (tr, trElement) {
                             var columnName = thisElementData.name.replace(new RegExp(" ", "g"), "_");
 
-                            $(trElement).find('td:eq(' + th + ')').addClass('css_dt_' + m.tableName + ' css_' + columnName);
+                            $(trElement).find("td:eq(" + th + ")").addClass("css_dt_" + m.tableName + " css_" + columnName);
                             for (var prop in thisElementData) {
-                                $(trElement).find('td:eq(' + th + ')').attr('data-' + prop, thisElementData[prop]);
+                                $(trElement).find("td:eq(" + th + ")").attr("data-" + prop, thisElementData[prop]);
                             }
                         });
                     });
 
                     if (m && m.table && m.table.css) {
-                        $('.css_dt_' + m.tableName).css(m.table.css);
+                        $(".css_dt_" + m.tableName).css(m.table.css);
                     }
 
                     if (m && m.table && m.table.columns && Array.isArray(m.table.columns)) {
