@@ -2993,7 +2993,6 @@ export var spCRUD = (function () {
                 loadLists();
                 //spCommon.spCommon.theList(m);
                 setTimeout(function () {
-                    +
                         spLoader.theLoader.hide({
                             id: 'initiateApp'
                         });
