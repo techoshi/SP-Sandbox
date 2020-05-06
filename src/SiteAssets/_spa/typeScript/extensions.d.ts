@@ -106,7 +106,12 @@ interface spaLoadListStruct {
     spType: string;
     loadActionButtons: boolean;
     queryStructure : any;
-
+    tableName : string;
+    tableID: string;
+    tableSelector: string;
+    ColumnsSelect : any;
+    d: any;
+    needsDocLibColumns : boolean;
 }
 
 interface spaAjax {

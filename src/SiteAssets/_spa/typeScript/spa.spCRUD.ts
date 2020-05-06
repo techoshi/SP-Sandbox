@@ -93,18 +93,25 @@ export var spCRUD = (function () {
     function initObjectParams(e: spaLoadListStruct) {
         e.thisVar = e.thisVar ? e.thisVar : e.name;
         e.name = e.name.toLowerCase();
+        e.title = e.thisVar;
+        e.spType = e.spType ? e.spType : e.title;
         e.thisObjectLower = e.name;
         e.owner = e.name;
         e.source = e.name;
         e.path = e.path ? e.path : _spPageContextInfo.webAbsoluteUrl;
         e.loaded = typeof e.loaded == "boolean" && e.loaded == true ? true : false;
-        e.title = e.thisVar;
+
         e.tabTitle = e.tabTitle ? e.tabTitle : e.thisVar;
         e.sectionName = e.sectionName ? e.sectionName : e.tabTitle;
-        e.spType = e.spType ? e.spType : e.title;
+
         e.loadActionButtons = true;
         e.dataEditable = typeof e.dataEditable == "boolean" ? e.dataEditable : true;
         e.metaDataVisible = typeof e.metaDataVisible == "boolean" ? e.metaDataVisible : false;
+        
+        e.tableName = e.name;
+        e.tableID = e.name;
+        e.tableSelector = '#' + e.name;
+        e.needsDocLibColumns = false;
 
         return e;
     }
@@ -577,6 +584,86 @@ export var spCRUD = (function () {
     
             $input.on('change', fileObjectChanged);
         }
+
+        function getFileBuffer(file: any) {
+
+            var deferred = $.Deferred();
+            var reader = new FileReader();
+    
+            reader.onload = function (e) {
+                deferred.resolve(e.target.result);
+            };
+            reader.onerror = function (e) {
+                deferred.reject(e.target.error);
+            };
+            reader.readAsArrayBuffer(file);
+            return deferred.promise();
+        };
+
+        function uploadTheFile(m: any) {
+            var currentFile = m.fileObjects[m.thisFile];
+            var loadedFile = FileLoaderMethods.getFileBuffer(currentFile);
+    
+            //.then(
+    
+            //function(buffer)
+            //{
+            var uploadFileXHR = {
+                method: 'POST',
+                url: m.url,
+                data: undefined,
+                processData: false,
+                tryCount: 0,
+                retryLimit: 3,
+                done: function (r: any) {
+                    toastr.success('File ' + currentFile.name + ' uploaded!', 'File Uploaded!');
+    
+                    if (typeof m.done == 'function') {
+                        m.done(r);
+                    }
+    
+                },
+                fail: function (response: any, errorCode: any, errorMessage: any) {
+    
+                    if (typeof m.fail == 'function') {
+                        m.fail(response);
+                    } else {
+                        if (response.status == 409) {
+                            if (this.tryCount <= this.retryLimit) {
+                                this.tryCount++;
+                                //try again
+                                $.ajax(this);
+                                return;
+                            } else {
+                                toastr.error('Error Submitting Data!', 'Data Not Submitted!');
+                            }
+                            //console.log(response)
+                            //handle error
+                        } else if (response.status == 400) {
+                            if (response.responseJSON && response.responseJSON.error && response.responseJSON.error.message) {
+                                var fileMessage = response.responseJSON.error.message.value;
+    
+                                toastr.error(fileMessage, 'File not saved');
+                            }
+    
+    
+                        } else {
+                            console.log(errorCode);
+                            //handle error
+                        }
+                    }
+    
+                },
+            };
+    
+            //spCommon.spCommon.ajax(uploadFileXHR);	        				
+            //});
+            return {
+                xhrRequest: uploadFileXHR,
+                theFile: loadedFile
+            };
+        }
+
         return {
             removeFile : function(e : any)
             {
@@ -589,6 +676,13 @@ export var spCRUD = (function () {
             fileLoader : function(m: any)
             {
                 return fileLoader(m);
+            },
+            getFileBuffer : function(file: any)
+            {
+                return getFileBuffer(file);
+            },
+            uploadTheFile : function (m: any){
+                return uploadTheFile(m);
             }
         }
     })();    
@@ -741,15 +835,17 @@ export var spCRUD = (function () {
 
         var baseTemplate = '100';
 
-        if (thisApp.objects[m.source.toLowerCase()].d && thisApp.objects[m.source.toLowerCase()].d.results && thisApp.objects[m.source.toLowerCase()].d.results.length > 0) {
-            if (_.find(thisApp.objects[m.source.toLowerCase()].d.results, {
+        var thisListObject = thisApp.objects[m.source.toLowerCase()]
+
+        if (thisListObject.d && thisListObject.d.results && thisListObject.d.results.length > 0) {
+            if (_.find(thisListObject.d.results, {
                 EntityPropertyName: "FileLeafRef"
             })) {
-                thisApp.objects[m.source.toLowerCase()].type = "Document Library";
-                thisApp.objects[m.source.toLowerCase()].d.results[0].multiple = false;
+                thisListObject.type = "Document Library";
+                thisListObject.d.results[0].multiple = false;
                 baseTemplate = '101';
             } else {
-                thisApp.objects[m.source.toLowerCase()].type = "List";
+                thisListObject.type = "List";
             }
         }
 
@@ -765,12 +861,7 @@ export var spCRUD = (function () {
 
         $('#tree_size_' + m.source.toLowerCase()).jstree();
 
-        spQuery.spQuery.genTable({
-            tableName: m.source.toLowerCase(),
-            tableID: m.source.toLowerCase(),
-            tableSelector: '#' + m.source.toLowerCase(),
-            tableStructure: thisApp.objects[m.source.toLowerCase()]
-        });
+        spQuery.spQuery.genTable(thisApp.objects[m.source.toLowerCase()]);
 
         if (typeof m.afterCompletion == 'function') {
             m.afterCompletion();
@@ -1386,24 +1477,14 @@ export var spCRUD = (function () {
         $('#modal-' + m.action + '-' + m.owner + '').modal('show');
     }
 
-    function getQueryForObject(s: any) {
+    function getQueryForObject(s: spaLoadListStruct) {
 
-        var itemQueryStruct = {
-            tableName: s.owner,
-            tableID: s.owner,
-            tableSelector: '#' + s.owner,
-            tableStructure: s,
-            templateType: s.baseTemplate,
-            queryFilter: s.queryFilter,
-            itemCall: false
-        };
-
-        if (s.baseTemplate == '101') {
+        if (s.baseTemplate == "101") {
             //actionURL += '?$select=Title,ID,EncodedAbsUrl,*'
-            itemQueryStruct.itemCall = true;
+            s.needsDocLibColumns = true;
         }
-        var itemQuery = spQuery.spQuery.getItemQuery(itemQueryStruct);
-        //itemQuery.restApiQuery = "?" + itemQuery.restApiQuery;
+        var itemQuery = spQuery.spQuery.getItemQuery(s);
+
         return itemQuery;
     }
 
@@ -1915,21 +1996,6 @@ export var spCRUD = (function () {
             }
         };
     }
-
-    var getFileBuffer = function (file: any) {
-
-        var deferred = $.Deferred();
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            deferred.resolve(e.target.result);
-        };
-        reader.onerror = function (e) {
-            deferred.reject(e.target.error);
-        };
-        reader.readAsArrayBuffer(file);
-        return deferred.promise();
-    };
 
     function clearForm(m: any) {
         m = typeof m == 'object' && m != undefined ? m : {};
@@ -2550,7 +2616,7 @@ export var spCRUD = (function () {
 
         if (m.fileObjects) {
             for (var thisFile = 0; thisFile < m.fileObjects.length; thisFile++) {
-                var itemForQueue = uploadTheFile({
+                var itemForQueue = FileLoaderMethods.uploadTheFile({
                     fileObjects: m.fileObjects,
                     thisFile: thisFile,
                     thisData: m.thisData,
@@ -2600,7 +2666,7 @@ export var spCRUD = (function () {
 
         if (m.fileObjects) {
             for (var thisFile = 0; thisFile < m.fileObjects.length; thisFile++) {
-                var itemForQueue = uploadTheFile({
+                var itemForQueue = FileLoaderMethods.uploadTheFile({
                     fileObjects: m.fileObjects,
                     thisFile: thisFile,
                     thisData: m.thisData,
@@ -2640,70 +2706,6 @@ export var spCRUD = (function () {
         }
 
         processQueue();
-    }
-
-    function uploadTheFile(m: any) {
-        var currentFile = m.fileObjects[m.thisFile];
-        var loadedFile = getFileBuffer(currentFile);
-
-        //.then(
-
-        //function(buffer)
-        //{
-        var uploadFileXHR = {
-            method: 'POST',
-            url: m.url,
-            data: undefined,
-            processData: false,
-            tryCount: 0,
-            retryLimit: 3,
-            done: function (r: any) {
-                toastr.success('File ' + currentFile.name + ' uploaded!', 'File Uploaded!');
-
-                if (typeof m.done == 'function') {
-                    m.done(r);
-                }
-
-            },
-            fail: function (response: any, errorCode: any, errorMessage: any) {
-
-                if (typeof m.fail == 'function') {
-                    m.fail(response);
-                } else {
-                    if (response.status == 409) {
-                        if (this.tryCount <= this.retryLimit) {
-                            this.tryCount++;
-                            //try again
-                            $.ajax(this);
-                            return;
-                        } else {
-                            toastr.error('Error Submitting Data!', 'Data Not Submitted!');
-                        }
-                        //console.log(response)
-                        //handle error
-                    } else if (response.status == 400) {
-                        if (response.responseJSON && response.responseJSON.error && response.responseJSON.error.message) {
-                            var fileMessage = response.responseJSON.error.message.value;
-
-                            toastr.error(fileMessage, 'File not saved');
-                        }
-
-
-                    } else {
-                        console.log(errorCode);
-                        //handle error
-                    }
-                }
-
-            },
-        };
-
-        //spCommon.spCommon.ajax(uploadFileXHR);	        				
-        //});
-        return {
-            xhrRequest: uploadFileXHR,
-            theFile: loadedFile
-        };
     }
 
     // Render and initialize the client-side People Picker.

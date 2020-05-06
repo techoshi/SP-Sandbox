@@ -45,13 +45,13 @@ export var spQuery = (function () {
         alert('Click Saved');
     }
 
-    function buildtableColumns(m) {
+    function buildtableColumns(m: spaLoadListStruct) {
         var temptableColumns = [];
         var temptableColumnDefs = [];
         var hasAttachments = false;
-        if (m.tableStructure) {
-            if (m.tableStructure.d) {
-                var columns = m.tableStructure.d;
+        if (m) {
+            if (m.d) {
+                var columns = m.d;
 
                 var thisAttachment = _.find(columns.results, function (o) {
                     return o.EntityPropertyName == 'Attachments';
@@ -195,13 +195,7 @@ export var spQuery = (function () {
             expands: []
         };
 
-        m.itemCall = typeof m.itemCall == "boolean" ? m.itemCall : false;
-
-        var thisSelect = "$select=";
-        var thisLookupSelect = '';
-        var thisExpand = "&$expand=";
-
-        var hasLookup = false;
+        m.needsDocLibColumns = typeof m.needsDocLibColumns == "boolean" ? m.needsDocLibColumns : false;
 
         var excludeTheseTypes = ["Lookup", "UserMulti", "User"];
 
@@ -280,7 +274,7 @@ export var spQuery = (function () {
                     column: "EncodedAbsUrl"
                 });
 
-                if (!m.itemCall) {
+                if (!m.needsDocLibColumns) {
                     selectStruct.filters.push({
                         type: "filter",
                         filter: "FSObjType eq 0"
@@ -649,8 +643,8 @@ export var spQuery = (function () {
                         delete json2.value;
                     }
 
-                    if (spEnv.mGlobal[xtra.path][xtra.tableName] != undefined) {
-                        spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData = json2;
+                    if (spEnv.mGlobal.page[xtra.tableName] != undefined) {
+                        spEnv.mGlobal.page[xtra.tableName].currentJsonData = json2;
                     }
 
                     //spEnv.tables[xtra.tableName].ajax.reload(null, false);
@@ -660,9 +654,9 @@ export var spQuery = (function () {
                 spEnv.tables[xtra.tableName].originalCaller.callThePromise = "Loaded";
             });
         } else {
-            json.fullData = spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData.fullData;
+            json.fullData = spEnv.mGlobal.page[xtra.tableName].currentJsonData.fullData;
             var ogCaller = spEnv.tables[xtra.tableName];
-            var ogMGlobal = spEnv.mGlobal[xtra.path][xtra.tableName];
+            var ogMGlobal = spEnv.mGlobal.page[xtra.tableName];
 
             var tempData2 = returnPagedData({
                 runSearch : true,
@@ -674,7 +668,7 @@ export var spQuery = (function () {
             json.data = tempData2.data;
             json.recordsTotal = tempData2.recordsTotal;
             json.recordsFiltered = tempData2.recordsFiltered;
-            json.spData = spEnv.mGlobal[xtra.path][xtra.tableName].currentJsonData.spData;
+            json.spData = spEnv.mGlobal.page[xtra.tableName].currentJsonData.spData;
         }
 
         if (json.FormDigestValue) {
@@ -850,7 +844,7 @@ export var spQuery = (function () {
         // }
     }
 
-    function refreshServerData(m) {
+    function refreshServerData(m: any) {
         var owner = $(this).data('owner');
 
         if (spEnv.tables[owner]) {
@@ -859,29 +853,30 @@ export var spQuery = (function () {
         }
     }
 
-    function genTable(m: any) {
+    function genTable(m: spaLoadListStruct) {
+        var mo : any = m;
+        if (m.tableName && mo.tableSelector) {
+            mo.tableStructure = m;
 
-        if (m.tableName && m.tableSelector) {
             spEnv.mGlobal.page[m.tableName] = {
                 currentJsonData: {}
             };
 
             var ColumnsModel = buildtableColumns(m);
 
-            var selectStruct = getSelectStruct(m);
-            m.ColumnsSelect = getSelect(selectStruct);
-            var modelObjPath = m.path == undefined ? 'page' : m.path;
-            m.path = modelObjPath;
+            var selectStruct = getSelectStruct(mo);
+            mo.ColumnsSelect = getSelect(selectStruct);
+            var modelObjPath = 'page';          
 
             var DataTableInMemory = {
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
                     type: "POST",
-                    url: triggerFetch(m)
+                    url: triggerFetch(mo)
                 },
-                "dom": m.dom != undefined ? m.dom : "<'row'<'col-md-6'l><'col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
-                "oLanguage": m.oLanguage != undefined ? m.oLanguage : {
+                "dom": mo.dom != undefined ? mo.dom : "<'row'<'col-md-6'l><'col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "oLanguage": mo.oLanguage != undefined ? mo.oLanguage : {
                     "sLengthMenu": "_MENU_",
                     "sSearch": "_INPUT_",
                     "sSearchPlaceholder": "Search..."
@@ -892,7 +887,7 @@ export var spQuery = (function () {
                     [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000],
                     [5, 10, 25, 50, 100, 200, 300, 400, 500, 1000]
                 ],
-                "pageLength": m.pageLength != undefined && m.pageLength != '' ? m.pageLength : defaultPageSize,
+                "pageLength": mo.pageLength != undefined && mo.pageLength != '' ? mo.pageLength : defaultPageSize,
                 "autoWidth": false,
                 "columns": ColumnsModel.Columns,
                 "columnDefs": ColumnsModel.ColumnDefs,
@@ -942,12 +937,12 @@ export var spQuery = (function () {
                         });
                     });
 
-                    if (m.tableStructure && m.tableStructure.table && m.tableStructure.table.css) {
-                        $('.css_dt_' + m.tableName).css(m.tableStructure.table.css);
+                    if (m && m.table && m.table.css) {
+                        $('.css_dt_' + m.tableName).css(m.table.css);
                     }
 
-                    if (m.tableStructure && m.tableStructure.table && m.tableStructure.table.columns && Array.isArray(m.tableStructure.table.columns)) {
-                        var thisTCArray = m.tableStructure.table.columns;
+                    if (m && m.table && m.table.columns && Array.isArray(m.table.columns)) {
+                        var thisTCArray = m.table.columns;
                         for (var tc = 0; tc < thisTCArray.length; tc++) {
                             var thisTableColumn = thisTCArray[tc];
                             var columnName = thisTableColumn.name.replace(new RegExp(" ", "g"), "_");
@@ -1030,13 +1025,12 @@ export var spQuery = (function () {
 
                     setTimeout(function () {
 
-                        var thisTempTableName = m.tableName != undefined ? m.tableName : m.page;
-                        $('#' + thisTempTableName + '_wrapper .dataTables_scrollHeadInner .table:hidden, #' + thisTempTableName + '_wrapper .dataTables_scrollHeadInner:hidden').css('width', '100%');
+                        $('#' + m.tableName + '_wrapper .dataTables_scrollHeadInner .table:hidden, #' + m.tableName + '_wrapper .dataTables_scrollHeadInner:hidden').css('width', '100%');
                         spData.iGlobal.pager.init({
-                            tableId: thisTempTableName,
-                            divID: '#' + thisTempTableName,
-                            currentJsonData: spEnv.mGlobal[modelObjPath][thisTempTableName].currentJsonData,
-                            params: spEnv.tables[thisTempTableName].ajax.params(),
+                            tableId: m.tableName,
+                            divID: '#' + m.tableName,
+                            currentJsonData: spEnv.mGlobal[modelObjPath][m.tableName].currentJsonData,
+                            params: spEnv.tables[m.tableName].ajax.params(),
                             recordType: ''
                         });
 
@@ -1050,7 +1044,7 @@ export var spQuery = (function () {
 
                     }, 10);
 
-                    fnDrawCallback(m, oSettings, json);
+                    fnDrawCallback(mo, oSettings, json);
 
                     spLoader.theLoader.hide({
                         id: m.tableName + 'datatable'
@@ -1064,22 +1058,36 @@ export var spQuery = (function () {
                         id: m.tableName + 'datatable'
                     });
 
-                    conformDataToSharePointRest(e, settings, data, m);
-
+                    conformDataToSharePointRest(e, settings, data, mo);
                 })
                 .on('xhr.dt', function (e, settings, json, xhr) {
 
-                    json = conformRestDataToDataTable(e, settings, json, xhr, m);
+                    json = conformRestDataToDataTable(e, settings, json, xhr, mo);
 
                 }).DataTable(DataTableInMemory);
 
-            spEnv.tables[m.tableName].originalCaller = m;
+            spEnv.tables[m.tableName].originalCaller = mo;
             spEnv.tables[m.tableName].originalCaller.callThePromise = "Load";
         }
     }
 
+    var FilterMethods = (function(){
+
+        function getFiltersNames (f : any)
+        {
+            return [];
+        }
+
+        return {
+            getFiltersNames : function(f : any)
+            {
+                return [];
+            }
+        }
+    })();
+
     return {
-        genTable: function (m: any) {
+        genTable: function (m: spaLoadListStruct) {
             genTable(m);
         },
         getTables: function () {
