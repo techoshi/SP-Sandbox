@@ -216,10 +216,10 @@ export var spQuery = (function () {
             }
         }
 
-        if (_.find(m.tableStructure.d.results, function (obj) {
+        if (_.find(m.d.results, function (obj) {
             return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
         })) {
-            var Lookups = _.filter(m.tableStructure.d.results, function (obj) {
+            var Lookups = _.filter(m.d.results, function (obj) {
                 return excludeTheseTypes.indexOf(obj.TypeAsString) == -1;
             });
 
@@ -261,14 +261,7 @@ export var spQuery = (function () {
                 column: "Modified"
             });
 
-            var thisTemplateType = '100';
-            if (m.templateType && m.templateType == '101') {
-                thisTemplateType = '101';
-            } else if (m.tableStructure && m.tableStructure.baseTemplate && m.tableStructure.baseTemplate == '101') {
-                thisTemplateType = '101';
-            }
-
-            if (thisTemplateType == '101') {
+            if (m.baseTemplate == '101') {
                 selectStruct.columns.push({
                     type: "column",
                     column: "EncodedAbsUrl"
@@ -285,10 +278,10 @@ export var spQuery = (function () {
         }
 
         //Load Lookups
-        if (_.find(m.tableStructure.d.results, function (obj) {
+        if (_.find(m.d.results, function (obj) {
             return excludeTheseTypes.indexOf(obj.TypeAsString) > -1;
         })) {
-            var Lookups2 = _.filter(m.tableStructure.d.results, function (obj) {
+            var Lookups2 = _.filter(m.d.results, function (obj) {
                 return excludeTheseTypes.indexOf(obj.TypeAsString) > -1;
             });
 
@@ -377,7 +370,7 @@ export var spQuery = (function () {
             useTop = "$skiptoken=" + encodeURIComponent("Paged=TRUE&p_ID=0") + "&$top=5000&";
         }
 
-        return m.tableStructure.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/items?" + useTop + m.ColumnsSelect + '&' + getOrderBy(m) + thisSearch;
+        return m.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/items?" + useTop + m.ColumnsSelect + '&' + getOrderBy(m) + thisSearch;
     }
 
     async function promiseQuery(m: any) {
@@ -390,7 +383,7 @@ export var spQuery = (function () {
 
         if (typeof m.isDatatable == "boolean" && m.isDatatable) {
             spEnv.tables[m.xtra.tableName].callThePromise = "Loading";
-            thePath = m.xtra.tableStructure.path;
+            thePath = m.xtra.path;
             theName = m.xtra.tableName;
             theOrder = getOrderBy(m.xtra);
             hasOrder = theOrder.length > 0 ? true : false;
@@ -846,8 +839,7 @@ export var spQuery = (function () {
 
     function genTable(m: spaLoadListStruct) {
         var mo : any = m;
-        if (m.tableName && mo.tableSelector) {
-            mo.tableStructure = m;
+        if (m.tableName && m.tableSelector) {
 
             spEnv.mGlobal.page[m.tableName] = {
                 currentJsonData: {}
@@ -855,15 +847,15 @@ export var spQuery = (function () {
 
             var ColumnsModel = buildtableColumns(m);
 
-            var selectStruct = getSelectStruct(mo);
-            mo.ColumnsSelect = getSelect(selectStruct);        
+            var selectStruct = getSelectStruct(m);
+            m.ColumnsSelect = getSelect(selectStruct);        
 
             var DataTableInMemory = {
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
                     type: "POST",
-                    url: triggerFetch(mo)
+                    url: triggerFetch(m)
                 },
                 "dom": mo.dom != undefined ? mo.dom : "<'row'<'col-md-6'l><'col-md-6'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
                 "oLanguage": mo.oLanguage != undefined ? mo.oLanguage : {
@@ -1031,10 +1023,9 @@ export var spQuery = (function () {
                         $('.iris-pager-nav').bind('click', spData.dt_nav_clicked);
                         $('.iris-pager-nav-select').bind('change', spData.dt_select_changed);
                         $('.dataTables_length').bind('change', spData.dt_length_changed);
-
                     }, 10);
 
-                    fnDrawCallback(mo, oSettings, json);
+                    fnDrawCallback(m, oSettings, json);
 
                     spLoader.theLoader.hide({
                         id: m.tableName + 'datatable'
@@ -1048,15 +1039,15 @@ export var spQuery = (function () {
                         id: m.tableName + 'datatable'
                     });
 
-                    conformDataToSharePointRest(e, settings, data, mo);
+                    conformDataToSharePointRest(e, settings, data, m);
                 })
                 .on('xhr.dt', function (e, settings, json, xhr) {
 
-                    json = conformRestDataToDataTable(e, settings, json, xhr, mo);
+                    json = conformRestDataToDataTable(e, settings, json, xhr, m);
 
                 }).DataTable(DataTableInMemory);
 
-            spEnv.tables[m.tableName].originalCaller = mo;
+            spEnv.tables[m.tableName].originalCaller = m;
             spEnv.tables[m.tableName].originalCaller.callThePromise = "Load";
         }
     }
