@@ -556,15 +556,6 @@ export var spQuery = (function () {
 
             spEnv.tables[thisTable].originalCaller.xhrReq = JSON.parse(JSON.stringify(data));
             spEnv.tables[thisTable].originalCaller.currentCall = newRestQ;
-
-            //tables[thisTable].ajax.url('#' + newRestQ);
-            if (false) {
-                if (data.start == 0) {
-                    spEnv.tables[thisTable].ajax.url(newRestQ);
-                } else {
-                    spEnv.tables[thisTable].ajax.url(getRestCount(thisTableMeta));
-                }
-            }
         }
 
         data.columns = [];
@@ -760,8 +751,8 @@ export var spQuery = (function () {
         return m.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/items?" + useTop + '$Select=ID' + '&' + getOrderBy(m);
     }
 
-    function getRestCount(m: any) {
-        return m.tableStructure.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/ItemCount";
+    function getRestCount(m: spaLoadListStruct) {
+        return m.path + "/_api/web/lists/getbytitle('" + m.tableName + "')/ItemCount";
     }
 
     function returnPagedData(m: any) {
