@@ -856,8 +856,7 @@ export var spQuery = (function () {
             var ColumnsModel = buildtableColumns(m);
 
             var selectStruct = getSelectStruct(mo);
-            mo.ColumnsSelect = getSelect(selectStruct);
-            var modelObjPath = 'page';          
+            mo.ColumnsSelect = getSelect(selectStruct);        
 
             var DataTableInMemory = {
                 "processing": true,
@@ -1020,7 +1019,7 @@ export var spQuery = (function () {
                         spData.iGlobal.pager.init({
                             tableId: m.tableName,
                             divID: '#' + m.tableName,
-                            currentJsonData: spEnv.mGlobal[modelObjPath][m.tableName].currentJsonData,
+                            currentJsonData: spEnv.mGlobal.page[m.tableName].currentJsonData,
                             params: spEnv.tables[m.tableName].ajax.params(),
                             recordType: ''
                         });
