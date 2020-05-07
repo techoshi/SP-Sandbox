@@ -2,6 +2,7 @@
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import * as spLoader from "./theLoader";
+import { spCommon } from './spa.spCommon';
 
 export var spAsyncQueue = (function () {
 
@@ -38,7 +39,7 @@ export var spAsyncQueue = (function () {
         var headers = m.headers != undefined ? m.headers : {};
         headers.Accept = "application/json;odata=verbose"; //It defines the Data format   
         headers["content-type"] = "application/json;odata=verbose"; //It defines the content type as JSON  
-        headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
+        headers["X-RequestDigest"] = spCommon.getDigest(); // $("#__REQUESTDIGEST").val(); //It gets the digest value           		
 
         var theQuery = {
             method: m.method,
@@ -54,9 +55,9 @@ export var spAsyncQueue = (function () {
         var ajaxReturn = $.ajax(theQuery)
             .done(function (response, textStatus, request) {
 
-                if (request.getResponseHeader('X-RequestDigest')) {
-                    $('#__REQUESTDIGEST').val();
-                }
+                // if (request.getResponseHeader('X-RequestDigest')) {
+                //     $('#__REQUESTDIGEST').val();
+                // }
 
                 if (typeof m.done == 'function') {
                     m.done(response);

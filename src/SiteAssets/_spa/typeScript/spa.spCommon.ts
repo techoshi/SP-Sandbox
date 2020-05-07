@@ -15,7 +15,7 @@ export async function spAjax(m: spaAjax) {
         var headers = m.headers != undefined ? m.headers : {};
         headers.Accept = headers.Accept ? headers.Accept : "application/json; odata=verbose"; //It defines the Data format   
         headers["content-type"] = headers["content-type"] ? headers["content-type"] : "application/json;odata=verbose"; //It defines the content type as JSON  
-        headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
+        headers["X-RequestDigest"] = spCommon.getDigest; //It gets the digest value           		
 
         var ajaxParam = {
             method: m.method,
@@ -30,9 +30,9 @@ export async function spAjax(m: spaAjax) {
         var ajaxReturn = await $.ajax(ajaxParam)
             .done(function (response, textStatus, request) {
 
-                if (request.getResponseHeader('X-RequestDigest')) {
-                    $('#__REQUESTDIGEST').val();
-                }
+                // if (request.getResponseHeader('X-RequestDigest')) {
+                //     $('#__REQUESTDIGEST').val();
+                // }
 
                 if (typeof m.done == 'function') {
                     m.done(response);
@@ -67,15 +67,19 @@ export var spCommon = (function () {
         objects: {} as any
     };
 
+    var __REQUESTDIGEST = $("#__REQUESTDIGEST").val();
+
     var continueToUpdateContext = true;
 
     function updateDigest() {
-        spAjax2({
+        
+        var thisDigestRequest = {
             url: _spPageContextInfo.webAbsoluteUrl + "/_api/contextinfo",
             async: true,
             method: 'POST',
             done: function (r: any) {
-                $('#__REQUESTDIGEST').val(r.d.GetContextWebInformation.FormDigestValue);
+                __REQUESTDIGEST = r.d.GetContextWebInformation.FormDigestValue;
+                //$('#__REQUESTDIGEST').val(__REQUESTDIGEST);
             },
             fail: function (response: any, errorCode: any, errorMessage: any) {
                 continueToUpdateContext = false;
@@ -98,7 +102,9 @@ export var spCommon = (function () {
                         }]
                 });
             }
-        });
+        }
+
+        spAjax2(thisDigestRequest);
     }
 
     setInterval(function () {
@@ -136,7 +142,7 @@ export var spCommon = (function () {
         var headers = m.headers != undefined ? m.headers : {};
         headers.Accept = headers.Accept ? headers.Accept : "application/json; odata=verbose"; //It defines the Data format   
         headers["content-type"] = headers["content-type"] ? headers["content-type"] : "application/json;odata=verbose"; //It defines the content type as JSON  
-        headers["X-RequestDigest"] = $("#__REQUESTDIGEST").val(); //It gets the digest value           		
+        headers["X-RequestDigest"] = __REQUESTDIGEST; //It gets the digest value           		
 
         var ajaxParam = {
             method: m.method,
@@ -152,9 +158,9 @@ export var spCommon = (function () {
         var ajaxReturn = $.ajax(ajaxParam)
             .done(function (response, textStatus, request) {
 
-                if (request.getResponseHeader('X-RequestDigest')) {
-                    $('#__REQUESTDIGEST').val();
-                }
+                // if (request.getResponseHeader('X-RequestDigest')) {
+                //     $('#__REQUESTDIGEST').val();
+                // }
 
                 if (typeof m.done == 'function') {
                     m.done(response);
@@ -221,6 +227,8 @@ export var spCommon = (function () {
     }
 
     return {
+        updateDigest : function(m: any) { __REQUESTDIGEST = m; },
+        getDigest : function() { return __REQUESTDIGEST; }, 
         ajax: function (m: any) { return spAjax2(m); },
         getExtension: function (m: any) {
             return getExtension(m);

@@ -656,7 +656,8 @@ export var spQuery = (function () {
         }
 
         if (json.FormDigestValue) {
-            $('#__REQUESTDIGEST').val(json.FormDigestValue);
+            spCommon.updateDigest(json.FormDigestValue);
+            //$('#__REQUESTDIGEST').val(json.FormDigestValue);
             // json.data = [];
             // json.recordsTotal = 0;
             // json.recordsFiltered = 0;
