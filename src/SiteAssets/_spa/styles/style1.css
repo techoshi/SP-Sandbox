@@ -15,6 +15,10 @@
   margin-bottom: 10px;
 }
 
+.card-body {
+  padding-bottom: 115px;
+}
+
 .li-child-form {
   display: inline-block;
   width: 100%;
