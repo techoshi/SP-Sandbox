@@ -424,7 +424,7 @@ export var spQuery = (function () {
             var currentStruct = { columns: columnChunks[index], filters: m.struct.filters, expand: m.struct.expand };
             eachQueryStruct.push(currentStruct);
             var getSelectParam = getSelect(currentStruct)
-            //console.log(getSelectParam);
+            spCommon.logger(getSelectParam);
 
             var columnChunkURL = "";
             if (typeof m.isDatatable == "boolean" && m.isDatatable) {
@@ -448,7 +448,7 @@ export var spQuery = (function () {
             var currentStruct = { columns: lookupChunks[index], filters: m.struct.filters, expand: m.struct.expand };
             eachQueryStruct.push(currentStruct);
             var getSelectParam = getSelect(currentStruct)
-            // console.log(getSelectParam);
+            spCommon.logger(getSelectParam);
 
             var lookupChunkURL = "";
             if (typeof m.isDatatable == "boolean" && m.isDatatable) {
@@ -474,7 +474,7 @@ export var spQuery = (function () {
         //@ts-ignore
         const returnedData = await Promise.all(ajaxes);
         var mergedRecs = [];
-        //console.log(returnedData);
+        spCommon.logger(returnedData);
         //Each Array from Promise
 
         if (Array.isArray(returnedData)) {
@@ -525,7 +525,7 @@ export var spQuery = (function () {
                 mergedRecs = _.values(merged);
             }
         }
-        //console.log(mergedRecs);
+        spCommon.logger(mergedRecs);
         return mergedRecs;
     }
 
@@ -554,7 +554,8 @@ export var spQuery = (function () {
         data.columns = [];
         data.order = [];
 
-        //console.log('Query by:'  + settings.sInstance);
+        
+        spCommon.logger('Query by:'  + settings.sInstance);
     }
 
     function conformRestDataToDataTable(e: any, settings: any, json: any, xhr: any, xtra: any) {
@@ -1034,6 +1035,8 @@ export var spQuery = (function () {
                 }
             }
 
+            FilterMethods.getFiltersNames(m)
+
             spEnv.tables[m.tableName] = $(m.tableSelector)
                 .on('preXhr.dt', function (e, settings, data) {
                     spLoader.theLoader.show({
@@ -1057,12 +1060,16 @@ export var spQuery = (function () {
 
         function getFiltersNames (f : any)
         {
+
+
             return [];
         }
 
         return {
-            getFiltersNames : function(f : any)
+            getFiltersNames : function(f : spaLoadListStruct)
             {
+                spCommon.logger(f);           
+
                 return [];
             }
         }

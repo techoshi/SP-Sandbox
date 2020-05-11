@@ -71,7 +71,8 @@ npm install font-awesome-loader --save-dev
 
 //npm install node-sass extract-text-webpack-plugin transfer-webpack-plugin image-webpack-loader
 npm install url-loader --save-dev
-
+npm install jquery.scrollto
+npm install --save @types/jquery.scrollto
 
 npm install babel --save-dev
 npm install babel-cli --save-dev

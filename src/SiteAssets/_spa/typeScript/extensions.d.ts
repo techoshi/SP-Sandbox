@@ -112,6 +112,7 @@ interface spaLoadListStruct {
     ColumnsSelect : any;
     d: any;
     needsDocLibColumns : boolean;
+    listData : any;
 }
 
 interface spaAjax {

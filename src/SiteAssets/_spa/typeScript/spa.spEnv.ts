@@ -24,6 +24,8 @@ import "../styles/modal.css"
 import "../styles/style7.css"
 import "../styles/iframe.css"
 
+globalThis.spaLogger = false;
+
 declare var MSOWebPartPageFormName: any;
 
 type mGlobal = {

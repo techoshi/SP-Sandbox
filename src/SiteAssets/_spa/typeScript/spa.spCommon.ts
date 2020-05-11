@@ -226,7 +226,19 @@ export var spCommon = (function () {
         spCommon.ajax(thisAjax);
     }
 
+    function captureThis(m: any)
+    {
+        if(typeof globalThis.spaLogger == "boolean" && globalThis.spaLogger)
+        {
+            console.log(m);
+        }
+    }
+
     return {
+        logger: function (m)
+        {
+            captureThis(m);
+        },
         updateDigest : function(m: any) { __REQUESTDIGEST = m; },
         getDigest : function() { return __REQUESTDIGEST; }, 
         ajax: function (m: any) { return spAjax2(m); },
@@ -262,7 +274,7 @@ export var spCommon = (function () {
         getUserPermissions: function (m: any) {
             for (var i = 0; i < m.urls.length; i++) {
 
-                //console.log(m.urls[i]);
+                spCommon.logger(m.urls[i]);
 
                 var site = { path: m.urls[i], privileges: [] };
 

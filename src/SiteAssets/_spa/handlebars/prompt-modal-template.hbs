@@ -1,7 +1,7 @@
 <div class="modal fade" id="{{promptID}}" data-choicetype="{{EditFormat}}" data-backdrop="static" role="dialog" aria-labelledby="{{id}}Title" aria-hidden="true">
     <!-- Modal -->
     <div class="modal-dialog modal-dialog-centered" role="{{promptID}}-modal" style="min-width: {{width}};">
-        <div class="modal-content" style="height: {{height}}">
+        <div class="modal-content" style="height: {{height}}; max-height: calc(100% - 60px);'">
             <div class="modal-header">
                 <h5 class="modal-title" id="{{promptID}}-modal-title}">{{header}}</h5>
                 {{#unless removeClose}}
@@ -10,7 +10,7 @@
                     </button>
                 {{/unless}}
             </div>
-            <div class="modal-body modal-overflow">
+            <div class="modal-body modal-overflow" style="overflow-y: scroll;">
                 <div>{{body}}</div>
             </div>
             <div class="modal-footer">

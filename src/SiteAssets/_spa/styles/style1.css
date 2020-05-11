@@ -14,9 +14,15 @@
 .card {
   margin-bottom: 10px;
 }
+/* 
+.card-body-overflow {
+  overflow: visible;
+  padding-bottom: 135px;
+} */
 
-.card-body {
-  padding-bottom: 115px;
+.child-wrapper > .card 
+{
+  overflow: visible;
 }
 
 .li-child-form {
@@ -112,6 +118,10 @@ table.dataTable tbody>tr>.selected {
   font-size: 12px;
 }
 
+/* .select2-container--default .select2-results > .select2-results__options {
+  max-height: 100px;
+  overflow-y: auto;
+} */
 
 
 .hidden-tab {
