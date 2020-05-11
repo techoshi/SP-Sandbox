@@ -128,6 +128,8 @@ export var $pa = {
 		spaChildFormRow: require("../handlebars/spa-child-form-row.hbs"),
 		thisNavLiTemplate: require("../handlebars/bootstrap-nav-li.hbs"),
 		thisNavDivTemplate: require("../handlebars/bootstrap-nav-div.hbs"),
+		spaCardFilters: require("../handlebars/spa_accordion_filters.hbs"),
+		datatableFilterItmes : require("../handlebars/datatable_filter_items.hbs")
 	},
 	spCommon: undefined as any,
 	spCRUD: undefined as any,

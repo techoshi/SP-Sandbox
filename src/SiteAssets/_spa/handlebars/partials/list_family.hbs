@@ -15,10 +15,11 @@
 </ul>
 <div class="tab-content" id="lf-content-container-{{name}}" style="padding-top: 20px;">
     <div class="tab-pane fade show active" id="lf-list-{{name}}" role="tabpanel" aria-labelledby="data-tab">
-        <div class="row no-horizontal-margin">
-            <div class="col-lg-3 order-lg-2 col-md-4 order-md-2 col-sm-12  order-sm-1 col-xs-12 order-xs-1 no-horizontal-padding" id="spActions-wrap-{{name}}"></div>
-            <div class="col-lg-9 order-lg-1 col-md-8 order-md-1 col-sm-12  order-sm-2 col-xs-12 order-xs-2" id="spTable-wrap-{{name}}" style="padding-right: 0; padding-bottom: 20px;">{{> ../sp_table_template}}</div>
-            
+        <div class="data-view-wrapper">
+            <div class="row no-horizontal-margin">
+                <div class="col-lg-3 order-lg-2 col-md-4 order-md-2 col-sm-12  order-sm-1 col-xs-12 order-xs-1 no-horizontal-padding" id="spActions-wrap-{{name}}"></div>
+                <div class="col-lg-9 order-lg-1 col-md-8 order-md-1 col-sm-12  order-sm-2 col-xs-12 order-xs-2" id="spTable-wrap-{{name}}" style="padding-right: 0; padding-bottom: 20px;">{{> ../sp_table_template}}</div>                
+            </div>
         </div>
     </div>
     <div class="tab-pane fade" id="lf-tree-{{name}}" role="tabpanel" aria-labelledby="tree-tab">{{> ../sp_jstree_template}}</div>

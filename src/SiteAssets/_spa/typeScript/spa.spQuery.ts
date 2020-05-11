@@ -482,20 +482,17 @@ export var spQuery = (function () {
                 var element_3: any;
 
                 if (returnedData[index_2] && returnedData[index_2].d) {
-                    if(Array.isArray(returnedData[index_2].d.results))
-                    {
+                    if (Array.isArray(returnedData[index_2].d.results)) {
                         element_3 = returnedData[index_2].d.results;
-                    }                    
-                    else if(returnedData[index_2].d.ID != undefined)
-                    {
+                    }
+                    else if (returnedData[index_2].d.ID != undefined) {
                         element_3 = [returnedData[index_2].d];
                     }
                 }
                 else if (returnedData[index_2] && returnedData[index_2].value) {
                     element_3 = returnedData[index_2].value;
                 }
-                else
-                {
+                else {
                     element_3 = [returnedData[index_2]]
                 }
 
@@ -554,8 +551,8 @@ export var spQuery = (function () {
         data.columns = [];
         data.order = [];
 
-        
-        spCommon.logger('Query by:'  + settings.sInstance);
+
+        spCommon.logger('Query by:' + settings.sInstance);
     }
 
     function conformRestDataToDataTable(e: any, settings: any, json: any, xhr: any, xtra: any) {
@@ -614,7 +611,7 @@ export var spQuery = (function () {
 
                         json2.fullData = json2.value;
                         var tempData = returnPagedData({
-                            runSearch : false,
+                            runSearch: false,
                             meta: spEnv.tables[thisTable].originalCaller.xhrReq,
                             data: json2.fullData,
                             start: 0,
@@ -643,9 +640,12 @@ export var spQuery = (function () {
             var ogCaller = spEnv.tables[xtra.tableName];
             var ogMGlobal = spEnv.mGlobal.page[xtra.tableName];
 
+
+            FilterMethods.loadFiltersWithData(xtra, ogMGlobal.currentJsonData.spData)
+
             var tempData2 = returnPagedData({
-                runSearch : true,
-                meta: ogCaller.originalCaller.xhrReq ? { search : ogCaller.originalCaller.xhrReq.search, columns : ogCaller.originalCaller.xhrReq.columns } : {},
+                runSearch: true,
+                meta: ogCaller.originalCaller.xhrReq ? { search: ogCaller.originalCaller.xhrReq.search, columns: ogCaller.originalCaller.xhrReq.columns } : {},
                 data: ogMGlobal.currentJsonData.fullData,
                 start: ogCaller.originalCaller.xhrReq.start,
                 length: ogCaller.originalCaller.xhrReq.length
@@ -770,7 +770,7 @@ export var spQuery = (function () {
             });
 
             var searchData = m.runSearch ? _.filter(searchStageData, function (o) {
-                    return eval(conditionSyntax);                
+                return eval(conditionSyntax);
             }) : searchStageData;
 
             var endRowLength = searchData.length <= endRow ? searchData.length : endRow;
@@ -840,7 +840,7 @@ export var spQuery = (function () {
     }
 
     function genTable(m: spaLoadListStruct) {
-        var mo : any = m;
+        var mo: any = m;
         if (m.tableName && m.tableSelector) {
 
             spEnv.mGlobal.page[m.tableName] = {
@@ -850,7 +850,7 @@ export var spQuery = (function () {
             var ColumnsModel = buildtableColumns(m);
 
             var selectStruct = getSelectStruct(m);
-            m.ColumnsSelect = getSelect(selectStruct);        
+            m.ColumnsSelect = getSelect(selectStruct);
 
             var DataTableInMemory = {
                 "processing": true,
@@ -880,6 +880,7 @@ export var spQuery = (function () {
                 "scroller": true,
                 "fnInitComplete": function () {
                     var eachColumn = spEnv.tables[m.tableName].columns()[0];
+                    $('#' + m.tableName + '_filter input[type="search"]').addClass("spa-dt-search");
                     $('#' + m.tableName + '_filter input[type="search"]').unbind();
                     $('#' + m.tableName + '_filter input[type="search"]').data('owner', m.tableName);
 
@@ -1056,21 +1057,62 @@ export var spQuery = (function () {
         }
     }
 
-    var FilterMethods = (function(){
+    var FilterMethods = (function () {
 
-        function getFiltersNames (f : any)
-        {
+        function getFiltersNames(f: spaLoadListStruct) {
+
+            spCommon.logger(f);
+
+            var excludeColumns = ["FileLeafRef", "ContentType", "Attachments"]
+
+            var validFilters = _.filter(f.d.results, function (m) {
+                return excludeColumns.indexOf(m.StaticName) == -1;
+            });
+
+            f.filters = validFilters;
+
+            $("#filters-tab-div-" + f.name).append(spEnv.$pa.env.spaCardFilters(f));
+
+            spCommon.logger(validFilters);
 
 
-            return [];
+
+            return validFilters;
+        }
+
+        function loadFiltersWithData(f: any, fullData: any) {
+            globalThis.spaLogger = true;
+            spCommon.logger(f.filters);
+            spCommon.logger(fullData);
+
+            if (f.filters) {
+                for (let index = 0; index < f.filters.length; index++) {
+                    const element = f.filters[index];
+                
+                    var resultsFor =  _.compact(_.map(fullData, element.StaticName));
+                    
+                    if(resultsFor.length > 0)
+                    {
+                        if (typeof resultsFor[0] == "object")
+                        {
+                            resultsFor = _.compact(_.map(resultsFor, element.StaticName));
+                        }                        
+                    }
+
+                    var thisFilterData = spEnv.$pa.env.datatableFilterItmes({ liItems : resultsFor });
+                    $('.filter-wrapper[data-source="' + f.name + '"] #filter-card-body-' + element.StaticName).html(thisFilterData);
+                }
+            }
+
+            globalThis.spaLogger = false;
         }
 
         return {
-            getFiltersNames : function(f : spaLoadListStruct)
-            {
-                spCommon.logger(f);           
-
-                return [];
+            getFiltersNames: function (f: spaLoadListStruct) {
+                return getFiltersNames(f);
+            },
+            loadFiltersWithData: function (f: any, fullData: any) {
+                loadFiltersWithData(f, fullData);
             }
         }
     })();

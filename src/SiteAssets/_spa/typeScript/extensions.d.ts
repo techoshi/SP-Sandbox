@@ -113,6 +113,7 @@ interface spaLoadListStruct {
     d: any;
     needsDocLibColumns : boolean;
     listData : any;
+    filters: any;
 }
 
 interface spaAjax {

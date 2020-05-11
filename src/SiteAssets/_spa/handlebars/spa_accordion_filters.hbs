@@ -1,0 +1,67 @@
+<div
+  id="{{wrapper_id}}"
+  class="filter-wrapper accordion"
+  data-source="{{source}}"
+  data-sptype="{{thisVar}}"
+>
+  {{#filters}}
+    <div class="card">
+      <div class="card-header" id="filter-card-{{StaticName}}">
+        <div class="row">
+          <div class="col-md-5">
+            <div
+              class="collapsable"
+              style="display: inline-block; padding-left: 10px;"
+              data-toggle="collapse"
+              data-target="#collapsefilter-{{StaticName}}"
+            ></div>
+            <div class="mb-0" style="display: inline-block;">
+              <a
+                class="btn-link"
+                style="cursor:pointer;"
+                data-toggle="collapse"
+                data-target="#collapsefilter-{{StaticName}}"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+              >
+                {{StaticName}}
+              </a>
+            </div>
+          </div>
+          <div class="col-md-7">
+            {{#switch @root.action}}
+              {{#case "edit"}}
+                <button
+                  type="button"
+                  class="btn btn-primary add-filter"
+                  data-ownersource="{{source}}"
+                  data-source="{{@root.source}}"
+                  data-action="{{@root.action}}"
+                  data-sptype="{{@root.thisVar}}"
+                  data-owner="{{buttonOwner}}"
+                  data-container="filter-card-body-{{StaticName}}"
+                >
+                  <i class="fa fa-plus"></i>
+                  Add
+                  {{singular}}
+                </button>
+              {{/case}}
+            {{/switch}}
+          </div>
+        </div>
+      </div>
+      <div
+        id="collapsefilter-{{StaticName}}"
+        class="collapse show"
+        aria-labelledby="filter-card-{{StaticName}}"
+        data-parent=""
+      >
+        <div class="card-body" id="filter-card-body-{{StaticName}}">
+          <ul>
+            {{{html}}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  {{/filters}}
+</div>

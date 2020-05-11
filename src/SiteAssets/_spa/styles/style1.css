@@ -14,14 +14,14 @@
 .card {
   margin-bottom: 10px;
 }
+
 /* 
 .card-body-overflow {
   overflow: visible;
   padding-bottom: 135px;
 } */
 
-.child-wrapper > .card 
-{
+.accordion >.card {
   overflow: visible;
 }
 
@@ -67,13 +67,14 @@
 }
 
 .accordion .card-header .collapsable:after {
-    font-family: 'FontAwesome';  
-    content: "\f139";
-    cursor: pointer;
+  font-family: 'FontAwesome';
+  content: "\f139";
+  cursor: pointer;
 }
+
 .accordion .card-header .collapsable.collapsed:after {
-    /* symbol for "collapsed" panels */
-    content: "\f13a"; 
+  /* symbol for "collapsed" panels */
+  content: "\f13a";
 }
 
 .add-child {
@@ -123,6 +124,16 @@ table.dataTable tbody>tr>.selected {
   overflow-y: auto;
 } */
 
+@media (max-width: 991px) {
+  .data-view-wrapper {
+    height: 800px;
+    overflow-y: auto;
+  }
+
+  .spa-dt-search {
+    width: 400px;
+  } 
+}
 
 .hidden-tab {
   display: none;
