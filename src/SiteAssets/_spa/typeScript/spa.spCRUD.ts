@@ -2037,18 +2037,20 @@ export var spCRUD = (function () {
         m = typeof m == 'object' && m != undefined ? m : {};
 
         var thisData = $(m.currentTarget).data();
-        var formSelector = '#' + thisData.owner;
+        var formSelector = '#' + thisData.caller;
         $(formSelector).data('FileLeafRef', '');
 
         var theseFormObjects = $(formSelector).find('input, select, textarea');
 
         $(theseFormObjects).each(function (i, element) {
-            switch ($(element).prop('type')) {
+            var DOMobjectType = $(element).prop('type');
+
+            switch (DOMobjectType) {
                 case 'text':
                     $(element).val($(element).data('defaultvalue'));
                     break;
                 case 'select-one':
-                    $(element).val($(element).data('defaultvalue'));
+                    $(element).val($(element).data('defaultvalue')).trigger('change');
                     break;
                 case 'file':
                     $('#' + thisData.owner + ' .box__inventory').html('');

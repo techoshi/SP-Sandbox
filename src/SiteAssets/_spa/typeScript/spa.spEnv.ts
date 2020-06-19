@@ -130,12 +130,7 @@ export var $pa = {
 		thisNavDivTemplate: require("../handlebars/bootstrap-nav-div.hbs"),
 		spaCardFilters: require("../handlebars/spa_accordion_filters.hbs"),
 		datatableFilterItmes : require("../handlebars/datatable_filter_items.hbs")
-	},
-	spCommon: undefined as any,
-	spCRUD: undefined as any,
-	spQuery: undefined as any,
-	spDB: undefined as any,
-	spAsyncQueue: undefined as any
+	}
 }
 
 require("./spa.spCommon");

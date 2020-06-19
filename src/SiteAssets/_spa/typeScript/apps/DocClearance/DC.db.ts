@@ -79,7 +79,7 @@ var MarkingsList = {
 var MainList = {
 	url: _spPageContextInfo.webAbsoluteUrl,
 	Title: 'DocumentClearance',
-	type: "Document Library",
+	type: "Generic List",
 	Description: 'Document Clearance App',
 	Columns: [{
 		type: 'FieldLookup',
@@ -122,9 +122,18 @@ var MainList = {
 		Title: 'CurrentParticipant'
 	},
 	{
-		type: 'FieldText',
+		type: 'FieldChoice',
 		Title: 'CurrentStatus',
-		DefaultValue: 'Pending'
+		Choices: ["Pending", "In Progress", "Canceled", "Approved", "Denied"],
+		DefaultValue: 'Pending',
+		EditFormat : 0
+	},
+	{
+		type: 'FieldChoice',
+		Title: 'ArchivedStatus',
+		Choices: ["Active", "Archived"],
+		DefaultValue: 'Active',
+		EditFormat : 0
 	}
 	]
 } as SharePointListStruct;
@@ -200,6 +209,25 @@ var NoteList = {
 			type: 'FieldMultiLineText',
 			Title: 'NoteEntry'
 		},
+	]
+} as SharePointListStruct;
+
+
+var MainListFiles = {
+	url: _spPageContextInfo.webAbsoluteUrl,
+	Title: 'DocumentClearanceFiles',
+	type: "Document Library",
+	Description: 'Document Clearance App Files',
+	Columns: [
+		{
+			type: 'FieldLookup',
+			Title: 'MainList',
+			LookupListId: {
+				listName: MainList.Title
+			},
+			AllowMultipleValues: false,
+			LookupFieldName: MainList.Title
+		}
 	]
 } as SharePointListStruct;
 

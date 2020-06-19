@@ -640,7 +640,6 @@ export var spQuery = (function () {
             var ogCaller = spEnv.tables[xtra.tableName];
             var ogMGlobal = spEnv.mGlobal.page[xtra.tableName];
 
-
             FilterMethods.loadFiltersWithData(xtra, ogMGlobal.currentJsonData.spData)
 
             var tempData2 = returnPagedData({
@@ -1075,8 +1074,6 @@ export var spQuery = (function () {
 
             spCommon.logger(validFilters);
 
-
-
             return validFilters;
         }
 
@@ -1089,17 +1086,17 @@ export var spQuery = (function () {
                 for (let index = 0; index < f.filters.length; index++) {
                     const element = f.filters[index];
                 
-                    var resultsFor =  _.compact(_.map(fullData, element.StaticName));
+                    var resultsFor =  _.uniq(_.compact(_.map(fullData, element.StaticName)));
                     
                     if(resultsFor.length > 0)
                     {
                         if (typeof resultsFor[0] == "object")
                         {
-                            resultsFor = _.compact(_.map(resultsFor, element.StaticName));
+                            resultsFor = _.uniq(_.compact(_.map(resultsFor, element.StaticName)));
                         }                        
                     }
 
-                    var thisFilterData = spEnv.$pa.env.datatableFilterItmes({ liItems : resultsFor });
+                    var thisFilterData = spEnv.$pa.env.datatableFilterItmes({ spaObject : f, liItems : resultsFor });
                     $('.filter-wrapper[data-source="' + f.name + '"] #filter-card-body-' + element.StaticName).html(thisFilterData);
                 }
             }

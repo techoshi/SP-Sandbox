@@ -89,7 +89,7 @@ export var spDB = (function () {
                             },
                             'results': m.Choices //[ 'Internal', 'External' ] 
                         },
-                        'EditFormat': 1
+                        'EditFormat': typeof m.EditFormat == "number" ? m.EditFormat : 1
                     }
                 };
             case 'FieldLookup':
@@ -637,20 +637,21 @@ export var spDB = (function () {
             deleteList(m);
         },
         demoApp: function (m: any) {
-            spEnv.$pa.spDB.createApp({
+            spDB.createApp({
                 url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists",
                 Title: 'Test_List123',
                 Description: 'Test Description',
-                Columns: [{
-                    type: 'Text',
-                    Title: 'MainColumn',
-                    MaxLength: 100
-                },
-                {
-                    type: 'Text',
-                    Title: 'MainColumn2',
-                    MaxLength: 400
-                }
+                Columns: [
+                    {
+                        type: 'Text',
+                        Title: 'MainColumn',
+                        MaxLength: 100
+                    },
+                    {
+                        type: 'Text',
+                        Title: 'MainColumn2',
+                        MaxLength: 400
+                    }
                 ]
             });
         },

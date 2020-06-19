@@ -1,5 +1,15 @@
-<ul>
+<ul class="filter-data-wrapper" data-spType="{{spaObject.spType}}" data-owner="{{spaObject.name}}">
   {{#liItems}}
-    <li>{{this}}</li>
+    <li>
+      <label class="checkbox-container checkbox-filterdata">
+        <input
+          type="checkbox"
+          data-parent="{{spaObject.name}}"
+          value="{{this}}"
+        />
+        {{this}}
+        <span class="checkmark"></span>
+      </label>
+    </li>
   {{/liItems}}
 </ul>

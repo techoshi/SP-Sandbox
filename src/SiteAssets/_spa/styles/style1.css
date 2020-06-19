@@ -217,3 +217,8 @@ table.dataTable tbody>tr>.selected {
   display: inline-block;
   border-bottom: solid 1px #ccc;
 }
+
+.filter-data-wrapper {
+  list-style-type: none;
+  padding-left: 0;
+}
