@@ -13,7 +13,7 @@
     "@types/select2": "^4.0.48",
     "@types/toastr": "^2.1.37",
     "bootstrap": "^4.4.1",
-    "datatables.net": "^1.10.20",
+    "datatables.net": "^1.10.22",
     "datatables.net-autofill": "^2.3.4",
     "datatables.net-bs4": "^1.10.20",
     "datatables.net-buttons": "^1.6.1",
